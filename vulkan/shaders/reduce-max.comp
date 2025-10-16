@@ -1,0 +1,46 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License
+
+#version 450 core
+#extension GL_KHR_shader_subgroup_arithmetic: enable
+
+#include "../common/ShaderDefines.h"
+
+layout (local_size_x = GROUP_SIZE) in;
+layout (constant_id = 0) const int subGroupSize = 64;
+
+layout(push_constant) uniform ConstantBlock {
+    int size;
+} consts;
+
+layout (binding = 0) buffer block1
+{
+    uint data[];
+};
+
+layout (binding = 1) buffer block2
+{
+    uint mx;
+};
+
+shared uint sdata[subGroupSize];
+
+void main(void) {
+    if(gl_GlobalInvocationID.x >= consts.size) {
+        return;
+    }
+    uint val = data[gl_GlobalInvocationID.x];
+    uint value = subgroupMax(val);
+
+    if (gl_SubgroupInvocationID == 0) {
+        sdata[gl_SubgroupID] = value;
+    }
+    memoryBarrierShared();
+    barrier();
+
+    if (gl_SubgroupID == 0) {
+        val = gl_SubgroupInvocationID < gl_NumSubgroups ? sdata[gl_SubgroupInvocationID] : 0;
+        value = subgroupMax(val);
+        atomicMax(mx, value);
+    }
+}

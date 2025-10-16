@@ -1,0 +1,115 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License
+
+ /**
+ * Based on the following paper:
+ *     Shengen Yan, Guoping Long, and Yunquan Zhang. 2013.
+ *     StreamScan: fast scan algorithms for GPUs without global barrier synchronization.
+ *     SIGPLAN Not. 48, 8 (August 2013), 229–238.
+ *     OpenCL code: https://code.google.com/archive/p/streamscan/
+ */
+
+#version 450 core
+
+layout (local_size_x_id = 0) in;
+
+layout (constant_id = 0) const int GROUP_SIZE = 128;
+layout (constant_id = 1) const int SUB_GROUP_SIZE = 32;
+layout (constant_id = 2) const int MAX_SUBGROUPS = 4;
+layout (constant_id = 3) const int LOG_SUB_GROUP_SIZE = 5;
+layout (constant_id = 4) const int HALF_GROUP_SIZE = 64;
+
+layout(push_constant) uniform ConstantBlock {
+    int wgsize;
+} consts;
+
+
+layout (binding = 0) buffer block1
+{
+    int data[];
+};
+
+layout (binding = 1) buffer block2
+{
+    volatile int sum[];
+};
+
+shared int column[2][GROUP_SIZE+1],lpsum,gid_; // column : to keep the sum of the block, lpsum: local previous sum, gid_: custom global id
+shared int local_memory[MAX_SUBGROUPS][SUB_GROUP_SIZE][SUB_GROUP_SIZE];
+
+
+void main(void)
+{
+    int src_offset;
+
+    int gid = 0; // global id
+    int lid = int(gl_LocalInvocationID.x); //local id
+
+    if(lid == 0)
+        gid_ = atomicAdd((sum[consts.wgsize]),1)+1;
+    barrier();
+    gid = gid_; 
+
+    if(gid>=consts.wgsize)
+        return;
+    
+    int register[SUB_GROUP_SIZE]; // private memory
+    int subgroup = lid >> LOG_SUB_GROUP_SIZE;
+    int tid_subgroup = lid & (SUB_GROUP_SIZE - 1); // thread id in particular subgroup
+    int lid_= lid+1; // local id + 1 
+    src_offset=gid * SUB_GROUP_SIZE * GROUP_SIZE + subgroup * SUB_GROUP_SIZE * SUB_GROUP_SIZE + tid_subgroup;
+    int t1=0,t2=0,t3=0,t4=0,psum=0; // psum: previous sum
+
+    t3=src_offset;
+    for(t2=0;t2<SUB_GROUP_SIZE;t2++)
+    {
+        local_memory[subgroup][t2][tid_subgroup]=data[t3 + t2*SUB_GROUP_SIZE];
+    }
+
+    register[0]= psum;
+    barrier();
+
+    for(t2=1;t2<SUB_GROUP_SIZE;t2++)
+    {
+        register[t2]=register[t2-1] + local_memory[subgroup][tid_subgroup][t2-1];
+    }
+    psum=register[(SUB_GROUP_SIZE - 1)]+local_memory[subgroup][tid_subgroup][SUB_GROUP_SIZE-1];
+
+
+    column[0][lid_] = psum; // current block sum
+
+    barrier();
+    for(t1 =1,t2 = 1,t3=1;t1<=HALF_GROUP_SIZE; t1<<=1,t2 <<=1, t3 = t3^1)
+    {
+        column[t3][lid_] = lid >=t1 ? column[t3^1][lid_] + column[t3^1][lid_ - t2] : column[t3^1][lid_];
+        barrier();
+    }
+    psum=0;
+    t3=t3^1;
+
+    if(lid==0)
+    {
+        if(gid == 0)
+            sum[0] = column[t3][GROUP_SIZE];
+        else
+        {
+            while((psum=sum[gid - 1])==-1){}
+            sum[gid] = column[t3][GROUP_SIZE] + psum;
+        }
+        lpsum = psum;
+        column[t3][0]=0;
+    }
+    barrier();
+    psum=lpsum + column[t3][lid]; // total sum need to be added to current block (previous sum)
+
+    t3=0;
+    for(t2=0;t2<SUB_GROUP_SIZE;t2++)
+    {
+        local_memory[subgroup][tid_subgroup][t2]=register[t2+t3] + psum;
+    }
+    t3=src_offset;
+    for(t2=0;t2<SUB_GROUP_SIZE;t2++)
+    {
+        data[t3 + t2*SUB_GROUP_SIZE]=local_memory[subgroup][t2][tid_subgroup];
+    }
+}
