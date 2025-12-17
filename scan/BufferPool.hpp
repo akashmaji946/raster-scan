@@ -10,7 +10,7 @@
 
 #include <common/constants.h>
 
-#define INDEX_RESOLUTION 4096
+#define INDEX_RESOLUTION 1024
 
 // requires 1 GB space for storing results
 #define MAX_RESULT_SIZE (1 << 28)
