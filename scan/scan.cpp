@@ -14,6 +14,7 @@
 #include <regex>
 #include <cstring>
 #include <thread>
+#include <cmath>
 #include <map>
 
 using namespace vkcore;
@@ -164,8 +165,8 @@ void readQueries(std::string fileName, int nqueries, std::vector<uint32_t> &targ
 
 
 void queries3d(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op, bool test = false) {
-    std::string opfolder = "E:/code/RasterVsRT/encodedData/";
-    std::string qfolder = "E:/code/RTScan/test/";
+    std::string opfolder = "/home/akashmaji/Desktop/RasterDB/raster-scan/encodedData/";
+    std::string qfolder = "/home/akashmaji/Desktop/RasterDB/raster-scan/test/";
     std::vector<std::string> datasets = {
         "normal_data_1e8_3",
         "zipf1.5_data_1e8_3",

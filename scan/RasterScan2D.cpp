@@ -4,6 +4,7 @@
 #include "RasterScan2D.hpp"
 
 #include <core/GPUTimer.hpp>
+#include <cmath>
 
 using namespace vkcore;
 
@@ -201,7 +202,8 @@ void RasterScan2D::setupBuildCountPipeline() {
     vk::Format colorFormat = vk::Format::eR8Sint;
     rpCreateInfo.pColorAttachmentFormats = &colorFormat;
 
-    bcPipeline = bcPipelineProps.createPipeline(vd,vk::UniqueRenderPass(),&rpCreateInfo);
+    vk::UniqueRenderPass dummyRenderPassBC;
+    bcPipeline = bcPipelineProps.createPipeline(vd, dummyRenderPassBC, &rpCreateInfo);
 }
 
 void RasterScan2D::setupBuildPipeline() {
@@ -249,7 +251,8 @@ void RasterScan2D::setupBuildPipeline() {
     vk::Format colorFormat = vk::Format::eR8Sint;
     rpCreateInfo.pColorAttachmentFormats = &colorFormat;
 
-    bPipeline = bPipelineProps.createPipeline(vd,vk::UniqueRenderPass(),&rpCreateInfo);
+    vk::UniqueRenderPass dummyRenderPassB;
+    bPipeline = bPipelineProps.createPipeline(vd, dummyRenderPassB, &rpCreateInfo);
 }
 
 void RasterScan2D::setupRQTPipeline() {
@@ -302,7 +305,8 @@ void RasterScan2D::setupRQTPipeline() {
     vk::Format colorFormat = vk::Format::eR8Sint;
     rpCreateInfo.pColorAttachmentFormats = &colorFormat;
 
-    rqtPipeline = rqtPipelineProps.createPipeline(vd,vk::UniqueRenderPass(),&rpCreateInfo);
+    vk::UniqueRenderPass dummyRenderPassRQT;
+    rqtPipeline = rqtPipelineProps.createPipeline(vd, dummyRenderPassRQT, &rpCreateInfo);
 }
 
 void RasterScan2D::setupRQEPipeline() {
@@ -349,7 +353,8 @@ void RasterScan2D::setupRQEPipeline() {
     vk::Format colorFormat = vk::Format::eR8Sint;
     rpCreateInfo.pColorAttachmentFormats = &colorFormat;
 
-    rqePipeline = rqePipelineProps.createPipeline(vd,vk::UniqueRenderPass(),&rpCreateInfo);
+    vk::UniqueRenderPass dummyRenderPassRQE;
+    rqePipeline = rqePipelineProps.createPipeline(vd, dummyRenderPassRQE, &rpCreateInfo);
 
 }
 
@@ -486,7 +491,7 @@ void RasterScan2D::runRQEPipeline(PRasterIndex index, vkcore::PBuffer qranges, u
     vd->device->updateDescriptorSets(descriptorSets, nullptr);
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, rqePipelineProps.pipelineLayout.get(), 0, rqePipelineProps.descriptorSet.get(), nullptr);
 
-    std::array<uint32_t,2> consts = {INDEX_RESOLUTION, ncols};
+    std::array<uint32_t,2> consts = {INDEX_RESOLUTION, static_cast<uint32_t>(ncols)};
     vd->commandBuffer->pushConstants<uint32_t>(rqePipelineProps.pipelineLayout.get(),vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment,0,consts);
 
     vk::DeviceSize offset = 0;
@@ -494,5 +499,4 @@ void RasterScan2D::runRQEPipeline(PRasterIndex index, vkcore::PBuffer qranges, u
     vd->commandBuffer->drawIndirect(maxBuffer->buf,0,1,4 * sizeof(uint32_t));
     vd->commandBuffer->endRendering();
 }
-
 

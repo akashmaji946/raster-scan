@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cstdint>
 
 struct X {
   ~X() { std::cerr << std::endl; }

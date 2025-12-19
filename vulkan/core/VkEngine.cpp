@@ -18,17 +18,34 @@ using VulkanDynamicLoader = vk::DynamicLoader;
 VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 namespace vkcore {
+// #ifdef DEV_BUILD
+// //inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+
+// inline static vk::Bool32 debugCallback(
+//         vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+//         vk::DebugUtilsMessageTypeFlagsEXT messageType,
+//         const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
+//         void* pUserData){
+
+//     if(messageSeverity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning) {
+//         std::cerr << std::endl << "validation layer: " << pCallbackData->pMessage << std::endl << std::endl;
+//     }
+//     return VK_FALSE;
+// }
+// #endif
+
 #ifdef DEV_BUILD
-//inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
-
-inline static vk::Bool32 debugCallback(
-        vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        vk::DebugUtilsMessageTypeFlagsEXT messageType,
-        const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
-        void* pUserData){
-
-    if(messageSeverity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning) {
-        std::cerr << std::endl << "validation layer: " << pCallbackData->pMessage << std::endl << std::endl;
+// Use the C API callback type so it matches PFN_vkDebugUtilsMessengerCallbackEXT
+inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+    VkDebugUtilsMessageSeverityFlagBitsEXT           messageSeverity,
+    VkDebugUtilsMessageTypeFlagsEXT                  messageType,
+    const VkDebugUtilsMessengerCallbackDataEXT*      pCallbackData,
+    void*                                            pUserData)
+{
+    if (messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+        std::cerr << std::endl
+                  << "validation layer: " << pCallbackData->pMessage
+                  << std::endl << std::endl;
     }
     return VK_FALSE;
 }
@@ -227,12 +244,17 @@ bool VkEngine::createDevices() {
         double memsize = hsize / (1024.0 * 1024 * 1024);
         LOG << "Device " << props.deviceName << " has ID: " << i <<  " and Heap size: " << memsize << " GB";
 
-        PVkDevice dev(new VulkanDevice(physicalDevices[i],props,i));
-        dev->subgroupSize = subgroupSize;
-        dev->memProps = memProps;
-        dev->rebarEnabled = rebar;
-        dev->heapSize = hsize;
-        this->devices.push_back(dev);
+        try {
+            PVkDevice dev(new VulkanDevice(physicalDevices[i], props, i));
+            dev->subgroupSize = subgroupSize;
+            dev->memProps = memProps;
+            dev->rebarEnabled = rebar;
+            dev->heapSize = hsize;
+            this->devices.push_back(dev);
+        } catch (const vk::FeatureNotPresentError &e) {
+            LOG << "Skipping device " << props.deviceName
+                << " because required features are not supported: " << e.what();
+        }
     }
     return true;
 }
