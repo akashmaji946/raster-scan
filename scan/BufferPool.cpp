@@ -4,6 +4,7 @@
 #include "BufferPool.hpp"
 
 #include <core/VkEngine.hpp>
+#include <cmath>
 
 #include <iostream>
 #ifdef WIN32
