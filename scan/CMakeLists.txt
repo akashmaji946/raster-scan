@@ -3,6 +3,7 @@
 
 set(scan_headers
     RasterScan2D.hpp
+    RasterScanIndexUpdate.hpp
     BufferPool.hpp
     CPUTimer.hpp
 )
@@ -10,6 +11,7 @@ set(scan_headers
 set(scan_src
     scan.cpp
     RasterScan2D.cpp
+    RasterScanIndexUpdate.cpp
     BufferPool.cpp
     CPUTimer.cpp
 )
@@ -28,6 +30,13 @@ set(scan_shader_src
     shaders/edge2D.vert
     shaders/edge2D.frag
     shaders/edge2D.geom
+    shaders/insert-page.vert
+    shaders/query-tex-ll.vert
+    shaders/query-tex-ll.geom
+    shaders/query-tex-ll.frag
+    shaders/query-page-ll.vert
+    shaders/query-page-ll.geom
+    shaders/query-page-ll.frag
 )
 
 add_executable(EncodeData ${encode_src})

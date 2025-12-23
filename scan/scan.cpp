@@ -4,6 +4,7 @@
 #include <iostream>
 
 #include "RasterScan2D.hpp"
+#include "RasterScanIndexUpdate.hpp"
 #include "CPUTimer.hpp"
 
 #include <operators/OperatorCache.hpp>
@@ -16,6 +17,7 @@
 #include <thread>
 #include <cmath>
 #include <map>
+#include <iomanip>
 
 using namespace vkcore;
 
@@ -165,8 +167,10 @@ void readQueries(std::string fileName, int nqueries, std::vector<uint32_t> &targ
 
 
 void queries3d(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op, bool test = false) {
+    
     std::string opfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/encodedData/";
     std::string qfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/test/";
+    
     std::vector<std::string> datasets = {
         "normal_data_1e8_3",
         "zipf1.5_data_1e8_3",
@@ -209,7 +213,6 @@ void queries3d(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op, boo
     std::cerr << "finished building index with max bin size: " << index->maxBinCt << "\n";
     std::cerr << "stats -- min: " << index->minVal[0] << ";" << index->minVal[1] << ", max: " << index->maxVal[0] << ";" << index->maxVal[1]  << ", range per bin: " << index->binRange[0]  << ";" << index->binRange[1]  << "\n";
 
-
     std::vector<uint32_t> targets;
     readQueries(qfolder + querysets[dataId], qct[dataId], targets, rowMap);
 
@@ -223,6 +226,7 @@ void queries3d(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op, boo
     queryBuffer->create(6 * sizeof(uint32_t),vk::BufferUsageFlagBits::eVertexBuffer|vk::BufferUsageFlagBits::eStorageBuffer|vk::BufferUsageFlagBits::eTransferSrc|vk::BufferUsageFlagBits::eTransferDst,MemoryType::Internal);
     double totTime = 0;
     int nct = 0;
+    
     for(int i = 0;i < qct[dataId];i ++) {
         int in = i * 6;
         // x1,y1,x2,y2,z1,z2
@@ -279,9 +283,286 @@ void queries3d(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op, boo
 }
 
 
+void queries3dIndexUpdate(int dataId, PVkDevice vd, PBuffer staging, bool test = false) {
+    
+    std::string opfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/encodedData/";
+    std::string qfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/test/";
+    
+    std::vector<std::string> datasets = {
+        "normal_data_1e8_3",
+        "zipf1.5_data_1e8_3",
+        "zipf1.3_data_1e8_3",
+        "zipf1.1_data_1e8_3",
+        "uniform_data_1e8_3",
+    };
+    std::vector<std::string> querysets = {
+        "normal.txt",
+        "zipf1.5.txt",
+        "zipf1.3.txt",
+        "zipf1.1.txt",
+        "scan_cmd_32_3c.txt",
+    };
+    std::vector<int> qct = {
+        1,
+        1,
+        1,
+        1,
+        10
+    };
+
+    PBufferCache bufs(new CommonBufferPool(vd));
+
+    std::cerr << "\n=== RasterScanIndexUpdate Pipeline ===\n";
+    std::cerr << "reading dataset: " << dataId << " (" << datasets[dataId] << ")\n";
+    int32_t ncols;
+    uint32_t npoints;
+    std::vector<uint32_t> minval, maxval;
+    std::vector<std::map<uint32_t, uint32_t>> rowMap;
+    std::vector<uint32_t> points;
+    PBuffer pointsBuffer = readEncodedData(opfolder + datasets[dataId],vd,staging,npoints,minval,maxval,rowMap,points,ncols);
+    std::cerr << "finished reading data " << minval[0] << ";" << maxval[0] << ",  " << minval[1] << ";" << maxval[1] << ",  " << minval[2] << ";" << maxval[2] << "\n";
+
+    // Limit points for testing (MAX_PAGES constraint with 1-item-per-page)
+    uint32_t maxTestPoints = (1 << 23);  // 8M points (MAX_PAGES limit)
+    if (npoints > maxTestPoints) {
+        std::cerr << "[WARNING] Limiting points from " << npoints << " to " << maxTestPoints << " due to MAX_PAGES\n";
+        npoints = maxTestPoints;
+    }
+
+    // Create RasterScanIndexUpdate instance
+    RasterScanIndexUpdate rsUpdate(vd, bufs, ncols);
+
+    // Build linked list index
+    std::cerr << "building linked list index\n";
+    CPUTimer buildTimer;
+    buildTimer.start();
+    PLinkedListIndex index = rsUpdate.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+    uint64_t buildTime = buildTimer.stop();
+    std::cerr << "finished building linked list index in " << double(buildTime) / 1000000. << " secs\n";
+    std::cerr << "stats -- min: " << index->minVal[0] << ";" << index->minVal[1] << ", max: " << index->maxVal[0] << ";" << index->maxVal[1]  << ", range per bin: " << index->binRange[0]  << ";" << index->binRange[1]  << "\n";
+
+    std::vector<uint32_t> targets;
+    readQueries(qfolder + querysets[dataId], qct[dataId], targets, rowMap);
+
+    for(int i = 0;i < targets.size()/2;i ++) {
+        if(i % 3 == 0) std::cerr << "Query: " << i / 3 << "\n";
+        std::cerr << targets[i * 2] << "," << targets[i * 2 + 1] << "\n";
+    }
+
+    // Execute queries
+    PBuffer queryBuffer(new Buffer(vd));
+    queryBuffer->create(6 * sizeof(uint32_t),vk::BufferUsageFlagBits::eVertexBuffer|vk::BufferUsageFlagBits::eStorageBuffer|vk::BufferUsageFlagBits::eTransferSrc|vk::BufferUsageFlagBits::eTransferDst,MemoryType::Internal);
+    double totTime = 0;
+    int nct = 0;
+    
+    for(int i = 0;i < qct[dataId];i ++) {
+        int in = i * 6;
+        // x1,y1,x2,y2,z1,z2
+        std::vector<uint32_t> queries = {targets[in],targets[in+2],targets[in+1],targets[in+3],targets[in+4],targets[in+5]};
+        loadUsingStagingBuf((char *)queries.data(),queries.size() * sizeof(uint32_t),queryBuffer,staging,vd,0);
+        CPUTimer timer;
+        timer.start();
+        rsUpdate.runRangeQueries(index, queryBuffer, 1);
+        uint64_t t = timer.stop();
+        double ts = double(t) / 1000000.;
+        totTime += ts;
+        nct ++;
+        std::cerr << "time for query " << (i + 1) << ": " << ts << " secs\n";
+
+        if(test) {
+            uint32_t arrsize = uint32_t(std::ceil(double(npoints) / 32));
+            std::vector<uint32_t> res(arrsize);
+            readUsingStagingBuf((char *)res.data(),arrsize * sizeof(uint32_t),bufs->resBuffer,staging,vd);
+            int32_t tot = 0;
+            for(uint32_t i = 0;i < npoints;i ++) {
+                if(i % 1000 == 0) {
+                    std::cerr << "\rtested " << i << " of " << npoints;
+                }
+                uint32_t pt[] = {points[i], points[i + npoints], points[i + 2 * npoints]};
+
+                uint32_t sat = 1;
+                for(int j = 0;j < 3;j ++) {
+                    if(!(targets[in + j * 2] <= pt[j] && targets[in + j * 2 + 1] >= pt[j])) {
+                        sat = 0;
+                        break;
+                    }
+                }
+                tot += sat;
+                uint32_t ind = i >> 5;
+                uint32_t bit = 1 << (i & 0x1f);
+                uint32_t resbit = res[ind] & bit;
+                resbit >>= (i & 0x1f);
+                if(resbit != sat)
+                {
+                    std::cerr << "\nError!! results not match! " << i << "," << ind << "," << resbit << "," << sat << ","
+                              << pt[0] << "," << pt[1] << "," << pt[2] << "\n";
+                    for(int xx = 0;xx < 9;xx ++) {
+                        std::cerr << res[xx] << ",";
+                    }
+                    std::cerr<< "\n";
+                    exit(0);
+                }
+            }
+            std::cerr << "\nTest successful: " << tot << "\n";
+        }
+    }
+    std::cerr << "Avg. query time over " << nct << " queries: " << totTime / nct << " secs\n";
+    std::cerr << "Throughput: " << nct/totTime << " qps\n";
+}
+
+
+// Compare results from both pipelines
+void compareResults(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op) {
+    std::string opfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/encodedData/";
+    std::string qfolder = "/home/akashmaji/Documents/RasterDB/raster-scan/test/";
+    
+    std::vector<std::string> datasets = {
+        "normal_data_1e8_3",
+        "zipf1.5_data_1e8_3",
+        "zipf1.3_data_1e8_3",
+        "zipf1.1_data_1e8_3",
+        "uniform_data_1e8_3",
+    };
+    std::vector<std::string> querysets = {
+        "normal.txt",
+        "zipf1.5.txt",
+        "zipf1.3.txt",
+        "zipf1.1.txt",
+        "scan_cmd_32_3c.txt",
+    };
+    std::vector<int> qct = {1, 1, 1, 1, 10};
+
+    std::cerr << "\n========================================\n";
+    std::cerr << "COMPARING RESULTS: Dataset " << dataId << " (" << datasets[dataId] << ")\n";
+    std::cerr << "========================================\n";
+
+    // Read dataset
+    int32_t ncols;
+    uint32_t npoints;
+    std::vector<uint32_t> minval, maxval;
+    std::vector<std::map<uint32_t, uint32_t>> rowMap;
+    std::vector<uint32_t> points;
+    PBuffer pointsBuffer = readEncodedData(opfolder + datasets[dataId], vd, staging, npoints, minval, maxval, rowMap, points, ncols);
+    std::cerr << "Dataset: " << npoints << " points\n";
+
+    // Limit points for IndexUpdate pipeline (MAX_PAGES constraint)
+    uint32_t maxTestPoints = (1 << 23);  // 8M points
+    uint32_t npointsLimited = std::min(npoints, maxTestPoints);
+    if (npoints > maxTestPoints) {
+        std::cerr << "[NOTE] Limiting to " << npointsLimited << " points for comparison (IndexUpdate MAX_PAGES limit)\n";
+    }
+
+    // Read queries
+    std::vector<uint32_t> targets;
+    readQueries(qfolder + querysets[dataId], qct[dataId], targets, rowMap);
+
+    // Setup for RasterScan2D (original)
+    SinglePassScan *scan = (SinglePassScan *) op.getFunction(FunctionType::SinglePassScan);
+    ReduceMax *reduce = (ReduceMax *) op.getFunction(FunctionType::ReduceMax);
+    PBufferCache bufs1(new CommonBufferPool(vd));
+    RasterScan2D rs(vd, bufs1, scan, reduce, ncols);
+    
+    std::cerr << "\nBuilding RasterScan2D index...\n";
+    CPUTimer buildTimer1;
+    buildTimer1.start();
+    PRasterIndex index1 = rs.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
+    double buildTime1 = double(buildTimer1.stop()) / 1000000.;
+    std::cerr << "RasterScan2D build time: " << buildTime1 << " secs\n";
+
+    // Setup for RasterScanIndexUpdate (new)
+    PBufferCache bufs2(new CommonBufferPool(vd));
+    RasterScanIndexUpdate rsUpdate(vd, bufs2, ncols);
+    
+    std::cerr << "Building RasterScanIndexUpdate index...\n";
+    CPUTimer buildTimer2;
+    buildTimer2.start();
+    PLinkedListIndex index2 = rsUpdate.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
+    double buildTime2 = double(buildTimer2.stop()) / 1000000.;
+    std::cerr << "RasterScanIndexUpdate build time: " << buildTime2 << " secs\n";
+
+    // Query buffer
+    PBuffer queryBuffer(new Buffer(vd));
+    queryBuffer->create(6 * sizeof(uint32_t), 
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer | 
+        vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
+        MemoryType::Internal);
+
+    uint32_t arrsize = uint32_t(std::ceil(double(npointsLimited) / 32));
+    std::vector<uint32_t> res1(arrsize), res2(arrsize);
+
+    double totTime1 = 0, totTime2 = 0;
+    int allMatch = 1;
+
+    std::cerr << "\n--- Query Results ---\n";
+    std::cerr << std::setw(6) << "Query" 
+              << std::setw(12) << "RS2D_Time" 
+              << std::setw(12) << "RSIU_Time"
+              << std::setw(12) << "RS2D_Rows"
+              << std::setw(12) << "RSIU_Rows"
+              << std::setw(10) << "Match?\n";
+    std::cerr << std::string(62, '-') << "\n";
+
+    for (int i = 0; i < qct[dataId]; i++) {
+        int in = i * 6;
+        std::vector<uint32_t> queries = {targets[in], targets[in+2], targets[in+1], targets[in+3], targets[in+4], targets[in+5]};
+        loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+
+        // Run RasterScan2D query
+        CPUTimer timer1;
+        timer1.start();
+        rs.runRangeQueries(index1, queryBuffer, 1);
+        double t1 = double(timer1.stop()) / 1000000.;
+        totTime1 += t1;
+        readUsingStagingBuf((char *)res1.data(), arrsize * sizeof(uint32_t), bufs1->resBuffer, staging, vd);
+
+        // Run RasterScanIndexUpdate query
+        CPUTimer timer2;
+        timer2.start();
+        rsUpdate.runRangeQueries(index2, queryBuffer, 1);
+        double t2 = double(timer2.stop()) / 1000000.;
+        totTime2 += t2;
+        readUsingStagingBuf((char *)res2.data(), arrsize * sizeof(uint32_t), bufs2->resBuffer, staging, vd);
+
+        // Count matching rows for each
+        uint32_t count1 = 0, count2 = 0;
+        for (uint32_t j = 0; j < arrsize; j++) {
+            count1 += __builtin_popcount(res1[j]);
+            count2 += __builtin_popcount(res2[j]);
+        }
+
+        // Check if results match
+        bool match = (res1 == res2);
+        if (!match) allMatch = 0;
+
+        std::cerr << std::setw(6) << (i + 1)
+                  << std::setw(12) << std::fixed << std::setprecision(6) << t1
+                  << std::setw(12) << std::fixed << std::setprecision(6) << t2
+                  << std::setw(12) << count1
+                  << std::setw(12) << count2
+                  << std::setw(10) << (match ? "YES" : "NO") << "\n";
+    }
+
+    std::cerr << std::string(62, '-') << "\n";
+    std::cerr << "\n--- Summary ---\n";
+    std::cerr << "Points compared: " << npointsLimited << "\n";
+    std::cerr << "RasterScan2D:       Build=" << std::fixed << std::setprecision(4) << buildTime1 
+              << "s, Avg Query=" << std::setprecision(6) << totTime1/qct[dataId] << "s\n";
+    std::cerr << "RasterScanIndexUpdate: Build=" << std::fixed << std::setprecision(4) << buildTime2 
+              << "s, Avg Query=" << std::setprecision(6) << totTime2/qct[dataId] << "s\n";
+    std::cerr << "ALL RESULTS MATCH: " << (allMatch ? "YES" : "NO") << "\n";
+    std::cerr << "========================================\n\n";
+}
+
+// Flag to select pipeline:
+// 0 = Original RasterScan2D pipeline
+// 1 = New RasterScanIndexUpdate pipeline (linked list)
+// 2 = Compare both pipelines
+#define USE_INDEX_UPDATE_PIPELINE 2
+
 int main() {
     int devId = VkEngine::getEngine()->getDefaultDeviceId();
     PVkDevice vd = VkEngine::getEngine()->getDevice(devId);
+
     std::cerr << "\n\n**** using device " << vd->props.deviceName << " with ID = " << devId << " ****" << std::endl;
     PBuffer staging(new Buffer(vd));
     staging->create(STAGING_BUFFER_SIZE,vk::BufferUsageFlagBits::eStorageBuffer|vk::BufferUsageFlagBits::eTransferSrc|vk::BufferUsageFlagBits::eTransferDst,MemoryType::ReadWrite);
@@ -290,9 +571,23 @@ int main() {
 
     // the experiments run for the paper
     int32_t nDataset = 5;
-    for(int i = 0;i < nDataset;i ++) {
-        queries3d(i,vd,staging,op);
+    
+#if USE_INDEX_UPDATE_PIPELINE == 2
+    std::cerr << "\n*** COMPARING Both Pipelines ***\n";
+    for(int i = 0; i < nDataset; i++) {
+        compareResults(i, vd, staging, op);
     }
+#elif USE_INDEX_UPDATE_PIPELINE == 1
+    std::cerr << "\n*** Running NEW RasterScanIndexUpdate (Linked List) Pipeline ***\n";
+    for(int i = 0; i < nDataset; i++) {
+        queries3dIndexUpdate(i, vd, staging, true);
+    }
+#else
+    std::cerr << "\n*** Running ORIGINAL RasterScan2D Pipeline ***\n";
+    for(int i = 0; i < nDataset; i++) {
+        queries3d(i, vd, staging, op, true);
+    }
+#endif
 
     return 0;
 }
