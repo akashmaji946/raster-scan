@@ -1,6 +1,7 @@
 data/
 encodedData/
-
+tests/
+test/
 
 # Prerequisites
 *.d

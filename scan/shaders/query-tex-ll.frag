@@ -6,10 +6,14 @@
 
 #version 450
 
-#define PAGE_DATA_SIZE 16
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)
+#define PAGE_DATA_SIZE 1
+#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // = 6
 #define NULL_PAGE_PTR 0xFFFFFFFF
 #define MAX_PAGES_PER_CELL 100000  // Safety limit to prevent infinite loops
+
+// Valid bit is stored in bit 31 of the rowId field
+#define VALID_BIT_MASK 0x80000000u
+#define ROWID_MASK 0x7FFFFFFFu
 
 layout(push_constant) uniform ConstantBlock {
     uvec2 minVal;
@@ -84,8 +88,18 @@ void main() {
         for (uint i = 0; i < count; i++) {
             uvec4 data = readData(pageOffset, i);
             
+            // Extract valid bit and rowId from data.w
+            uint rowIdWithValid = data.w;
+            bool isValid = (rowIdWithValid & VALID_BIT_MASK) != 0u;
+            uint rowId = rowIdWithValid & ROWID_MASK;
+            
+            // Skip deleted entries (valid bit = 0)
+            if (!isValid) {
+                continue;
+            }
+            
             // Check if data matches query range
-            // data = (x, y, z, rowId)
+            // data = (x, y, z, rowId_with_valid)
             // qrange = (x1, y1, x2, y2), zrange = (z1, z2)
             bool flag = false;
             
@@ -99,7 +113,6 @@ void main() {
             
             if (flag) {
                 // Set bit in result bitmap
-                uint rowId = data.w;
                 uint ind = rowId >> 5;       // rowId / 32
                 uint bit = 1 << (rowId & 0x1f);  // 1 << (rowId % 32)
                 atomicOr(res[ind], bit);

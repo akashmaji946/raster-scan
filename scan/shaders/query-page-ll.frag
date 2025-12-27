@@ -6,9 +6,13 @@
 
 #version 450
 
-#define PAGE_DATA_SIZE 16
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)
+#define PAGE_DATA_SIZE 1
+#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // = 6
 #define NULL_PAGE_PTR 0xFFFFFFFF
+
+// Valid bit is stored in bit 31 of the rowId field
+#define VALID_BIT_MASK 0x80000000u
+#define ROWID_MASK 0x7FFFFFFFu
 
 layout(push_constant) uniform ConstantBlock {
     uint res;
@@ -93,11 +97,15 @@ void main() {
             }
             
             if (flag) {
-                // Set bit in result bitmap
-                uint rowId = data.w;
-                uint ind = rowId >> 5;       // rowId / 32
-                uint bit = 1 << (rowId & 0x1f);  // 1 << (rowId % 32)
-                atomicOr(res[ind], bit);
+                // Check if entry is valid (bit 31 set)
+                uint rowIdWithValid = data.w;
+                if ((rowIdWithValid & VALID_BIT_MASK) != 0u) {
+                    // Extract actual rowId (bits 0-30)
+                    uint rowId = rowIdWithValid & ROWID_MASK;
+                    uint ind = rowId >> 5;       // rowId / 32
+                    uint bit = 1u << (rowId & 0x1fu);  // 1 << (rowId % 32)
+                    atomicOr(res[ind], bit);
+                }
             }
         }
         

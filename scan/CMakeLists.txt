@@ -31,6 +31,8 @@ set(scan_shader_src
     shaders/edge2D.frag
     shaders/edge2D.geom
     shaders/insert-page.vert
+    shaders/delete-page.vert
+    shaders/delete-range.vert
     shaders/query-tex-ll.vert
     shaders/query-tex-ll.geom
     shaders/query-tex-ll.frag

@@ -4,15 +4,21 @@
 #version 450
 
 // Page structure constants
-#define PAGE_DATA_SIZE 16
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // data + count + nextPtr
+#define PAGE_DATA_SIZE 1
+#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // data + count + nextPtr = 6
 #define NULL_PAGE_PTR 0xFFFFFFFF
+
+// Valid bit is stored in bit 31 of the rowId field
+// rowId field = (valid << 31) | (rowId & 0x7FFFFFFF)
+#define VALID_BIT_MASK 0x80000000u
+#define ROWID_MASK 0x7FFFFFFFu
 
 layout(push_constant) uniform ConstantBlock {
     uvec2 minVal;
     uvec2 binRange;
     uint res;
     uint pageDataSize;
+    uint rowIdOffset;  // Offset to add to gl_VertexIndex for unique rowIds
 } consts;
 
 // Head pointer buffer: stores pointer to first page for each cell
@@ -22,7 +28,7 @@ layout (binding = 0) buffer headPtrBuffer {
 
 // Page buffer: stores all pages
 // Page layout: [data0, data1, ..., data15, count, nextPtr]
-// Each data item is uvec4 (x, y, z, rowId)
+// Each data item is uvec4 (x, y, z, rowId_with_valid_bit)
 layout (binding = 1) buffer pageBuffer {
     uint pages[];
 };
@@ -66,8 +72,12 @@ void main() {
     uvec2 binid = (val - consts.minVal) / consts.binRange;
     uint bin = binid.x + binid.y * consts.res;
     
-    // Data to insert: (x, y, z, rowId)
-    uvec4 data = uvec4(val, valz, gl_VertexIndex);
+    // Data to insert: (x, y, z, rowId_with_valid_bit)
+    // Set valid bit (bit 31) to 1 to mark entry as valid
+    // Add rowIdOffset to gl_VertexIndex to generate unique rowIds for inserted data
+    uint rowId = (uint(gl_VertexIndex) + consts.rowIdOffset) & ROWID_MASK;
+    uint rowIdWithValid = VALID_BIT_MASK | rowId;
+    uvec4 data = uvec4(val, valz, rowIdWithValid);
     
     // Allocate new page
     uint newPageIdx = allocatePage();
@@ -81,7 +91,7 @@ void main() {
     pages[newPageOffset + 0] = data.x;
     pages[newPageOffset + 1] = data.y;
     pages[newPageOffset + 2] = data.z;
-    pages[newPageOffset + 3] = data.w;
+    pages[newPageOffset + 3] = data.w;  // rowId with valid bit set
     
     // Set count to 1
     pages[newCountOffset] = 1;

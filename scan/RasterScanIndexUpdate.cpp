@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "RasterScanIndexUpdate.hpp"
+#include "GPUMemoryTool.hpp"
 
 #include <core/GPUTimer.hpp>
 #include <cmath>
@@ -30,6 +31,8 @@ void PageAllocator::initialize() {
         vk::BufferUsageFlagBits::eTransferDst | 
         vk::BufferUsageFlagBits::eTransferSrc,
         MemoryType::Internal);
+    GPU_MEM_PRINT("PageAllocator::pageBuffer", pageBufferSize);
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After pageBuffer allocation");
 
     // Create allocation counter buffer (stores next free page index)
     allocCounterBuffer.reset(new Buffer(vd));
@@ -38,6 +41,8 @@ void PageAllocator::initialize() {
         vk::BufferUsageFlagBits::eTransferDst | 
         vk::BufferUsageFlagBits::eTransferSrc,
         MemoryType::LocalHostVisibleForce);
+    GPU_MEM_PRINT("PageAllocator::allocCounter", sizeof(uint32_t));
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After allocCounter allocation");
 
     valid = true;
 }
@@ -70,12 +75,15 @@ LinkedListIndex::~LinkedListIndex() {
 void LinkedListIndex::initialize() {
     // Create head pointer buffer: one uint32_t per cell
     // Initialized to NULL_PAGE_PTR (0xFFFFFFFF)
+    size_t headBufferSize = indexSize * sizeof(uint32_t);
     headPtrBuffer.reset(new Buffer(vd));
-    headPtrBuffer->create(indexSize * sizeof(uint32_t),
+    headPtrBuffer->create(headBufferSize,
         vk::BufferUsageFlagBits::eStorageBuffer |
         vk::BufferUsageFlagBits::eTransferDst |
         vk::BufferUsageFlagBits::eTransferSrc,
         MemoryType::Internal);
+    GPU_MEM_PRINT("LinkedListIndex::headPtrBuffer", headBufferSize);
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After headPtrBuffer allocation");
 
     valid = true;
 }
@@ -103,14 +111,19 @@ RasterScanIndexUpdate::~RasterScanIndexUpdate() {
 }
 
 void RasterScanIndexUpdate::initialize() {
-    // Create page allocator
-    pageAlloc.reset(new PageAllocator(vd, MAX_PAGES));
+    // NOTE: PageAllocator is created lazily in buildIndex() to avoid
+    // allocating GPU memory until it's actually needed
     
     this->initShaders();
     this->initBuffers();
     this->setupInsertPipeline();
+    this->setupDeletePipeline();
+    this->setupDeleteRangePipeline();
     this->setupQueryTexturePipeline();
     this->setupQueryPagePipeline();
+    
+    // Print GPU memory after pipeline setup (no large buffers allocated yet)
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScanIndexUpdate init (pipelines only)");
 }
 
 void RasterScanIndexUpdate::initShaders() {
@@ -171,6 +184,24 @@ void RasterScanIndexUpdate::initShaders() {
             fshader.size() * sizeof(uint32_t), fshader.data());
         queryPageFragShader = vd->device->createShaderModuleUnique(fCreateInfo);
     }
+    
+    // Delete vertex shader
+    {
+        std::vector<uint32_t> vshader;
+        validate(readShader(SHADER_FOLDER + "/delete-page.vert.spv", vshader), "delete page vertex shader");
+        vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),
+            vshader.size() * sizeof(uint32_t), vshader.data());
+        deleteVertShader = vd->device->createShaderModuleUnique(createInfo);
+    }
+    
+    // Delete range vertex shader
+    {
+        std::vector<uint32_t> vshader;
+        validate(readShader(SHADER_FOLDER + "/delete-range.vert.spv", vshader), "delete range vertex shader");
+        vk::ShaderModuleCreateInfo createInfo(vk::ShaderModuleCreateFlags(),
+            vshader.size() * sizeof(uint32_t), vshader.data());
+        deleteRangeVertShader = vd->device->createShaderModuleUnique(createInfo);
+    }
 }
 
 void RasterScanIndexUpdate::initBuffers() {
@@ -227,9 +258,9 @@ void RasterScanIndexUpdate::setupInsertPipeline() {
         vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 1},
     };
 
-    // Push constants: minVal, binRange, res, pageDataSize
+    // Push constants: minVal, binRange, res, pageDataSize, rowIdOffset
     insertPipelineProps.pushConstantRange = {
-        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, sizeof(uint32_t) * 6)
+        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, sizeof(uint32_t) * 7)
     };
     insertPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
 
@@ -240,6 +271,102 @@ void RasterScanIndexUpdate::setupInsertPipeline() {
 
     vk::UniqueRenderPass dummyRenderPass;
     insertPipeline = insertPipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
+}
+
+void RasterScanIndexUpdate::setupDeletePipeline() {
+    std::cerr << "setting up delete pipeline for linked list index\n";
+    
+    deletePipelineProps.pipelineShaderStageCreateInfos = {
+        vk::PipelineShaderStageCreateInfo(vk::PipelineShaderStageCreateFlags(), 
+            vk::ShaderStageFlagBits::eVertex, deleteVertShader.get(), "main"),
+        vk::PipelineShaderStageCreateInfo(vk::PipelineShaderStageCreateFlags(), 
+            vk::ShaderStageFlagBits::eFragment, dummyFragShader.get(), "main")
+    };
+    deletePipelineProps.setShaderStageFlag();
+
+    // Input: rowId to delete
+    deletePipelineProps.vertexInputBindingDescriptions = {
+        vk::VertexInputBindingDescription(0, sizeof(uint32_t)),
+    };
+    deletePipelineProps.setInputBindingFlag();
+
+    deletePipelineProps.vertexInputAttributeDescriptions = {
+        vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32Uint, 0),
+    };
+    deletePipelineProps.setInputAttrFlag();
+
+    deletePipelineProps.pipelineInputAssemblyStateCreateInfo = 
+        vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(), 
+            vk::PrimitiveTopology::ePointList);
+    deletePipelineProps.setInputAssemblyFlag();
+
+    // Bindings: only pageBuffer (binding 1 to match shader)
+    deletePipelineProps.setLayoutBindings = {
+        vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+    };
+
+    deletePipelineProps.poolSizes = {
+        vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 1},
+    };
+
+    // No push constants needed - we directly use rowId as page index
+    deletePipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
+
+    vk::PipelineRenderingCreateInfo rpCreateInfo;
+    rpCreateInfo.colorAttachmentCount = 1;
+    vk::Format colorFormat = vk::Format::eR8Sint;
+    rpCreateInfo.pColorAttachmentFormats = &colorFormat;
+
+    vk::UniqueRenderPass dummyRenderPass;
+    deletePipeline = deletePipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
+}
+
+void RasterScanIndexUpdate::setupDeleteRangePipeline() {
+    std::cerr << "setting up delete range pipeline for linked list index\n";
+    
+    deleteRangePipelineProps.pipelineShaderStageCreateInfos = {
+        vk::PipelineShaderStageCreateInfo(vk::PipelineShaderStageCreateFlags(), 
+            vk::ShaderStageFlagBits::eVertex, deleteRangeVertShader.get(), "main"),
+        vk::PipelineShaderStageCreateInfo(vk::PipelineShaderStageCreateFlags(), 
+            vk::ShaderStageFlagBits::eFragment, dummyFragShader.get(), "main")
+    };
+    deleteRangePipelineProps.setShaderStageFlag();
+
+    // No vertex input - we use gl_VertexIndex to iterate over cells
+    deleteRangePipelineProps.vertexInputBindingDescriptions = {};
+    deleteRangePipelineProps.setInputBindingFlag();
+    deleteRangePipelineProps.vertexInputAttributeDescriptions = {};
+    deleteRangePipelineProps.setInputAttrFlag();
+    
+    deleteRangePipelineProps.pipelineInputAssemblyStateCreateInfo = 
+        vk::PipelineInputAssemblyStateCreateInfo(vk::PipelineInputAssemblyStateCreateFlags(), 
+            vk::PrimitiveTopology::ePointList);
+    deleteRangePipelineProps.setInputAssemblyFlag();
+
+    // Bindings: headPtrBuffer, pageBuffer
+    deleteRangePipelineProps.setLayoutBindings = {
+        vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+        vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+    };
+
+    deleteRangePipelineProps.poolSizes = {
+        vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 1},
+        vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 1},
+    };
+
+    // Push constants: x1, x2, y1, y2, z1, z2, res (7 uint32_t)
+    deleteRangePipelineProps.pushConstantRange = {
+        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, sizeof(uint32_t) * 7)
+    };
+    deleteRangePipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
+
+    vk::PipelineRenderingCreateInfo rpCreateInfo;
+    rpCreateInfo.colorAttachmentCount = 1;
+    vk::Format colorFormat = vk::Format::eR8Sint;
+    rpCreateInfo.pColorAttachmentFormats = &colorFormat;
+
+    vk::UniqueRenderPass dummyRenderPass;
+    deleteRangePipeline = deleteRangePipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
 }
 
 void RasterScanIndexUpdate::setupQueryTexturePipeline() {
@@ -381,6 +508,18 @@ inline vk::RenderingInfo setupRenderingLL(PVkDevice vd, PFrameBuffer fbo, vk::Re
 
 PLinkedListIndex RasterScanIndexUpdate::buildIndex(PBuffer pointsBuffer, uint32_t npoints, 
                                                     uint32_t *minVal, uint32_t *maxVal) {
+    // Print memory requirements for this index
+    std::cerr << "\n";
+    GPUMemoryTool::printLinkedListIndexMemory(MAX_PAGES, PAGE_SIZE_UINTS, INDEX_RESOLUTION, npoints, ncols);
+    
+    // Create page allocator lazily (only when buildIndex is called)
+    // This allows RasterScan2D to release its memory first
+    if (!pageAlloc) {
+        GPUMemoryTool::printGPUMemoryStatus(vd, "Before PageAllocator creation");
+        pageAlloc.reset(new PageAllocator(vd, MAX_PAGES));
+        GPUMemoryTool::printGPUMemoryStatus(vd, "After PageAllocator creation");
+    }
+    
     PLinkedListIndex index(new LinkedListIndex(vd, npoints, pageAlloc));
     index->minVal[0] = minVal[0];
     index->maxVal[0] = maxVal[0];
@@ -415,14 +554,17 @@ PLinkedListIndex RasterScanIndexUpdate::buildIndex(PBuffer pointsBuffer, uint32_
     vd->submit(submitInfo, drawFence.get(), false);
     vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
 
+    // Print GPU memory status after building index
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After buildIndex complete");
+
     return index;
 }
 
-void RasterScanIndexUpdate::insertPoints(PLinkedListIndex index, PBuffer pointsBuffer, uint32_t npoints) {
+void RasterScanIndexUpdate::insertPoints(PLinkedListIndex index, PBuffer pointsBuffer, uint32_t npoints, uint32_t rowIdOffset) {
     vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
     vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
 
-    this->runInsertPipeline(pointsBuffer, index, npoints);
+    this->runInsertPipeline(pointsBuffer, index, npoints, rowIdOffset);
 
     vd->commandBuffer->end();
     vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
@@ -430,11 +572,28 @@ void RasterScanIndexUpdate::insertPoints(PLinkedListIndex index, PBuffer pointsB
     vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
 }
 
-void RasterScanIndexUpdate::deletePoints(PLinkedListIndex index, PBuffer pointsBuffer, uint32_t npoints) {
-    // Delete is implemented as marking items in pages
-    // For simplicity, we can use a separate delete shader or mark items with a special value
-    // This is a placeholder - actual implementation would need a delete shader
-    std::cerr << "Delete operation not yet implemented - use update (delete + insert)\n";
+void RasterScanIndexUpdate::deletePoints(PLinkedListIndex index, PBuffer rowIdBuffer, uint32_t ndeletes) {
+    vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
+    vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
+
+    this->runDeletePipeline(rowIdBuffer, index, ndeletes);
+
+    vd->commandBuffer->end();
+    vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
+    vd->submit(submitInfo, drawFence.get(), false);
+    vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
+}
+
+void RasterScanIndexUpdate::deleteRange(PLinkedListIndex index, uint32_t* range) {
+    vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
+    vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
+    vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
+
+    this->runDeleteRangePipeline(index, range);
+
+    vd->commandBuffer->end();
+    vd->submit(submitInfo, drawFence.get(), false);
+    vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
 }
 
 void RasterScanIndexUpdate::runRangeQueries(PLinkedListIndex index, PBuffer qranges, uint32_t nqueries) {
@@ -454,7 +613,7 @@ void RasterScanIndexUpdate::runRangeQueries(PLinkedListIndex index, PBuffer qran
     vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
 }
 
-void RasterScanIndexUpdate::runInsertPipeline(PBuffer pointsBuffer, PLinkedListIndex index, uint32_t npoints) {
+void RasterScanIndexUpdate::runInsertPipeline(PBuffer pointsBuffer, PLinkedListIndex index, uint32_t npoints, uint32_t rowIdOffset) {
     vk::RenderingAttachmentInfo colorInfo;
     vk::RenderingInfo renderingInfo = setupRenderingLL(vd, bufs->dummyFbo, colorInfo);
 
@@ -477,10 +636,10 @@ void RasterScanIndexUpdate::runInsertPipeline(PBuffer pointsBuffer, PLinkedListI
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, 
         insertPipelineProps.pipelineLayout.get(), 0, insertPipelineProps.descriptorSet.get(), nullptr);
 
-    std::array<uint32_t, 6> consts = {
+    std::array<uint32_t, 7> consts = {
         index->minVal[0], index->minVal[1], 
         index->binRange[0], index->binRange[1], 
-        INDEX_RESOLUTION, PAGE_DATA_SIZE
+        INDEX_RESOLUTION, PAGE_DATA_SIZE, rowIdOffset
     };
     vd->commandBuffer->pushConstants<uint32_t>(insertPipelineProps.pipelineLayout.get(),
         vk::ShaderStageFlagBits::eVertex, 0, consts);
@@ -495,6 +654,67 @@ void RasterScanIndexUpdate::runInsertPipeline(PBuffer pointsBuffer, PLinkedListI
     vd->commandBuffer->bindVertexBuffers(2, pointsBuffer->buf, offset);
 
     vd->commandBuffer->draw(npoints, 1, 0, 0);
+    vd->commandBuffer->endRendering();
+}
+
+void RasterScanIndexUpdate::runDeletePipeline(PBuffer rowIdBuffer, PLinkedListIndex index, uint32_t ndeletes) {
+    vk::RenderingAttachmentInfo colorInfo;
+    vk::RenderingInfo renderingInfo = setupRenderingLL(vd, bufs->dummyFbo, colorInfo);
+
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, deletePipeline.get());
+    vd->commandBuffer->beginRendering(&renderingInfo);
+
+    // Only need pageBuffer - we directly access page by rowId
+    vk::DescriptorBufferInfo pageDescriptor{pageAlloc->pageBuffer->buf, 0, VK_WHOLE_SIZE};
+
+    std::vector<vk::WriteDescriptorSet> descriptorSets = {
+        vk::WriteDescriptorSet{deletePipelineProps.descriptorSet.get(), 1, 0, 1,
+            vk::DescriptorType::eStorageBuffer, nullptr, &pageDescriptor},
+    };
+    vd->device->updateDescriptorSets(descriptorSets, nullptr);
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, 
+        deletePipelineProps.pipelineLayout.get(), 0, deletePipelineProps.descriptorSet.get(), nullptr);
+
+    // No push constants needed
+
+    vk::DeviceSize offset = 0;
+    vd->commandBuffer->bindVertexBuffers(0, rowIdBuffer->buf, offset);
+
+    vd->commandBuffer->draw(ndeletes, 1, 0, 0);
+    vd->commandBuffer->endRendering();
+}
+
+void RasterScanIndexUpdate::runDeleteRangePipeline(PLinkedListIndex index, uint32_t* range) {
+    vk::RenderingAttachmentInfo colorInfo;
+    vk::RenderingInfo renderingInfo = setupRenderingLL(vd, bufs->dummyFbo, colorInfo);
+
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, deleteRangePipeline.get());
+    vd->commandBuffer->beginRendering(&renderingInfo);
+
+    // Bindings: headPtrBuffer, pageBuffer
+    vk::DescriptorBufferInfo headPtrDescriptor{index->headPtrBuffer->buf, 0, VK_WHOLE_SIZE};
+    vk::DescriptorBufferInfo pageDescriptor{pageAlloc->pageBuffer->buf, 0, VK_WHOLE_SIZE};
+
+    std::vector<vk::WriteDescriptorSet> descriptorSets = {
+        vk::WriteDescriptorSet{deleteRangePipelineProps.descriptorSet.get(), 0, 0, 1, 
+            vk::DescriptorType::eStorageBuffer, nullptr, &headPtrDescriptor},
+        vk::WriteDescriptorSet{deleteRangePipelineProps.descriptorSet.get(), 1, 0, 1,
+            vk::DescriptorType::eStorageBuffer, nullptr, &pageDescriptor},
+    };
+    vd->device->updateDescriptorSets(descriptorSets, nullptr);
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, 
+        deleteRangePipelineProps.pipelineLayout.get(), 0, deleteRangePipelineProps.descriptorSet.get(), nullptr);
+
+    // Push constants: x1, x2, y1, y2, z1, z2, res
+    std::array<uint32_t, 7> consts = {
+        range[0], range[1], range[2], range[3], range[4], range[5], INDEX_RESOLUTION
+    };
+    vd->commandBuffer->pushConstants<uint32_t>(deleteRangePipelineProps.pipelineLayout.get(),
+        vk::ShaderStageFlagBits::eVertex, 0, consts);
+
+    // Draw one vertex per grid cell
+    uint32_t totalCells = INDEX_RESOLUTION * INDEX_RESOLUTION;
+    vd->commandBuffer->draw(totalCells, 1, 0, 0);
     vd->commandBuffer->endRendering();
 }
 
