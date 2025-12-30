@@ -1,0 +1,219 @@
+#include "ModeUtils.hpp"
+
+// Global variables definitions
+const std::string PROJECT_DIR = "/home/akashmaji/Documents/RasterDB/raster-scan/";
+std::string g_opfolder;
+std::string g_qfolder;
+int32_t g_dim = 3;
+uint32_t g_npoints = uint32_t(50e6);
+int32_t nDataset = 5;
+
+std::vector<std::string> datasets = {
+    "normal",
+    "zipf1.5",
+    "zipf1.3",
+    "zipf1.1",
+    "uniform",
+};
+std::vector<std::string> querysets = {
+    "normal.txt",
+    "zipf1.5.txt",
+    "zipf1.3.txt",
+    "zipf1.1.txt",
+    "uniform.txt",
+};
+std::vector<int> qct = {
+    1,
+    1,
+    1,
+    1,
+    10
+};
+
+// Implementations
+
+std::vector<uint32_t> generateQueries(uint32_t nqueries) {
+    std::vector<uint32_t> queries;
+    for(uint32_t i = 0;i < nqueries;i ++) {
+        uint32_t q = rand();
+        queries.push_back(q);
+    }
+    return queries;
+}
+
+PBuffer readEncodedData(std::string prefix, PVkDevice vd, PBuffer staging, uint32_t &npoints, std::vector<uint32_t> &minval, std::vector<uint32_t> &maxval,
+                 std::vector<std::map<uint32_t, uint32_t>> &rowMap, std::vector<uint32_t> &points, int32_t &ncols) {
+    // read encodeMap
+    {
+        std::string fileName = prefix + "-map.bin";
+        std::ifstream binfile(fileName, std::ios::binary);
+        if(binfile.fail()) {
+            std::cerr << "input file does not exist: " << fileName << "\n";
+            exit(0);
+        }
+        binfile.read((char *)&ncols,sizeof(uint32_t));
+        rowMap.resize(ncols);
+        for(int c = 0;c < ncols;c ++) {
+            uint32_t mapsize;
+            binfile.read((char *)&mapsize,sizeof(uint32_t));
+            std::vector<std::pair<uint32_t,uint32_t>> encs(mapsize);
+            binfile.read((char *)encs.data(),sizeof(std::pair<uint32_t,uint32_t>) * mapsize);
+            for(auto enc : encs) {
+                rowMap[c][enc.first] = enc.second;
+            }
+        }
+    }
+    // read data
+    {
+        std::string fileName = prefix + "-data.bin";
+        std::ifstream binfile(fileName, std::ios::binary|std::ios::ate);
+        if(binfile.fail()) {
+            std::cerr << "input file does not exist: " << fileName << "\n";
+            exit(0);
+        }
+        size_t sizeInBytes = binfile.tellg();
+        binfile.close();
+        npoints = uint32_t(sizeInBytes / (ncols * sizeof(uint32_t)));
+        std::cerr << "input file size: " << sizeInBytes << " with " << npoints << " points\n";
+
+        points.resize(npoints * ncols);
+        binfile.open(fileName, std::ios::binary);
+        binfile.read((char*)points.data(), points.size() * sizeof(uint32_t));
+        if(!binfile) {
+            std::cerr << "ERROR: all data not read from file:" << fileName << " - " << binfile.gcount() << "," << sizeInBytes << "\n";
+            binfile.close();
+            exit(0);
+        }
+        binfile.close();
+    }
+
+    minval.resize(ncols);
+    maxval.resize(ncols);
+
+    for(int c = 0;c < ncols;c ++) {
+        minval[c] = 0;
+        maxval[c] = npoints;
+    }
+    size_t pointsBufferSize = static_cast<size_t>(npoints) * ncols * sizeof(uint32_t);
+    PBuffer pointsBuffer(new Buffer(vd));
+    pointsBuffer->create(pointsBufferSize,vk::BufferUsageFlagBits::eVertexBuffer|vk::BufferUsageFlagBits::eTransferSrc|vk::BufferUsageFlagBits::eTransferDst|vk::BufferUsageFlagBits::eStorageBuffer,MemoryType::Internal);
+    GPU_MEM_PRINT("Points Buffer", pointsBufferSize);
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After points buffer allocation");
+    loadUsingStagingBuf((char *)points.data(), points.size() * sizeof(uint32_t),pointsBuffer,staging,vd,0);
+    return pointsBuffer;
+}
+
+std::vector<std::string> stringSplit(const std::string& str, char delim) {
+    std::string s;
+    s.append(1, delim);
+    std::regex reg(s);
+    std::vector<std::string> elems(std::sregex_token_iterator(str.begin(), str.end(), reg, -1),std::sregex_token_iterator());
+    return elems;
+}
+
+std::vector<uint32_t> get_target_numbers(std::string s) {
+    std::stringstream ss(s);
+    std::string value;
+    std::vector<uint32_t> result;
+    while (std::getline(ss, value, ',')) {
+        result.push_back((uint32_t)stod(value));
+    }
+    return result;
+}
+
+uint32_t transformQuery(int cid, uint32_t query, std::string &cmd, const std::vector<std::map<uint32_t, uint32_t>> &rowMap) {
+    // queries used in the paper are present in: https://github.com/AntaresAlice/RTScan/tree/main/test
+    // Since it contains only *less than* queries, we perform query transformation only for this case.
+    // *greater than* can be accomplished in a similar manner.
+    if (cmd == "lt") {
+        // RasterScan supports only LE, so converting LT to LE
+        auto it = rowMap[cid].lower_bound(query-1);
+        if (it == rowMap[cid].end()) {
+            return uint32_t(-1);
+        }
+        return it->second;
+    } else if (cmd == "le") {
+        auto it = rowMap[cid].upper_bound(query);
+        if (it == rowMap[cid].end()) {
+            return uint32_t(-1);
+        }
+        return it->second - 1;
+    } else {
+        printf("incorrect encode command.\n");
+        exit(-1);
+    }
+}
+
+void readQueries(std::string fileName, int nqueries, std::vector<uint32_t> &targets, const std::vector<std::map<uint32_t, uint32_t>> &rowMap) {
+    int ncols = g_dim;
+
+    std::ifstream fin(fileName);
+    if (!fin.is_open()) {
+        std::cerr << "Fail to open FILE " << fileName << std::endl;
+        exit(-1);
+    }
+    targets.resize(2 * ncols * nqueries);
+    for (int i = 0; i < ncols * nqueries; i++) {
+        std::string input;
+        std::getline(fin, input);
+        std::vector<std::string> cmds = stringSplit(input, ' ');
+        if (cmds[0] == "exit") exit(0);
+        if (cmds.size() > 1) {
+            uint32_t th = get_target_numbers(cmds[1])[0];
+            int cid = i % g_dim;
+            th = transformQuery(cid,th,cmds[0],rowMap);
+
+            // RTScan queries only had "lt". The thresholds can be set in a similar manner for other types of comparisons
+            if(cmds[0] == "lt") {
+                targets[i * 2] = 0;
+                targets[i * 2 + 1] = th;
+            }
+        } else {
+            printf("Error: No operand\n");
+            exit(-1);
+        }
+    }
+}
+
+void printUsage(const char* progName) {
+    std::cerr << "Usage: " << progName << " [-m millions] [-c columns] [-t testfolder] [-g GPU]\n";
+    std::cerr << "  -m: Number of millions of rows (default: 50)\n";
+    std::cerr << "  -c: Number of columns (default: 3)\n";
+    std::cerr << "  -t: Test folder name (default: test)\n";
+    std::cerr << "  -g: GPU vendor (A=AMD, N=NVIDIA, D=Default, default: D)\n";
+}
+
+int selectGPUByVendor(char vendor) {
+    int devId = -1;
+    
+    // Iterate over all available devices to find one matching the vendor
+    std::vector<vk::PhysicalDevice> physicalDevices = VkEngine::getEngine()->getVulkanInstance().enumeratePhysicalDevices();
+    
+    for(int id = 0; id < physicalDevices.size(); id++) {
+        vk::PhysicalDeviceProperties props = physicalDevices[id].getProperties();
+        std::string deviceName = props.deviceName;
+        
+        // Convert to uppercase for comparison
+        std::transform(deviceName.begin(), deviceName.end(), deviceName.begin(), ::toupper);
+        
+        if(vendor == 'N' && deviceName.find("NVIDIA") != std::string::npos) {
+            devId = id;
+            break;
+        } else if(vendor == 'A' && deviceName.find("AMD") != std::string::npos) {
+            devId = id;
+            break;
+        } else if(vendor == 'I' && deviceName.find("INTEL") != std::string::npos) {
+            devId = id;
+            break;
+        }
+    }
+    
+    if(devId == -1 && !physicalDevices.empty()) {
+        devId = 0; // Fallback
+    }
+    
+    std::cerr << "[selectGPUByVendor] Returning device ID: " << devId << "\n";
+    std::cerr.flush();
+    
+    return devId;
+}

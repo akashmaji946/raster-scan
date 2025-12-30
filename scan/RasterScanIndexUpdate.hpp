@@ -24,7 +24,9 @@
 
 // Size of a page in uint32_t units
 // PAGE_DATA_SIZE * 4 (uvec4) + 1 (count) + 1 (nextPagePtr)
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // = 6 uints per page
+// Note: std430 alignment requires struct size to be multiple of 16 bytes (uvec4 alignment)
+// 6 uints = 24 bytes -> padded to 32 bytes = 8 uints
+#define PAGE_SIZE_UINTS 8
 
 // Maximum number of pages that can be allocated
 // Note: With 1-item-per-page approach, this limits max data points
@@ -42,7 +44,41 @@
 
 // #define MAX_PAGES (1 << 25)  // 32M pages = 768MB page buffer (safe for comparison mode)
 
-#define MAX_PAGES (1 << 27) // 128M pages = 3.84GB page buffer 
+#define MAX_PAGES (1 << 25) // 128M pages = 1.536GB page buffer 
+
+// Bitmap size for tracking free pages
+// 128M pages / 32 bits per uint = 4M uints = 16MB bitmap
+#define BITMAP_SIZE_UINTS (MAX_PAGES / 32)
+#define BITMAP_SIZE_BYTES (BITMAP_SIZE_UINTS * sizeof(uint32_t))
+
+// Free page management class using bitmap
+class FreeBitmap {
+public:
+    FreeBitmap(vkcore::PVkDevice vd, uint32_t maxPages);
+    ~FreeBitmap();
+
+    void initialize();
+    void initializeWithAllocatedCount(uint32_t allocatedPages);  // Set first N pages as allocated, rest as free
+    void destroy();
+
+public:
+    vkcore::PVkDevice vd;
+    
+    // GPU buffer storing the bitmap (1 = free, 0 = allocated)
+    vkcore::PBuffer bitmapBuffer;
+    
+    // GPU buffer for tracking number of free pages
+    vkcore::PBuffer freeCountBuffer;
+    
+    // GPU buffer for next allocation hint (for faster allocation)
+    vkcore::PBuffer nextFreeHintBuffer;
+    
+    uint32_t maxPages;
+    uint32_t bitmapSizeUints;
+    bool valid;
+};
+
+typedef std::shared_ptr<FreeBitmap> PFreeBitmap;
 
 class PageAllocator {
 public:
@@ -119,6 +155,48 @@ public:
     
     // Run range queries on the linked list index
     void runRangeQueries(PLinkedListIndex index, vkcore::PBuffer qranges, uint32_t nqueries);
+    
+    // ==================== Bitmap-based Free Space Management ====================
+    
+    // Initialize bitmap with initial allocation count (call after buildIndex)
+    void initializeBitmapWithAllocation(uint32_t allocatedPages);
+    
+    // Mark deleted pages as free in the bitmap
+    void markDeletedPagesAsFree(PLinkedListIndex index);
+    
+    // Compact pages: reclaim deleted pages and rebuild linked lists
+    // Call this when allocation limit is reached but there are free pages
+    void compactPages(PLinkedListIndex index);
+    
+    // Insert points using bitmap-based allocation (reuses freed pages)
+    void insertPointsWithBitmap(PLinkedListIndex index, vkcore::PBuffer pointsBuffer, uint32_t npoints, uint32_t rowIdOffset = 0);
+    
+    // Insert points using bitmap-based allocation V2 (stores pageId in count field)
+    void insertPointsWithBitmapV2(PLinkedListIndex index, vkcore::PBuffer pointsBuffer, uint32_t npoints, uint32_t rowIdOffset = 0);
+    
+    // Delete points by data coordinates (x, y, z) - marks as invalid and updates bitmap
+    void deletePointsByData(PLinkedListIndex index, vkcore::PBuffer dataBuffer, uint32_t ndeletes);
+    
+    // Verify index by traversing linked list and outputting valid points
+    void verifyIndex(PLinkedListIndex index, vkcore::PBuffer resultBuffer, vkcore::PBuffer countBuffer);
+
+    // Get statistics about page allocation
+    struct AllocationStats {
+        uint32_t totalPages;        // MAX_PAGES (128M)
+        uint32_t allocatedPages;    // Pages that have been allocated (allocCounter)
+        uint32_t validPages;        // Allocated pages with valid bit set (in use)
+        uint32_t invalidPages;      // Allocated pages with valid bit cleared (deleted)
+        uint32_t freePages;         // Pages marked free in bitmap (available for reuse)
+        uint32_t unallocatedPages;  // Pages never allocated (totalPages - allocatedPages)
+    };
+    AllocationStats getAllocationStats(PLinkedListIndex index);
+    
+    // Count valid/invalid pages by scanning page buffer (expensive - for debugging)
+    void countValidInvalidPages(uint32_t allocCounter, uint32_t& validCount, uint32_t& invalidCount);
+    
+    // Traverse all linked lists and count reachable pages (expensive - for debugging)
+    // Returns: validCount = pages with valid bit set, invalidCount = pages with valid bit cleared
+    void traverseLinkedListsAndCount(PLinkedListIndex index, uint32_t& validCount, uint32_t& invalidCount);
 
 protected:
     void initShaders();
@@ -128,6 +206,12 @@ protected:
     void setupDeleteRangePipeline();
     void setupQueryTexturePipeline();
     void setupQueryPagePipeline();
+    void setupInsertBitmapPipeline();
+    void setupInsertBitmapV2Pipeline();
+    void setupDeleteByDataPipeline();
+    void setupMarkFreePipeline();
+    void setupCompactPipeline();
+    void setupVerifyIndexPipeline();
 
 protected:
     void runInsertPipeline(vkcore::PBuffer pointsBuffer, PLinkedListIndex index, uint32_t npoints, uint32_t rowIdOffset = 0);
@@ -135,6 +219,12 @@ protected:
     void runDeleteRangePipeline(PLinkedListIndex index, uint32_t* range);
     void runQueryTexturePipeline(PLinkedListIndex index, vkcore::PBuffer qranges, uint32_t nqueries);
     void runQueryPagePipeline(PLinkedListIndex index, vkcore::PBuffer qranges, uint32_t nqueries);
+    void runInsertBitmapPipeline(vkcore::PBuffer pointsBuffer, PLinkedListIndex index, uint32_t npoints, uint32_t rowIdOffset = 0);
+    void runInsertBitmapV2Pipeline(vkcore::PBuffer pointsBuffer, PLinkedListIndex index, uint32_t npoints, uint32_t rowIdOffset = 0);
+    void runDeleteByDataPipeline(vkcore::PBuffer dataBuffer, PLinkedListIndex index, uint32_t ndeletes);
+    void runMarkFreePipeline(PLinkedListIndex index);
+    void runCompactPipeline(PLinkedListIndex index);
+    void runVerifyIndexPipeline(PLinkedListIndex index, vkcore::PBuffer resultBuffer, vkcore::PBuffer countBuffer);
 
 protected:
     int32_t ncols;
@@ -151,13 +241,30 @@ public:
     vkcore::GraphicsPipelineProperties deleteRangePipelineProps;
     vkcore::GraphicsPipelineProperties queryTexturePipelineProps;
     vkcore::GraphicsPipelineProperties queryPagePipelineProps;
+    vkcore::GraphicsPipelineProperties insertBitmapPipelineProps;
+    vkcore::GraphicsPipelineProperties insertBitmapV2PipelineProps;
+    vkcore::GraphicsPipelineProperties deleteByDataPipelineProps;
+    vkcore::GraphicsPipelineProperties markFreePipelineProps;
+    vkcore::GraphicsPipelineProperties compactPipelineProps;
     
+    // Compute pipeline for verification
+    vk::UniqueDescriptorSetLayout verifyIndexDescSetLayout;
+    vk::UniquePipelineLayout verifyIndexPipelineLayout;
+    vk::UniquePipeline verifyIndexPipeline;
+    vk::UniqueDescriptorPool verifyIndexDescPool;
+    vk::UniqueDescriptorSet verifyIndexDescSet;
+
     vk::UniquePipeline insertPipeline;
     vk::UniquePipeline deletePipeline;
     vk::UniquePipeline deleteRangePipeline;
     vk::UniquePipeline queryTexturePipeline;
     vk::UniquePipeline queryPagePipeline;
-
+    vk::UniquePipeline insertBitmapPipeline;
+    vk::UniquePipeline insertBitmapV2Pipeline;
+    vk::UniquePipeline deleteByDataPipeline;
+    vk::UniquePipeline markFreePipeline;
+    vk::UniquePipeline compactPipeline;
+    
     // Shaders
     vk::UniqueShaderModule dummyFragShader;
     vk::UniqueShaderModule insertVertShader;
@@ -165,6 +272,15 @@ public:
     vk::UniqueShaderModule deleteRangeVertShader;
     vk::UniqueShaderModule queryTexVertShader, queryTexGeomShader, queryTexFragShader;
     vk::UniqueShaderModule queryPageVertShader, queryPageGeomShader, queryPageFragShader;
+    vk::UniqueShaderModule insertBitmapVertShader;
+    vk::UniqueShaderModule insertBitmapV2VertShader;
+    vk::UniqueShaderModule deleteByDataVertShader;
+    vk::UniqueShaderModule markFreeVertShader;
+    vk::UniqueShaderModule compactVertShader;
+    vk::UniqueShaderModule verifyIndexCompShader;
+    
+    // Free bitmap for page reclamation
+    PFreeBitmap freeBitmap;
 };
 
 typedef std::shared_ptr<RasterScanIndexUpdate> PRasterScanIndexUpdate;

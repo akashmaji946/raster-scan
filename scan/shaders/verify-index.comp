@@ -1,0 +1,57 @@
+#version 450
+layout(local_size_x = 256) in;
+
+layout(std430, binding = 0) buffer HeadPtr {
+    uint heads[];
+};
+
+// Page structure (std430 alignment)
+struct Page {
+    uvec4 data; // x, y, z, w (valid | rowId)
+    uint count;
+    uint next;
+    uvec2 _pad; // Padding to 32 bytes (8 uints)
+};
+
+layout(std430, binding = 1) buffer PageBuffer {
+    Page pages[];
+};
+
+layout(std430, binding = 2) buffer ResultBuffer {
+    uvec4 results[]; // x, y, z, 0 stored linearly
+};
+
+layout(std430, binding = 3) buffer CountBuffer {
+    uint outputCount;
+};
+
+layout(push_constant) uniform PushConsts {
+    int dim; 
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    int h = dim;
+    
+    if (idx >= h * h) return;
+    
+    // Read head
+    uint pagePtr = heads[idx];
+    
+    uint curr = pagePtr;
+    int loopSafety = 0;
+    
+    while (curr != 0xFFFFFFFFu && loopSafety < 10000000) {
+        // Read page
+        Page p = pages[curr];
+        
+        // Check valid bit (bit 31 of w)
+        if ((p.data.w & 0x80000000u) != 0u) {
+            uint outIdx = atomicAdd(outputCount, 1);
+            results[outIdx] = uvec4(p.data.x, p.data.y, p.data.z, 0);
+        }
+        
+        curr = p.next;
+        loopSafety++;
+    }
+}

@@ -7,7 +7,7 @@
 #version 450
 
 #define PAGE_DATA_SIZE 1
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // = 6
+#define PAGE_SIZE_UINTS 8  // = 8
 #define NULL_PAGE_PTR 0xFFFFFFFF
 
 // Valid bit is stored in bit 31 of the rowId field
@@ -70,9 +70,14 @@ void main() {
     uvec2 coord = uvec2(gl_FragCoord.xy);
     
     // Traverse the linked list starting from pagePtr
+    // SAFETY: Limit iterations to prevent infinite loops from corrupted linked lists
     uint currentPage = pagePtr;
+    uint iterCount = 0;
+    const uint MAX_ITERATIONS = 1000000u;  // Safety limit
     
-    while (currentPage != NULL_PAGE_PTR) {
+    while (currentPage != NULL_PAGE_PTR && iterCount < MAX_ITERATIONS) {
+        iterCount++;
+        
         uint pageOffset = getPageOffset(currentPage);
         uint count = pages[getCountOffset(pageOffset)];
         
@@ -110,7 +115,14 @@ void main() {
         }
         
         // Move to next page
-        currentPage = pages[getNextPtrOffset(pageOffset)];
+        uint nextPage = pages[getNextPtrOffset(pageOffset)];
+        
+        // SAFETY: Detect self-loop (page pointing to itself)
+        if (nextPage == currentPage) {
+            break;
+        }
+        
+        currentPage = nextPage;
     }
     
     discard;

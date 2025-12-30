@@ -7,7 +7,7 @@
 #version 450
 
 #define PAGE_DATA_SIZE 1
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // = 6
+#define PAGE_SIZE_UINTS 8  // = 8
 #define NULL_PAGE_PTR 0xFFFFFFFF
 #define MAX_PAGES_PER_CELL 100000  // Safety limit to prevent infinite loops
 

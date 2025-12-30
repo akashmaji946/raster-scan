@@ -1,0 +1,49 @@
+#version 450
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(std430, binding = 1) buffer CountBuffer {
+    uint count[];
+};
+
+layout(std430, binding = 5) buffer StatsBuffer {
+    uint minVal;
+    uint maxVal;
+};
+
+layout(push_constant) uniform PushConstants {
+    uint numBins;
+} pc;
+
+shared uint localMin[256];
+shared uint localMax[256];
+
+void main() {
+    uint tid = gl_LocalInvocationID.x;
+    uint gid = gl_GlobalInvocationID.x;
+
+    uint val = (gid < pc.numBins) ? count[gid] : 0;
+    // For min, if out of bounds, ignore? 
+    // If we count 0 for out of bounds, min becomes 0.
+    // Initialize out of bounds to MAX.
+    if (gid >= pc.numBins) val = 0xFFFFFFFF;
+
+    localMin[tid] = val;
+    localMax[tid] = (gid < pc.numBins) ? count[gid] : 0;
+    
+    barrier();
+
+    // Reduction
+    for (uint s = 128; s > 0; s >>= 1) {
+        if (tid < s) {
+            localMin[tid] = min(localMin[tid], localMin[tid + s]);
+            localMax[tid] = max(localMax[tid], localMax[tid + s]);
+        }
+        barrier();
+    }
+
+    if (tid == 0) {
+        atomicMin(minVal, localMin[0]);
+        atomicMax(maxVal, localMax[0]);
+    }
+}

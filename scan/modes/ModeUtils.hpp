@@ -1,0 +1,72 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <fstream>
+#include <regex>
+#include <cstring>
+#include <thread>
+#include <cmath>
+#include <iomanip>
+#include <random>
+#include <array>
+#include <numeric>
+#include <algorithm>
+#include <iterator>
+#include <sstream>
+
+#include "../RasterScan2D.hpp"
+#include "../RasterScanIndexUpdate.hpp"
+#include "../GPUMemoryTool.hpp"
+#include "../CPUTimer.hpp"
+
+#include <operators/OperatorCache.hpp>
+#include <operators/SinglePassScan.hpp>
+#include <core/vkutils.h>
+
+using namespace vkcore;
+
+// Global variables
+extern const std::string PROJECT_DIR;
+extern std::string g_opfolder;
+extern std::string g_qfolder;
+extern int32_t g_dim;
+extern uint32_t g_npoints;
+extern int32_t nDataset;
+extern std::vector<std::string> datasets;
+extern std::vector<std::string> querysets;
+extern std::vector<int> qct;
+
+// Structs
+struct Point3D {
+    uint32_t x, y, z;
+    bool operator<(const Point3D& other) const {
+        if (x != other.x) return x < other.x;
+        if (y != other.y) return y < other.y;
+        return z < other.z;
+    }
+    bool operator==(const Point3D& other) const {
+        return x == other.x && y == other.y && z == other.z;
+    }
+};
+
+// Helper functions
+std::vector<uint32_t> generateQueries(uint32_t nqueries);
+
+PBuffer readEncodedData(std::string prefix, PVkDevice vd, PBuffer staging, uint32_t &npoints, std::vector<uint32_t> &minval, std::vector<uint32_t> &maxval,
+                 std::vector<std::map<uint32_t, uint32_t>> &rowMap, std::vector<uint32_t> &points, int32_t &ncols);
+
+std::vector<std::string> stringSplit(const std::string& str, char delim);
+
+std::vector<uint32_t> get_target_numbers(std::string s);
+
+uint32_t transformQuery(int cid, uint32_t query, std::string &cmd, const std::vector<std::map<uint32_t, uint32_t>> &rowMap);
+
+void readQueries(std::string fileName, int nqueries, std::vector<uint32_t> &targets, const std::vector<std::map<uint32_t, uint32_t>> &rowMap);
+
+void printUsage(const char* progName);
+
+int selectGPUByVendor(char vendor);
+

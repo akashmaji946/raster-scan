@@ -1,0 +1,50 @@
+#version 450
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(std430, binding = 1) buffer CountBuffer {
+    uint count[];
+};
+
+layout(std430, binding = 3) buffer PointsBuffer {
+    uint points[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint minVal[3];
+    uint resolution;
+    uint maxVal[3];
+    uint npoints;
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.npoints) return;
+
+    // Read point
+    uint x = points[gid * 3 + 0];
+    uint y = points[gid * 3 + 1];
+    uint z = points[gid * 3 + 2];
+
+    // Determine bin
+    uint bx = 0;
+    if (x >= pc.minVal[0]) {
+        uint range = pc.maxVal[0] - pc.minVal[0];
+        if (range > 0)
+            bx = (x - pc.minVal[0]) * pc.resolution / range;
+    }
+    if (bx >= pc.resolution) bx = pc.resolution - 1;
+    
+    uint by = 0;
+    if (y >= pc.minVal[1]) {
+        uint range = pc.maxVal[1] - pc.minVal[1];
+        if (range > 0)
+            by = (y - pc.minVal[1]) * pc.resolution / range;
+    }
+    if (by >= pc.resolution) by = pc.resolution - 1;
+    
+    uint binIdx = by * pc.resolution + bx;
+    
+    // Atomic increment count
+    atomicAdd(count[binIdx], 1);
+}

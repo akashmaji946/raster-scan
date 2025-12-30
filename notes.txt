@@ -1,0 +1,5 @@
+I want to write a C++ file cpu_scan.cpp that will take encoded data and test files as in scan.cpp and run the queries and generate the outputs (matching rowids as per query) to text files, also modify scan.cpp to add another mode=5 to run the queries on the encoded data and test and output results rowids to text files
+
+finally a file compare_cpu_gpu.cpp to compare the corresponding files for matching and accuracy
+
+the cpu_scan.cpp and compare_cpu_gpu.cpp   file should be in compare/ folder and text files be placed in compare/cpu_files/ and compare/gpu_files/ respectively

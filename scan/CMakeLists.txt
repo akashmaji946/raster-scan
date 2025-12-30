@@ -6,6 +6,9 @@ set(scan_headers
     RasterScanIndexUpdate.hpp
     BufferPool.hpp
     CPUTimer.hpp
+    modes/ModeUtils.hpp
+    modes/RunModes.hpp
+    CompactScanIndex.hpp
 )
 
 set(scan_src
@@ -14,10 +17,35 @@ set(scan_src
     RasterScanIndexUpdate.cpp
     BufferPool.cpp
     CPUTimer.cpp
+    modes/ModeUtils.cpp
+    modes/Mode0.cpp
+    modes/Mode1.cpp
+    modes/Mode2.cpp
+    modes/Mode3.cpp
+    modes/Mode4.cpp
+    modes/Mode5.cpp
+    modes/Mode6.cpp
+    modes/Mode7.cpp
+    modes/Mode8.cpp
+    modes/Mode9.cpp
+    modes/Mode10.cpp
+    modes/Mode11.cpp
+    modes/Mode12.cpp
+    modes/Mode13.cpp
+    modes/Mode21.cpp
+    CompactScanIndex.cpp
 )
 
 set(encode_src
     encode.cpp
+)
+
+set(cpu_scan_src
+    cpu_scan.cpp
+)
+
+set(compare_src
+    compare_cpu_gpu.cpp
 )
 
 set(scan_shader_src
@@ -39,10 +67,23 @@ set(scan_shader_src
     shaders/query-page-ll.vert
     shaders/query-page-ll.geom
     shaders/query-page-ll.frag
+    shaders/insert-page-bitmap.vert
+    shaders/insert-page-bitmap-v2.vert
+    shaders/delete-by-data.vert
+    shaders/mark-free-bitmap.vert
+    shaders/compact-pages.vert
+    shaders/verify-index.comp
+    shaders/compact_insert.comp
+    shaders/compact_query.comp
+    shaders/compact_delete.comp
+    shaders/compact_count.comp
+    shaders/compact_stats.comp
 )
 
 add_executable(EncodeData ${encode_src})
 add_executable(RasterScan ${scan_src} ${scan_shader_src} ${scan_headers})
+add_executable(CPUScan ${cpu_scan_src})
+add_executable(Compare ${compare_src})
 
 target_include_directories(RasterScan PUBLIC ./)
 target_include_directories(RasterScan PUBLIC ${Vulkan_INCLUDE_DIRS})

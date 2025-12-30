@@ -5,7 +5,7 @@
 
 // Page structure constants
 #define PAGE_DATA_SIZE 1
-#define PAGE_SIZE_UINTS (PAGE_DATA_SIZE * 4 + 2)  // data + count + nextPtr = 6
+#define PAGE_SIZE_UINTS 8  // data + count + nextPtr + padding = 8
 #define NULL_PAGE_PTR 0xFFFFFFFF
 
 // Valid bit is stored in bit 31 of the rowId field

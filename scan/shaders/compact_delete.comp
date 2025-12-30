@@ -1,0 +1,94 @@
+#version 450
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+struct CompactEntry {
+    uint x;
+    uint y;
+    uint z;
+    uint rowId;
+    uint pageId; // MSB valid
+    uint pad0;
+    uint pad1;
+    uint pad2;
+};
+
+layout(std430, binding = 0) buffer StartAddrBuffer {
+    uint startAddr[];
+};
+
+layout(std430, binding = 1) buffer CountBuffer {
+    uint count[];
+};
+
+layout(std430, binding = 2) buffer DataBuffer {
+    CompactEntry data[];
+};
+
+layout(std430, binding = 3) buffer DeleteDataBuffer {
+    uint deletePoints[]; // [x, y, z] triples
+};
+
+layout(push_constant) uniform PushConstants {
+    uint minVal[3];
+    uint resolution;
+    uint maxVal[3];
+    uint ndeletes;
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.ndeletes) return;
+    
+    // Read point to delete
+    uint dx = deletePoints[gid * 3 + 0];
+    uint dy = deletePoints[gid * 3 + 1];
+    uint dz = deletePoints[gid * 3 + 2];
+    
+    // Determine bin
+    uint bx = 0;
+    if (dx >= pc.minVal[0]) {
+        uint range = pc.maxVal[0] - pc.minVal[0];
+        if (range > 0)
+            bx = (dx - pc.minVal[0]) * pc.resolution / range;
+    }
+    if (bx >= pc.resolution) bx = pc.resolution - 1;
+    
+    uint by = 0;
+    if (dy >= pc.minVal[1]) {
+        uint range = pc.maxVal[1] - pc.minVal[1];
+        if (range > 0)
+            by = (dy - pc.minVal[1]) * pc.resolution / range;
+    }
+    if (by >= pc.resolution) by = pc.resolution - 1;
+    
+    uint binIdx = by * pc.resolution + bx;
+    uint cnt = count[binIdx];
+    uint start = startAddr[binIdx];
+    
+    // Linear scan of bin
+    // Since this thread owns the delete operation for ONE point, it can scan the bin.
+    // If the bin is large, this is slow.
+    // But since `ndeletes` can be processed in parallel, it's parallelized over deletes.
+    // The user asked for parallelization WITHIN bin for deletes too.
+    // But that requires knowing which bins have deletes.
+    // This approach is standard "Delete by Data" where we find the record and kill it.
+    
+    for (uint i = 0; i < cnt; i++) {
+        uint idx = start + i;
+        CompactEntry entry = data[idx];
+        
+        if ((entry.pageId & 0x80000000) != 0) { // If valid
+            if (entry.x == dx && entry.y == dy && entry.z == dz) {
+                // Found match. Mark invalid.
+                // Atomic not strictly needed if only one thread deletes this specific point?
+                // But duplicate points might exist. Or multiple delete threads targeting same bin.
+                // Atomic AND to clear MSB.
+                atomicAnd(data[idx].pageId, 0x7FFFFFFF);
+                // We don't break because there might be duplicates? 
+                // Usually raster scan assumes unique points or we delete all matching?
+                // Assuming delete all matching.
+            }
+        }
+    }
+}

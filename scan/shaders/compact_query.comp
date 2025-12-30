@@ -1,0 +1,95 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16, local_size_z = 1) in;
+
+struct CompactEntry {
+    uint x;
+    uint y;
+    uint z;
+    uint rowId;
+    uint pageId;
+    uint pad0;
+    uint pad1;
+    uint pad2;
+};
+
+layout(std430, binding = 0) buffer StartAddrBuffer {
+    uint startAddr[];
+};
+
+layout(std430, binding = 1) buffer CountBuffer {
+    uint count[];
+};
+
+layout(std430, binding = 2) buffer DataBuffer {
+    CompactEntry data[];
+};
+
+layout(std430, binding = 3) buffer QueryBuffer {
+    uint queries[]; // [x1, x2, y1, y2, z1, z2] * nqueries
+};
+
+layout(std430, binding = 4) buffer ResultBuffer {
+    uint result[]; // Bitmask indexed by rowId
+};
+
+layout(push_constant) uniform PushConstants {
+    uint minVal[3];
+    uint resolution;
+    uint maxVal[3];
+    uint nqueries; // Assuming 1 for now or handle all?
+    // Mode 21 runs 1 query at a time usually.
+} pc;
+
+void main() {
+    uint bx = gl_WorkGroupID.x;
+    uint by = gl_WorkGroupID.y;
+    uint binIdx = by * pc.resolution + bx;
+    
+    uint cnt = count[binIdx];
+    if (cnt == 0) return;
+    
+    uint start = startAddr[binIdx];
+    
+    // Check if bin overlaps query range?
+    // We assume 1 query in queries[0..5]
+    uint qx1 = queries[0];
+    uint qx2 = queries[1];
+    uint qy1 = queries[2];
+    uint qy2 = queries[3];
+    uint qz1 = queries[4];
+    uint qz2 = queries[5];
+    
+    // Bin range in data coordinates
+    uint rangeX = pc.maxVal[0] - pc.minVal[0];
+    uint rangeY = pc.maxVal[1] - pc.minVal[1];
+    
+    uint binX1 = pc.minVal[0] + (bx * rangeX) / pc.resolution;
+    uint binX2 = pc.minVal[0] + ((bx + 1) * rangeX) / pc.resolution;
+    uint binY1 = pc.minVal[1] + (by * rangeY) / pc.resolution;
+    uint binY2 = pc.minVal[1] + ((by + 1) * rangeY) / pc.resolution;
+    
+    // Simple AABB check
+    if (binX2 < qx1 || binX1 > qx2 || binY2 < qy1 || binY1 > qy2) return;
+    
+    // Parallel search within bin
+    // Local threads: 16x16 = 256 threads
+    uint tid = gl_LocalInvocationIndex;
+    
+    for (uint i = tid; i < cnt; i += 256) {
+        CompactEntry entry = data[start + i];
+        
+        // Check validity
+        if ((entry.pageId & 0x80000000) == 0) continue;
+        
+        // Check range
+        if (entry.x >= qx1 && entry.x <= qx2 &&
+            entry.y >= qy1 && entry.y <= qy2 &&
+            entry.z >= qz1 && entry.z <= qz2) {
+            
+            // Mark result bit
+            uint rowId = entry.rowId;
+            atomicOr(result[rowId / 32], 1 << (rowId % 32));
+        }
+    }
+}

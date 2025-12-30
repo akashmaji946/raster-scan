@@ -11,7 +11,44 @@ The goal of this project is to inform the broader database community that the wa
 
 ### Build 
 
-Run cmake, and then build the project
+```bash
+# Create build directory and configure
+mkdir -p build
+cd build
+cmake ..
+
+# Build the project
+make -j4
+```
+
+### Run
+
+```bash
+# Navigate to the scan subfolder and run
+cd build/scan
+./RasterScan --gpu N
+```
+
+### GPU Selection
+
+The GPU can be selected by vendor:
+- `--gpu N` for NVIDIA
+- `--gpu A` for AMD  
+- `--gpu D` for default
+
+### Pipeline Selection
+
+The pipeline mode can be configured in `scan/scan.cpp` by changing the `USE_INDEX_UPDATE_PIPELINE` macro:
+
+```cpp
+// Flag to select pipeline:
+// 0 = Original RasterScan2D pipeline
+// 1 = New RasterScanIndexUpdate pipeline (naive linked list)
+// 2 = Compare both pipelines above
+// 3 = Test dynamic operations (rowId-based delete)
+// 4 = Test dynamic updated (range delete operations)
+#define USE_INDEX_UPDATE_PIPELINE 0
+```
 
 ### Test
 
@@ -23,6 +60,13 @@ Two executables are generated.
 
 [1] Y. Lv, K. Zhang, Z. Wang, X. Zhang, R. Lee, Z. He, Y. Jing, and X. Wang. RTScan: Efficient Scan with Ray Tracing Cores. Proc. VLDB Endow. 17, 6 (2024).
 
+## Changelog
+
+| Version | Description |
+|---------|-------------|
+| 0 | Setup Vulkan and initial RasterScan2D pipeline |
+| 1 | RasterScanIndexUpdate - static index with naive linked list |
+| 2 | Updates to RasterScanIndex - dynamic operations (delete + insert) |
 
 ## Trademarks
 
