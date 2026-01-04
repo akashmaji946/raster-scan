@@ -15,7 +15,7 @@
 #include <set>
 #include <cstdint>
 
-const std::string PROJECT_DIR = "/home/akashmaji/Documents/RasterDB/raster-scan/";
+const std::string PROJECT_DIR = "/home/akashmaji/Device/IMPORTANT/raster-scan/";
 
 std::vector<std::string> datasets = {
     "normal",

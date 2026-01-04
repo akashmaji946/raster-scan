@@ -494,6 +494,12 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     
     // Total bins for capacity buffer operations
     uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
+    // Integer scale factor for per-bin over-allocation. When this is 1, we
+    // should skip the scale compute pass to match RasterScan2D's static build
+    // cost more closely.
+    uint32_t scaleFactorInt = (uint32_t)(COMPACT_INITIAL_SCALE_FACTOR + 0.5);
+    if (scaleFactorInt < 1) scaleFactorInt = 1;
+    bool doScale = (scaleFactorInt > 1);
     
     // Single command buffer submission
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
@@ -553,33 +559,37 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
     extentBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                           vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
-    
-    // Scale counts by INITIAL_SCALE_FACTOR to reserve extra space per bin
-    {
+        
+    // Scale counts by INITIAL_SCALE_FACTOR to reserve extra space per bin.
+    // If scaleFactorInt==1, this is a no-op and we can skip the compute pass
+    // entirely to reduce overhead for the static (no-updates) case.
+    if (doScale) {
         // Bind countBuffer to descSet binding 1 for scale shader
         vk::DescriptorBufferInfo countInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::WriteDescriptorSet write(descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countInfo);
         vd->device->updateDescriptorSets({write}, nullptr);
-        
+
         vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, scalePipeline.get());
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
-        
+
         // Push constants: totalBins, scaleFactor (as integer, e.g., 2 for 2x)
-        uint32_t scaleFactorInt = (uint32_t)(COMPACT_INITIAL_SCALE_FACTOR + 0.5); // Round to nearest int
-        if (scaleFactorInt < 1) scaleFactorInt = 1;
         uint32_t pcScale[2] = { totalBins, scaleFactorInt };
         vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 2 * sizeof(uint32_t), pcScale);
-        
+
         uint32_t groups = (totalBins + 255) / 256;
         vd->commandBuffer->dispatch(groups, 1, 1);
     }
-    
+        
     // capacityBuffer now contains original counts (before scaling)
     // The insert shader will compute actual capacity as capacity[bin] * scaleFactor
     
-    // Barrier: Scale shader write -> Prefix sum read
-    countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eComputeShader,
-                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    // Barrier: Scale shader write -> Prefix sum read. If we skipped scaling,
+    // the last writer was the transfer copy and the earlier barrier from
+    // transfer to compute is already in place.
+    if (doScale) {
+        countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eComputeShader,
+                             vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    }
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
     

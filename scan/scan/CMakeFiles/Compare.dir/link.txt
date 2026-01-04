@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.o -o Compare 

@@ -40,7 +40,7 @@ using namespace vkcore;
 #define USE_INDEX_UPDATE_PIPELINE 7
 
 // Global folder paths for data and test files
-const std::string PROJECT_DIR = "/home/akashmaji/Documents/RasterDB/raster-scan/";
+const std::string PROJECT_DIR = "/home/akashmaji/Device/IMPORTANT/raster-scan/";
 
 std::string g_opfolder;
 std::string g_qfolder;

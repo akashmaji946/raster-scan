@@ -19,15 +19,15 @@ VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 
 namespace vkcore {
 #ifdef DEV_BUILD
-//inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+    //inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
 
-inline static vk::Bool32 debugCallback(
-        vk::DebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-        vk::DebugUtilsMessageTypeFlagsEXT messageType,
-        const vk::DebugUtilsMessengerCallbackDataEXT* pCallbackData,
+inline static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+        VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+        VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
         void* pUserData){
 
-    if(messageSeverity >= vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning) {
+    if(messageSeverity >= VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
         std::cerr << std::endl << "validation layer: " << pCallbackData->pMessage << std::endl << std::endl;
     }
     return VK_FALSE;
@@ -227,12 +227,22 @@ bool VkEngine::createDevices() {
         double memsize = hsize / (1024.0 * 1024 * 1024);
         LOG << "Device " << props.deviceName << " has ID: " << i <<  " and Heap size: " << memsize << " GB";
 
-        PVkDevice dev(new VulkanDevice(physicalDevices[i],props,i));
-        dev->subgroupSize = subgroupSize;
-        dev->memProps = memProps;
-        dev->rebarEnabled = rebar;
-        dev->heapSize = hsize;
-        this->devices.push_back(dev);
+        // Try to create a logical device for this physical device. If required features
+        // are not supported (e.g., shaderSharedInt64Atomics) or any other Vulkan error
+        // occurs during device creation, skip this GPU instead of aborting.
+        try {
+            PVkDevice dev(new VulkanDevice(physicalDevices[i],props,i));
+            dev->subgroupSize = subgroupSize;
+            dev->memProps = memProps;
+            dev->rebarEnabled = rebar;
+            dev->heapSize = hsize;
+            this->devices.push_back(dev);
+        } catch (const std::exception &e) {
+            std::cerr << "WARNING: failed to create logical device for '"
+                      << props.deviceName << "' (index " << i << "): "
+                      << e.what() << std::endl;
+            std::cerr << "         Skipping this device and continuing with others." << std::endl;
+        }
     }
     return true;
 }
