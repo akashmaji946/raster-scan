@@ -6,15 +6,13 @@
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
+// CompactEntry: 4 uints (16 bytes) - same as RasterScan2D
+// Valid bit is MSB of rowId (0x80000000)
 struct CompactEntry {
     uint x;
     uint y;
     uint z;
-    uint rowId;
-    uint pageId; // MSB is valid
-    uint pad0;
-    uint pad1;
-    uint pad2;
+    uint rowId;  // MSB is valid bit
 };
 
 layout(std430, binding = 0) buffer StartAddrBuffer {
@@ -43,6 +41,8 @@ layout(push_constant) uniform PushConstants {
     uint maxX; uint maxY; uint maxZ;
     uint npoints;
     uint binWidthX; uint binWidthY; uint binWidthZ;
+    uint useRowMajor; // 0 = column-major (build), 1 = row-major (insert)
+    uint scaleFactor; // COMPACT_INITIAL_SCALE_FACTOR for capacity calculation
 } pc;
 
 void main() {
@@ -56,10 +56,18 @@ void main() {
     uint z = 0;
     
     if (isActive) {
-        // Read point (Column Major: [X... | Y... | Z...])
-        x = points[gid];
-        y = points[gid + pc.npoints];
-        z = points[gid + 2 * pc.npoints];
+        // Read point based on layout
+        if (pc.useRowMajor != 0u) {
+            // Row-major: [x0, y0, z0, x1, y1, z1, ...]
+            x = points[gid * 3 + 0];
+            y = points[gid * 3 + 1];
+            z = points[gid * 3 + 2];
+        } else {
+            // Column-major: [X... | Y... | Z...]
+            x = points[gid];
+            y = points[gid + pc.npoints];
+            z = points[gid + 2 * pc.npoints];
+        }
 
         // Determine bin
         uint bx = 0;
@@ -99,22 +107,29 @@ void main() {
             // Calculate thread-local offset
             uint localOffset = subgroupExclusiveAdd(1);
             
-            // Global index
-            uint start = startAddr[targetBin];
-            uint globalIdx = start + groupBase + localOffset;
+            // Check capacity before writing
+            // capacity[bin] stores original count, actual capacity = count * scaleFactor
+            // For bins with 0 original count, we can't insert (no space allocated)
+            uint origCount = capacity[targetBin];
+            uint binCapacity = origCount * pc.scaleFactor;
+            uint offsetInBin = groupBase + localOffset;
             
-            // Write to data buffer
-            CompactEntry entry;
-            entry.x = x;
-            entry.y = y;
-            entry.z = z;
-            entry.rowId = gid; // Original index as rowId
-            entry.pageId = 0x80000000; // Valid bit set (MSB)
-            entry.pad0 = 0;
-            entry.pad1 = 0;
-            entry.pad2 = 0;
-            
-            data[globalIdx] = entry;
+            // Allow insert if within capacity
+            if (offsetInBin < binCapacity) {
+                // Global index
+                uint start = startAddr[targetBin];
+                uint globalIdx = start + offsetInBin;
+                
+                // Write to data buffer (4 uints, valid bit in MSB of rowId)
+                CompactEntry entry;
+                entry.x = x;
+                entry.y = y;
+                entry.z = z;
+                entry.rowId = gid | 0x80000000u; // rowId with valid bit set in MSB
+                
+                data[globalIdx] = entry;
+            }
+            // If over capacity, the insert is silently dropped (could add overflow handling)
             
             isActive = false;
         }

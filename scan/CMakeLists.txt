@@ -79,6 +79,16 @@ set(scan_shader_src
     shaders/compact_delete.comp
     shaders/compact_count.comp
     shaders/compact_stats.comp
+    shaders/compact_count_gfx.vert
+    shaders/compact_build_gfx.vert
+    shaders/compact_scale_counts.comp
+    shaders/compact_query_gfx.vert
+    shaders/compact_query_gfx.geom
+    shaders/compact_query_gfx.frag
+    shaders/compact_range.frag
+    shaders/compact_edge.vert
+    shaders/compact_edge.geom
+    shaders/compact_edge.frag
 )
 
 add_executable(EncodeData ${encode_src})

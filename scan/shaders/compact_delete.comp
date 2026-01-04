@@ -2,15 +2,13 @@
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
+// CompactEntry: 4 uints (16 bytes) - same as RasterScan2D
+// Valid bit is MSB of rowId (0x80000000)
 struct CompactEntry {
     uint x;
     uint y;
     uint z;
-    uint rowId;
-    uint pageId; // MSB valid
-    uint pad0;
-    uint pad1;
-    uint pad2;
+    uint rowId;  // MSB is valid bit
 };
 
 layout(std430, binding = 0) buffer StartAddrBuffer {
@@ -63,28 +61,41 @@ void main() {
     uint cnt = count[binIdx];
     uint start = startAddr[binIdx];
     
-    // Linear scan of bin
-    // Since this thread owns the delete operation for ONE point, it can scan the bin.
-    // If the bin is large, this is slow.
-    // But since `ndeletes` can be processed in parallel, it's parallelized over deletes.
-    // The user asked for parallelization WITHIN bin for deletes too.
-    // But that requires knowing which bins have deletes.
-    // This approach is standard "Delete by Data" where we find the record and kill it.
+    // Linear scan of bin with race-condition safe deletion
+    // Uses atomicCompSwap to ensure only one thread successfully invalidates each entry
+    // If another thread invalidates an entry first, this thread sees it as invalid and moves on
     
     for (uint i = 0; i < cnt; i++) {
         uint idx = start + i;
-        CompactEntry entry = data[idx];
         
-        if ((entry.pageId & 0x80000000) != 0) { // If valid
-            if (entry.x == dx && entry.y == dy && entry.z == dz) {
-                // Found match. Mark invalid.
-                // Atomic not strictly needed if only one thread deletes this specific point?
-                // But duplicate points might exist. Or multiple delete threads targeting same bin.
-                // Atomic AND to clear MSB.
-                atomicAnd(data[idx].pageId, 0x7FFFFFFF);
-                // We don't break because there might be duplicates? 
-                // Usually raster scan assumes unique points or we delete all matching?
-                // Assuming delete all matching.
+        // Read coordinates first (these don't change)
+        uint ex = data[idx].x;
+        uint ey = data[idx].y;
+        uint ez = data[idx].z;
+        
+        // Check if coordinates match
+        if (ex == dx && ey == dy && ez == dz) {
+            // Coordinates match - try to atomically invalidate
+            // Loop until we either successfully invalidate or see it's already invalid
+            while (true) {
+                uint currentRowId = data[idx].rowId;
+                
+                // Check if already invalid (another thread got it first)
+                if ((currentRowId & 0x80000000u) == 0u) {
+                    // Already invalid, move on to find next matching entry
+                    break;
+                }
+                
+                // Try to atomically clear the valid bit
+                uint newRowId = currentRowId & 0x7FFFFFFFu;
+                uint oldRowId = atomicCompSwap(data[idx].rowId, currentRowId, newRowId);
+                
+                if (oldRowId == currentRowId) {
+                    // Successfully invalidated this entry
+                    // Continue scanning for duplicates (don't return)
+                    break;
+                }
+                // else: another thread modified rowId, retry the check
             }
         }
     }

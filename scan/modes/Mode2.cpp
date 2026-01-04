@@ -32,11 +32,19 @@ void compareResults(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op
     RasterScan2D rs(vd, bufs1, scan, reduce, ncols);
     
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
-    std::cerr << "\nBuilding RasterScan2D index...\n";
-    CPUTimer buildTimer1;
-    buildTimer1.start();
-    PRasterIndex index1 = rs.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
-    double buildTime1 = double(buildTimer1.stop()) / 1000000.;
+    std::cerr << "\nBuilding RasterScan2D index (taking min of 3 runs)...\n";
+    double minBuildTime1 = 1e9;
+    PRasterIndex index1;
+    for(int k=0; k<3; k++) {
+        if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+        CPUTimer buildTimer1;
+        buildTimer1.start();
+        index1 = rs.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
+        double bt = double(buildTimer1.stop()) / 1000000.;
+        if(bt < minBuildTime1) minBuildTime1 = bt;
+        if(k < 2) index1.reset(); // Release buffers
+    }
+    double buildTime1 = minBuildTime1;
     std::cerr << "RasterScan2D build time: " << buildTime1 << " secs\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
 
@@ -45,12 +53,22 @@ void compareResults(int dataId, PVkDevice vd, PBuffer staging, OperatorCache &op
     PBufferCache bufs2(new CommonBufferPool(vd));
     RasterScanIndexUpdate rsUpdate(vd, bufs2, ncols);
     
-    std::cerr << "Building RasterScanIndexUpdate index...\n";
-    CPUTimer buildTimer2;
-    buildTimer2.start();
-    PLinkedListIndex index2 = rsUpdate.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
-    double buildTime2 = double(buildTimer2.stop()) / 1000000.;
+    GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScanIndexUpdate build");
+    std::cerr << "Building RasterScanIndexUpdate index (taking min of 3 runs)...\n";
+    double minBuildTime2 = 1e9;
+    PLinkedListIndex index2;
+    for(int k=0; k<3; k++) {
+        if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+        CPUTimer buildTimer2;
+        buildTimer2.start();
+        index2 = rsUpdate.buildIndex(pointsBuffer, npointsLimited, minval.data(), maxval.data());
+        double bt = double(buildTimer2.stop()) / 1000000.;
+        if(bt < minBuildTime2) minBuildTime2 = bt;
+        if(k < 2) index2.reset();
+    }
+    double buildTime2 = minBuildTime2;
     std::cerr << "RasterScanIndexUpdate build time: " << buildTime2 << " secs\n";
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScanIndexUpdate build");
 
     // Query buffer
     PBuffer queryBuffer(new Buffer(vd));

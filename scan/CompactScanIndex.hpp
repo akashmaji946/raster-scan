@@ -7,21 +7,17 @@
 #include "BufferPool.hpp"
 #include <memory>
 
-// INITIAL_SCALE_FACTOR as requested
+// INITIAL_SCALE_FACTOR - allocate 2x space per bin for inserts
 #define COMPACT_INITIAL_SCALE_FACTOR 2
-#define COMPACT_GROW_SCALE_FACTOR 1.2
+#define COMPACT_GROW_SCALE_FACTOR 2
 
-// CompactEntry structure (GPU layout)
-// Size: 32 bytes (8 uints) to maintain 16-byte alignment
+// CompactEntry structure (GPU layout) - same as RasterScan2D's uvec4
+// Size: 16 bytes (4 uints)
 struct CompactEntry {
     uint32_t x;
     uint32_t y;
     uint32_t z;
-    uint32_t rowId;
-    uint32_t pageId; // MSB is valid bit (0x80000000)
-    uint32_t pad0;
-    uint32_t pad1;
-    uint32_t pad2;
+    uint32_t rowId;  // MSB is valid bit (0x80000000), lower 31 bits are rowId
 };
 
 class CompactScanIndex {
@@ -85,27 +81,49 @@ public:
     uint64_t globalFreeOffset;
     uint64_t totalAllocatedCapacity;
 
-    // Pipelines
-    vkcore::GraphicsPipelineProperties buildPipelineProps;
-    vkcore::GraphicsPipelineProperties queryPipelineProps;
-    vkcore::GraphicsPipelineProperties deletePipelineProps;
-
-    vk::UniquePipeline buildPipeline;
-    vk::UniquePipeline countPipeline;
+    // Graphics Pipelines (for fast build like RasterScan2D)
+    vkcore::GraphicsPipelineProperties bcPipelineProps; // Build Count
+    vkcore::GraphicsPipelineProperties bPipelineProps;  // Build Insert
+    vkcore::GraphicsPipelineProperties queryGfxPipelineProps; // Query Pass 1 (range)
+    vkcore::GraphicsPipelineProperties edgePipelineProps;     // Query Pass 2 (edge)
+    vk::UniquePipeline bcPipeline; // Build Count
+    vk::UniquePipeline bPipeline;  // Build Insert
+    vk::UniquePipeline queryGfxPipeline; // Query Pass 1 (range)
+    vk::UniquePipeline edgePipeline;     // Query Pass 2 (edge)
+    vk::UniqueShaderModule bcVertexShader;
+    vk::UniqueShaderModule bVertexShader;
+    vk::UniqueShaderModule fragmentShader; // Dummy fragment shader
+    vk::UniqueShaderModule queryGfxVertexShader;
+    vk::UniqueShaderModule queryGfxGeomShader;
+    vk::UniqueShaderModule queryGfxFragShader;
+    vk::UniqueShaderModule edgeVertexShader;
+    vk::UniqueShaderModule edgeGeomShader;
+    vk::UniqueShaderModule edgeFragShader;
+    
+    // Buffers for two-pass query (like RasterScan2D)
+    vkcore::PBuffer maxBuffer;   // [0]=numRanges, [1]=maxCount for indirect draw
+    vkcore::PBuffer edgeBuffer;  // Stores [st, en) pairs from pass 1
+    
+    // Compute Pipelines (for delete, stats, insert)
+    vk::UniquePipeline scalePipeline;
     vk::UniquePipeline statsPipeline;
-    vk::UniquePipeline queryPipeline;
+    vk::UniquePipeline queryPipeline; // Compute query (fallback)
     vk::UniquePipeline deletePipeline;
-
-    vk::UniqueShaderModule buildShader;
-    vk::UniqueShaderModule countShader;
+    vk::UniquePipeline insertPipeline;
+    vk::UniqueShaderModule scaleShader;
     vk::UniqueShaderModule statsShader;
     vk::UniqueShaderModule queryShader;
     vk::UniqueShaderModule deleteShader;
+    vk::UniqueShaderModule insertShader;
     
+    // Compute pipeline layout
     vk::UniqueDescriptorSetLayout descSetLayout;
     vk::UniquePipelineLayout pipelineLayout;
     vk::UniqueDescriptorPool descPool;
     vk::UniqueDescriptorSet descSet;
+    
+    // Dummy FBO for graphics pipeline
+    vkcore::PFrameBuffer dummyFbo;
 
 private:
     void setupPipelines();
