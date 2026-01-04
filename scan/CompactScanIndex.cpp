@@ -102,10 +102,19 @@ void CompactScanIndex::allocateBuffers(uint32_t npoints) {
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
         MemoryType::Internal);
         
-    // Capacity Buffer
+    // Capacity Buffer - max capacity per bin
     capacityBuffer = std::make_shared<Buffer>(vd);
     capacityBuffer->create(totalBins * sizeof(uint32_t), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
+        MemoryType::Internal);
+    
+    // Extent Buffer - highest index written per bin (used by query shader)
+    // On build: extent[bin] = original_count
+    // On insert: extent[bin] = max(extent[bin], new_offset + 1)
+    // On delete: unchanged (entries not shifted)
+    extentBuffer = std::make_shared<Buffer>(vd);
+    extentBuffer->create(totalBins * sizeof(uint32_t), 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
         MemoryType::Internal);
     
     auto allocEnd = std::chrono::high_resolution_clock::now();
@@ -128,6 +137,7 @@ void CompactScanIndex::setupPipelines() {
     bindings.push_back(vk::DescriptorSetLayoutBinding(4, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Output
     bindings.push_back(vk::DescriptorSetLayoutBinding(5, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Stats
     bindings.push_back(vk::DescriptorSetLayoutBinding(6, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Capacity
+    bindings.push_back(vk::DescriptorSetLayoutBinding(7, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Extent
     
     vk::DescriptorSetLayoutCreateInfo layoutInfo({}, (uint32_t)bindings.size(), bindings.data());
     descSetLayout = vd->device->createDescriptorSetLayoutUnique(layoutInfo);
@@ -297,14 +307,16 @@ void CompactScanIndex::setupPipelines() {
         queryGfxPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         queryGfxPipelineProps.setInputAssemblyFlag();
         
-        // Bindings: startAddr (0), data (2), result (3) - count computed from offsets
+        // Bindings: startAddr (0), data (2), result (3), validCount (7)
+        // validCount is used for efficient iteration (actual valid entries, not allocated capacity)
         queryGfxPipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
             vk::DescriptorSetLayoutBinding{2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-            vk::DescriptorSetLayoutBinding{3, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
+            vk::DescriptorSetLayoutBinding{3, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
+            vk::DescriptorSetLayoutBinding{7, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
         };
         queryGfxPipelineProps.poolSizes = {
-            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 3}
+            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 4}
         };
         queryGfxPipelineProps.pushConstantRange = {
             vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, 8 * sizeof(uint32_t))
@@ -525,9 +537,13 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     countBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
     
-    // ========== PASS 1.5: Copy counts to capacityBuffer and scale counts ==========
-    // Copy original counts to capacityBuffer (will be scaled later for per-bin capacity)
+    // ========== PASS 1.5: Copy counts to capacityBuffer, extentBuffer and scale counts ==========
+    // Copy original counts to capacityBuffer (will be used for per-bin capacity tracking)
     capacityBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
+    
+    // Copy original counts to extentBuffer (highest index written per bin, used by query shader)
+    // Initially extent[bin] = original_count (all entries are contiguous from 0)
+    extentBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
     
     // Barrier: Transfer -> Compute (for scale shader)
     countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
@@ -536,6 +552,8 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // Barrier: Transfer write -> Compute shader
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    extentBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                          vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
     
     // Scale counts by INITIAL_SCALE_FACTOR to reserve extra space per bin
     {
@@ -646,15 +664,18 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
 
 void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer) {
     // Single-pass graphics query (with loop in fragment shader)
-    // Bindings: startAddr (0), data (2), result (3) - count computed from scaled offsets
+    // Bindings: startAddr (0), data (2), result (3), extent (7)
+    // extent[bin] = highest index written, used for efficient iteration
     vk::DescriptorBufferInfo tInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
     vk::DescriptorBufferInfo dInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
     vk::DescriptorBufferInfo rInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+    vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
     
     std::vector<vk::WriteDescriptorSet> writes = {
         vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &tInfo},
         vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo},
-        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rInfo}
+        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rInfo},
+        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo}
     };
     vd->device->updateDescriptorSets(writes, nullptr);
     
@@ -723,6 +744,10 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t n
     // Binding 6: Capacity
     vk::DescriptorBufferInfo cpInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 6, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cpInfo));
+    
+    // Binding 7: Extent (not modified on delete - entries not shifted)
+    vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo));
     
     vd->device->updateDescriptorSets(writes, nullptr);
     
@@ -866,6 +891,10 @@ void CompactScanIndex::insertPoints(vkcore::PBuffer pointsBuffer, uint32_t npoin
     // Binding 5: Stats
     vk::DescriptorBufferInfo sInfo(statsBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 5, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &sInfo));
+    
+    // Binding 7: Extent (updated with atomicMax on insert)
+    vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo));
     
     vd->device->updateDescriptorSets(writes, nullptr);
     

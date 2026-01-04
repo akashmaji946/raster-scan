@@ -27,6 +27,12 @@ layout(std430, binding = 3) buffer DeleteDataBuffer {
     uint deletePoints[]; // [x, y, z] triples
 };
 
+// Binding 7: extentBuffer - highest index written per bin
+// NOT modified on delete (entries not shifted, just marked invalid)
+layout(std430, binding = 7) buffer ExtentBuffer {
+    uint extent[];
+};
+
 layout(push_constant) uniform PushConstants {
     uint minX; uint minY; uint minZ;
     uint resolution;
@@ -92,6 +98,7 @@ void main() {
                 
                 if (oldRowId == currentRowId) {
                     // Successfully invalidated this entry
+                    // Note: extent is NOT decremented (entries not shifted)
                     // Continue scanning for duplicates (don't return)
                     break;
                 }

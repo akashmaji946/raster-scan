@@ -1,4 +1,5 @@
 // Compact Index Query - Graphics Pipeline Fragment Shader
+// Uses validCount buffer for efficient iteration (only valid entries, not allocated capacity)
 
 #version 450
 
@@ -26,6 +27,14 @@ layout (std430, binding = 3) buffer ResultBuffer {
     uint result[];
 };
 
+// Binding 7: extentBuffer - highest index written per bin
+// On build: extent[bin] = original_count
+// On insert: extent[bin] = max(extent[bin], new_offset + 1)
+// On delete: unchanged (entries not shifted, just marked invalid)
+layout (std430, binding = 7) buffer ExtentBuffer {
+    uint extent[];
+};
+
 layout (location = 0) flat in uint qind;
 layout (location = 1) flat in uvec4 qrange;
 layout (location = 2) flat in uvec2 zrange;
@@ -37,8 +46,9 @@ void main() {
     uint binIdx = coord.x + coord.y * consts.resolution;
     
     uint start = startAddr[binIdx];
-    uint end = startAddr[binIdx + 1];
-    uint cnt = end - start;
+    // Use extent instead of (startAddr[binIdx+1] - startAddr[binIdx])
+    // extent[bin] = highest index written, so we iterate [0, extent) and skip invalid entries
+    uint cnt = extent[binIdx];
     
     // Safety clamp
     cnt = min(cnt, MAX_ENTRIES_PER_BIN);

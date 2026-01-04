@@ -35,6 +35,12 @@ layout(std430, binding = 6) buffer CapacityBuffer {
     uint capacity[];
 };
 
+// Binding 7: extentBuffer - highest index written per bin
+// Updated with atomicMax when an entry is successfully inserted
+layout(std430, binding = 7) buffer ExtentBuffer {
+    uint extent[];
+};
+
 layout(push_constant) uniform PushConstants {
     uint minX; uint minY; uint minZ;
     uint resolution;
@@ -128,6 +134,10 @@ void main() {
                 entry.rowId = gid | 0x80000000u; // rowId with valid bit set in MSB
                 
                 data[globalIdx] = entry;
+                
+                // Update extent for this bin: extent = max(extent, offsetInBin + 1)
+                // This tracks the highest index written in the bin
+                atomicMax(extent[targetBin], offsetInBin + 1);
             }
             // If over capacity, the insert is silently dropped (could add overflow handling)
             

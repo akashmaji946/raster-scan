@@ -77,13 +77,12 @@ public:
     // Capacity Buffer (1024*1024 uints) - max capacity per bin
     vkcore::PBuffer capacityBuffer;
     
-    // Valid Count Buffer (1024*1024 uints) - actual valid entries per bin
-    // Updated on insert/delete, used by query shader for efficient iteration
-    vkcore::PBuffer validCountBuffer;
-    
-    // Min/Max valid count across all bins (for texture sizing)
-    uint32_t cmin; // Minimum valid count in any bin
-    uint32_t cmax; // Maximum valid count in any bin
+    // Extent Buffer (1024*1024 uints) - highest index written per bin
+    // On build: extent[bin] = original_count
+    // On insert: extent[bin] = max(extent[bin], new_offset + 1)
+    // On delete: unchanged (entries not shifted)
+    // Query iterates extent[bin] entries and skips invalid ones
+    vkcore::PBuffer extentBuffer;
     
     // Global Free Offset (for growing bins)
     uint64_t globalFreeOffset;
