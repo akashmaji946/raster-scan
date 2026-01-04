@@ -34,11 +34,11 @@ layout(std430, binding = 4) buffer ResultBuffer {
 };
 
 layout(push_constant) uniform PushConstants {
-    uint minVal[3];
+    uint minX; uint minY; uint minZ;
     uint resolution;
-    uint maxVal[3];
-    uint nqueries; // Assuming 1 for now or handle all?
-    // Mode 21 runs 1 query at a time usually.
+    uint maxX; uint maxY; uint maxZ;
+    uint nqueries;
+    uint binWidthX; uint binWidthY; uint binWidthZ;
 } pc;
 
 void main() {
@@ -51,7 +51,7 @@ void main() {
     
     uint start = startAddr[binIdx];
     
-    // Check if bin overlaps query range?
+    // Check if bin overlaps query range
     // We assume 1 query in queries[0..5]
     uint qx1 = queries[0];
     uint qx2 = queries[1];
@@ -60,14 +60,13 @@ void main() {
     uint qz1 = queries[4];
     uint qz2 = queries[5];
     
-    // Bin range in data coordinates
-    uint rangeX = pc.maxVal[0] - pc.minVal[0];
-    uint rangeY = pc.maxVal[1] - pc.minVal[1];
+    // Bin range in data coordinates using binWidth
+    uint binX1 = pc.minX + bx * pc.binWidthX;
+    uint binX2 = binX1 + pc.binWidthX; // Upper bound non-inclusive? or inclusive?
+    // Using simple bounds check.
     
-    uint binX1 = pc.minVal[0] + (bx * rangeX) / pc.resolution;
-    uint binX2 = pc.minVal[0] + ((bx + 1) * rangeX) / pc.resolution;
-    uint binY1 = pc.minVal[1] + (by * rangeY) / pc.resolution;
-    uint binY2 = pc.minVal[1] + ((by + 1) * rangeY) / pc.resolution;
+    uint binY1 = pc.minY + by * pc.binWidthY;
+    uint binY2 = binY1 + pc.binWidthY;
     
     // Simple AABB check
     if (binX2 < qx1 || binX1 > qx2 || binY2 < qy1 || binY1 > qy2) return;

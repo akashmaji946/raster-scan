@@ -46,3 +46,6 @@ void testCPUVerificationVarying(vkcore::PVkDevice vd, vkcore::PBuffer staging);
 
 // Mode 21
 void testCompactIndex(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 22: Mode 21 + RasterScan2D Comparison
+void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

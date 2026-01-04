@@ -31,9 +31,11 @@ using namespace vkcore;
 // 11 = Same as Mode 8 but with VARYING batch sizes
 // 12 = Same as Mode 9 but with VARYING batch sizes
 // 13 = Same as Mode 10 but with VARYING batch sizes
-// 21 = Compact Index Mode (Contiguous memory per bin)
 
-#define USE_INDEX_UPDATE_PIPELINE 21
+// 21 = Compact Index Mode (Contiguous memory per bin)
+// 22 = CompactIndex + RasterScan2D Comparison
+
+#define USE_INDEX_UPDATE_PIPELINE 22
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -110,6 +112,8 @@ int main(int argc, char* argv[]) {
     testCPUVerificationVarying(vd, staging);
 #elif USE_INDEX_UPDATE_PIPELINE == 21
     testCompactIndex(0, vd, staging, op); // Hardcoded dataId 0 (normal) for test
+#elif USE_INDEX_UPDATE_PIPELINE == 22
+    testCompactIndexAndCompare(0, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 12
     std::cerr << "\n*** Robustness Test: Delete/Insert + Compact + Reverse Cycles (Varying Batch Sizes) ***\n";
     testRobustnessWithReverseCyclesVarying(vd, staging);

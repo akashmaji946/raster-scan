@@ -3,6 +3,7 @@
 #include <core/VkEngine.hpp>
 #include <core/vkutils.h>
 #include <core/GraphicsPipelineProperties.hpp>
+#include <operators/SinglePassScan.hpp>
 #include "BufferPool.hpp"
 #include <memory>
 
@@ -25,7 +26,7 @@ struct CompactEntry {
 
 class CompactScanIndex {
 public:
-    CompactScanIndex(vkcore::PVkDevice vd, int32_t ncols);
+    CompactScanIndex(vkcore::PVkDevice vd, int32_t ncols, vkcore::SinglePassScan* scan = nullptr);
     ~CompactScanIndex();
 
     // Initialize buffers and pipelines
@@ -52,11 +53,14 @@ public:
 
 public:
     vkcore::PVkDevice vd;
+    vkcore::SinglePassScan* scan; // For GPU prefix sum
     int32_t ncols;
     uint32_t npoints;
     uint32_t minVal[3];
     uint32_t maxVal[3];
-    uint32_t binRange; // Average entries per bin
+    uint32_t binRange; // Average entries per bin (Allocation hint)
+    uint32_t binWidth[3]; // Coordinate width of each bin
+    size_t countBufSize; // Size of count buffer (aligned for prefix sum)
 
     // Buffers
     // T: Start Address Buffer (1024*1024 uints)

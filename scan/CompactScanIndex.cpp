@@ -6,7 +6,7 @@
 
 using namespace vkcore;
 
-CompactScanIndex::CompactScanIndex(PVkDevice vd, int32_t ncols) : vd(vd), ncols(ncols) {
+CompactScanIndex::CompactScanIndex(PVkDevice vd, int32_t ncols, SinglePassScan* scan) : vd(vd), ncols(ncols), scan(scan) {
     binRange = 0;
 }
 
@@ -27,30 +27,22 @@ void CompactScanIndex::allocateBuffers(uint32_t npoints) {
     uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
     binRange = (npoints + totalBins - 1) / totalBins;
     
-    // T: Start Address Buffer (1024*1024 uints) - Init later
+    // Calculate count buffer size to be compatible with prefix sum
+    // Must be a multiple of scan->getBufSizeDivisor()
+    size_t scanBufSize = scan ? scan->getBufSizeDivisor() : 4096;
+    countBufSize = size_t(std::ceil(double(totalBins + 1) / scanBufSize) * scanBufSize);
+    
+    // T: Start Address Buffer - same size as count buffer for compatibility
     startAddrBuffer = std::make_shared<Buffer>(vd);
-    startAddrBuffer->create(totalBins * sizeof(uint32_t), 
+    startAddrBuffer->create(countBufSize * sizeof(uint32_t), 
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
         MemoryType::Internal);
 
-    // C: Count Buffer (1024*1024 uints) - Init to 0
+    // C: Count Buffer - sized for prefix sum compatibility
     countBuffer = std::make_shared<Buffer>(vd);
-    countBuffer->create(totalBins * sizeof(uint32_t), 
+    countBuffer->create(countBufSize * sizeof(uint32_t), 
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
         MemoryType::Internal);
-        
-    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
-    vd->commandBuffer->begin(beginInfo);
-    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
-    vd->commandBuffer->end();
-    
-    vk::SubmitInfo submitInfo2;
-    submitInfo2.commandBufferCount = 1;
-    submitInfo2.pCommandBuffers = &vd->commandBuffer.get();
-    vk::Fence fence2 = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo2, fence2, false);
-    vd->waitForFences(fence2, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence2);
 
     // Stats Buffer
     statsBuffer = std::make_shared<Buffer>(vd);
@@ -184,31 +176,101 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     for(int i=0; i<3; i++) {
         this->minVal[i] = minVal[i];
         this->maxVal[i] = maxVal[i];
+        
+        // Calculate binWidth (safely)
+        uint32_t range = maxVal[i] - minVal[i];
+        binWidth[i] = (range + INDEX_RESOLUTION - 1) / INDEX_RESOLUTION;
+        if(binWidth[i] == 0) binWidth[i] = 1;
     }
     
-    // --- Pass 1: Count Points per Bin ---
-    // Update Descriptor Set with Points
+    uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
+    uint32_t groups = (npoints + 255) / 256;
+    uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], npoints, binWidth[0], binWidth[1], binWidth[2], 0 };
+    
+    // Pre-allocate data buffer with estimated capacity (npoints * scale factor)
+    // This avoids needing to read counts back to CPU
+    uint32_t estimatedCapacity = (uint32_t)(npoints * COMPACT_GROW_SCALE_FACTOR) + 100000;
+    this->totalAllocatedCapacity = estimatedCapacity;
+    this->globalFreeOffset = npoints;
+    
+    dataBuffer = std::make_shared<Buffer>(vd);
+    dataBuffer->create(totalAllocatedCapacity * sizeof(CompactEntry), 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
+        MemoryType::Internal);
+    
+    std::cout << "[CompactIndex] Estimated Capacity: " << totalAllocatedCapacity << " entries (" << (totalAllocatedCapacity * sizeof(CompactEntry) / (1024*1024.0)) << " MB)\n";
+    
+    // Setup all descriptor sets upfront
     std::vector<vk::WriteDescriptorSet> writes;
+    
+    vk::DescriptorBufferInfo tInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &tInfo));
     
     vk::DescriptorBufferInfo cInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cInfo));
     
+    vk::DescriptorBufferInfo dInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
+    
     vk::DescriptorBufferInfo pInfo(pointsBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &pInfo));
     
+    vk::DescriptorBufferInfo cpInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 6, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cpInfo));
+    
     vd->device->updateDescriptorSets(writes, nullptr);
     
-    // Dispatch Count
+    // ========== SINGLE COMMAND BUFFER SUBMISSION ==========
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
+    
+    // Clear count buffer
+    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader);
+    
+    // --- Pass 1: Count Points per Bin ---
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, countPipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
-    uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], npoints };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 8 * sizeof(uint32_t), pc);
-    uint32_t groups = (npoints + 255) / 256;
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
     vd->commandBuffer->dispatch(groups, 1, 1);
+    
+    // Barrier: Count shader write -> Prefix sum read
+    countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eComputeShader,
+                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    
+    // --- GPU Prefix Sum (computes offsets in-place) ---
+    // After prefix sum: countBuffer[i] = sum of counts[0..i-1] = start offset for bin i
+    if(scan) {
+        scan->prefixSum(countBuffer->buf, countBufSize);
+    } else {
+        std::cerr << "[CompactIndex] ERROR: No SinglePassScan provided, cannot compute GPU prefix sum!\n";
+        vd->commandBuffer->end();
+        return;
+    }
+    
+    // Barrier: Prefix sum write -> Copy read
+    countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eTransfer,
+                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
+    
+    // Copy prefix sum result to startAddrBuffer (offsets)
+    vk::BufferCopy copyRegion(0, 0, totalBins * sizeof(uint32_t));
+    vd->commandBuffer->copyBuffer(countBuffer->buf, startAddrBuffer->buf, copyRegion);
+    
+    // Barrier: Copy write -> Shader read (for insert pass)
+    startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+    
+    // Clear count buffer again for insert pass (uses atomicAdd from 0)
+    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader);
+    
+    // --- Pass 2: Insert Points ---
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, buildPipeline.get());
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
+    vd->commandBuffer->dispatch(groups, 1, 1);
+    
     vd->commandBuffer->end();
     
+    // Single fence wait for entire build
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
@@ -219,96 +281,6 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     
     // --- GPU Stats (Min/Max) ---
     computeAndPrintStats("[GPU Stats - Build]");
-
-    // --- Host: Read Counts, Compute Offsets, Alloc Data ---
-    uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
-    std::vector<uint32_t> counts(totalBins);
-    
-    // Use WriteOnly (HostVisible) staging buffer for readback
-    PBuffer staging(new Buffer(vd));
-    staging->create(totalBins * sizeof(uint32_t), vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, MemoryType::WriteOnly);
-    readUsingStagingBuf((char *)counts.data(), totalBins * sizeof(uint32_t), countBuffer, staging, vd);
-    
-    std::vector<uint32_t> offsets(totalBins);
-    std::vector<uint32_t> capacities(totalBins);
-    uint32_t currentOffset = 0;
-    for(size_t i=0; i<totalBins; i++) {
-        offsets[i] = currentOffset;
-        // Allocate exact space (or scaled)
-        // User requested growth scale factor
-        uint32_t cap = (uint32_t)(counts[i] * COMPACT_GROW_SCALE_FACTOR);
-        if (cap < counts[i]) cap = counts[i]; 
-        if (counts[i] == 0) cap = 0; 
-        
-        capacities[i] = cap;
-        currentOffset += cap;
-    }
-    
-    // Total Capacity + Reserve
-    uint32_t neededCapacity = currentOffset;
-    // Add 10% global reserve for growing bins at the end
-    uint32_t reserve = neededCapacity / 10; 
-    if (reserve < 100000) reserve = 100000; // Min 100k entries reserve
-    
-    this->totalAllocatedCapacity = neededCapacity + reserve;
-    this->globalFreeOffset = neededCapacity; // Points to start of reserve
-    
-    std::cout << "[CompactIndex] Needed: " << neededCapacity << ", Reserve: " << reserve << "\n";
-    std::cout << "[CompactIndex] Total Capacity: " << totalAllocatedCapacity << " entries (" << (totalAllocatedCapacity * sizeof(CompactEntry) / (1024*1024.0)) << " MB)\n";
-    
-    // Allocate DataBuffer
-    dataBuffer = std::make_shared<Buffer>(vd);
-    dataBuffer->create(totalAllocatedCapacity * sizeof(CompactEntry), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
-        MemoryType::Internal);
-        
-    // Upload Offsets
-    staging->loadData((char*)offsets.data(), totalBins * sizeof(uint32_t));
-    vd->commandBuffer->begin(beginInfo);
-    vk::BufferCopy copyRegion(0, 0, totalBins * sizeof(uint32_t));
-    vd->commandBuffer->copyBuffer(staging->buf, startAddrBuffer->buf, copyRegion);
-    
-    // Upload Capacities (reuse staging buffer)
-    staging->loadData((char*)capacities.data(), totalBins * sizeof(uint32_t));
-    vd->commandBuffer->copyBuffer(staging->buf, capacityBuffer->buf, copyRegion); // Size is same (totalBins * 4)
-
-    // Clear Count Buffer for Pass 2 (Insert uses atomicAdd starting from 0)
-    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
-    vd->commandBuffer->end();
-    
-    vk::Fence fence2 = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo, fence2, false);
-    vd->waitForFences(fence2, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence2);
-    
-    staging->destroy();
-
-    // --- Pass 2: Insert Points ---
-    writes.clear();
-    
-    vk::DescriptorBufferInfo tInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &tInfo));
-    
-    vk::DescriptorBufferInfo dInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
-    
-    vk::DescriptorBufferInfo cpInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 6, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cpInfo));
-    
-    vd->device->updateDescriptorSets(writes, nullptr);
-    
-    // Dispatch Insert
-    vd->commandBuffer->begin(beginInfo);
-    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, buildPipeline.get());
-    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 8 * sizeof(uint32_t), pc);
-    vd->commandBuffer->dispatch(groups, 1, 1);
-    vd->commandBuffer->end();
-    
-    vk::Fence fence3 = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo, fence3, false);
-    vd->waitForFences(fence3, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence3);
 }
 
 void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer) {
@@ -330,8 +302,8 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, queryPipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
     
-    uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], nqueries };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 8 * sizeof(uint32_t), pc);
+    uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], nqueries, binWidth[0], binWidth[1], binWidth[2], 0 };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
     
     // Wait, query dispatch logic: "create a subtexture ... per bin"
     // We iterate over BINS. 1024x1024 bins.
@@ -439,8 +411,8 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer dataBuffer, uint32_t ndelete
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, deletePipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
     
-    uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], ndeletes };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 8 * sizeof(uint32_t), pc);
+    uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], ndeletes, binWidth[0], binWidth[1], binWidth[2], 0 };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
     
     // Group size 256
     uint32_t groups = (ndeletes + 255) / 256;
@@ -505,8 +477,8 @@ void CompactScanIndex::insertPoints(vkcore::PBuffer pointsBuffer, uint32_t npoin
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, buildPipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
     
-    uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], npoints };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 8 * sizeof(uint32_t), pc);
+    uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], npoints, binWidth[0], binWidth[1], binWidth[2], 0 };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
     
     uint32_t groups = (npoints + 255) / 256;
     vd->commandBuffer->dispatch(groups, 1, 1);

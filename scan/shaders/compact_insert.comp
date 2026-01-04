@@ -1,4 +1,8 @@
 #version 450
+#extension GL_KHR_shader_subgroup_basic : enable
+#extension GL_KHR_shader_subgroup_ballot : enable
+#extension GL_KHR_shader_subgroup_arithmetic : enable
+#extension GL_KHR_shader_subgroup_vote : enable
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
@@ -26,21 +30,7 @@ layout(std430, binding = 2) buffer DataBuffer {
 };
 
 layout(std430, binding = 3) buffer PointsBuffer {
-    uint points[]; // Assumed packed [x, y, z] triples or column major?
-    // scan/modes/ModeUtils.cpp: readEncodedData reads into `points`.
-    // It seems to be flat array. 
-    // In `buildIndex` for RasterScan2D, it binds `pointsBuffer`.
-    // Let's assume it's flat [x0, y0, z0, x1, y1, z1...] OR [x0..xN, y0..yN, z0..zN].
-    // RasterScan2D seems to use Column Major?
-    // Let's check `readEncodedData` again.
-    // It reads `npoints * ncols * sizeof(uint32_t)`.
-    // `points[i * ncols + 0]` in `testCPUVerification` (Mode 13) implies ROW MAJOR [x, y, z, ...].
-    // Wait, Mode 13 code:
-    // `uint32_t x = rowMajorData[i * ncols + 0];`
-    // So `readEncodedData` produces Row Major?
-    // Let's verify Mode 21 uses `readEncodedData` into `points`.
-    // And passes `pointsBuffer`.
-    // So it is [x0, y0, z0, x1, y1, z1...].
+    uint points[];
 };
 
 layout(std430, binding = 6) buffer CapacityBuffer {
@@ -48,65 +38,85 @@ layout(std430, binding = 6) buffer CapacityBuffer {
 };
 
 layout(push_constant) uniform PushConstants {
-    uint minVal[3];
+    uint minX; uint minY; uint minZ;
     uint resolution;
-    uint maxVal[3];
+    uint maxX; uint maxY; uint maxZ;
     uint npoints;
+    uint binWidthX; uint binWidthY; uint binWidthZ;
 } pc;
 
 void main() {
     uint gid = gl_GlobalInvocationID.x;
-    if (gid >= pc.npoints) return;
+    
+    bool isActive = (gid < pc.npoints);
+    uint binIdx = 0;
+    
+    uint x = 0;
+    uint y = 0;
+    uint z = 0;
+    
+    if (isActive) {
+        // Read point (Column Major: [X... | Y... | Z...])
+        x = points[gid];
+        y = points[gid + pc.npoints];
+        z = points[gid + 2 * pc.npoints];
 
-    // Read point
-    // Assuming 3 columns [x, y, z] stride 3
-    uint x = points[gid * 3 + 0];
-    uint y = points[gid * 3 + 1];
-    uint z = points[gid * 3 + 2];
-
-    // Determine bin
-    // Normalize to [0, 1] then * resolution
-    
-    // Safety check for min/max
-    uint bx = 0;
-    if (x >= pc.minVal[0]) {
-        uint range = pc.maxVal[0] - pc.minVal[0];
-        if (range > 0)
-            bx = (x - pc.minVal[0]) * pc.resolution / range;
+        // Determine bin
+        uint bx = 0;
+        if (x >= pc.minX) {
+            bx = (x - pc.minX) / pc.binWidthX;
+        }
+        if (bx >= pc.resolution) bx = pc.resolution - 1;
+        
+        uint by = 0;
+        if (y >= pc.minY) {
+            by = (y - pc.minY) / pc.binWidthY;
+        }
+        if (by >= pc.resolution) by = pc.resolution - 1;
+        
+        binIdx = by * pc.resolution + bx;
     }
-    if (bx >= pc.resolution) bx = pc.resolution - 1;
     
-    uint by = 0;
-    if (y >= pc.minVal[1]) {
-        uint range = pc.maxVal[1] - pc.minVal[1];
-        if (range > 0)
-            by = (y - pc.minVal[1]) * pc.resolution / range;
+    // Subgroup Aggregation
+    while (subgroupAny(isActive)) {
+        // Pick the highest bin index among active threads
+        uint targetBin = subgroupMax(isActive ? binIdx : 0);
+        
+        // Identify participants
+        bool isTarget = isActive && (binIdx == targetBin);
+        
+        if (isTarget) {
+            // How many threads for this bin?
+            uint aggCount = subgroupAdd(1);
+            
+            // Get base offset for the group using one atomic
+            uint groupBase = 0;
+            if (subgroupElect()) {
+                groupBase = atomicAdd(count[targetBin], aggCount);
+            }
+            groupBase = subgroupBroadcastFirst(groupBase);
+            
+            // Calculate thread-local offset
+            uint localOffset = subgroupExclusiveAdd(1);
+            
+            // Global index
+            uint start = startAddr[targetBin];
+            uint globalIdx = start + groupBase + localOffset;
+            
+            // Write to data buffer
+            CompactEntry entry;
+            entry.x = x;
+            entry.y = y;
+            entry.z = z;
+            entry.rowId = gid; // Original index as rowId
+            entry.pageId = 0x80000000; // Valid bit set (MSB)
+            entry.pad0 = 0;
+            entry.pad1 = 0;
+            entry.pad2 = 0;
+            
+            data[globalIdx] = entry;
+            
+            isActive = false;
+        }
     }
-    if (by >= pc.resolution) by = pc.resolution - 1;
-    
-    uint binIdx = by * pc.resolution + bx;
-    
-    // Atomic increment count
-    uint idx = atomicAdd(count[binIdx], 1);
-    
-    // Write to data buffer
-    uint start = startAddr[binIdx];
-    
-    // Check overflow? We assume buffer large enough.
-    // If not, we might overwrite next bin or crash. 
-    // Ideally user provided capacity should handle it.
-    
-    uint globalIdx = start + idx;
-    
-    CompactEntry entry;
-    entry.x = x;
-    entry.y = y;
-    entry.z = z;
-    entry.rowId = gid; // Original index as rowId
-    entry.pageId = 0x80000000; // Valid bit set (MSB), rest 0
-    entry.pad0 = 0;
-    entry.pad1 = 0;
-    entry.pad2 = 0;
-    
-    data[globalIdx] = entry;
 }

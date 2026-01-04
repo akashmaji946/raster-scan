@@ -30,10 +30,11 @@ layout(std430, binding = 3) buffer DeleteDataBuffer {
 };
 
 layout(push_constant) uniform PushConstants {
-    uint minVal[3];
+    uint minX; uint minY; uint minZ;
     uint resolution;
-    uint maxVal[3];
+    uint maxX; uint maxY; uint maxZ;
     uint ndeletes;
+    uint binWidthX; uint binWidthY; uint binWidthZ;
 } pc;
 
 void main() {
@@ -47,18 +48,14 @@ void main() {
     
     // Determine bin
     uint bx = 0;
-    if (dx >= pc.minVal[0]) {
-        uint range = pc.maxVal[0] - pc.minVal[0];
-        if (range > 0)
-            bx = (dx - pc.minVal[0]) * pc.resolution / range;
+    if (dx >= pc.minX) {
+        bx = (dx - pc.minX) / pc.binWidthX;
     }
     if (bx >= pc.resolution) bx = pc.resolution - 1;
     
     uint by = 0;
-    if (dy >= pc.minVal[1]) {
-        uint range = pc.maxVal[1] - pc.minVal[1];
-        if (range > 0)
-            by = (dy - pc.minVal[1]) * pc.resolution / range;
+    if (dy >= pc.minY) {
+        by = (dy - pc.minY) / pc.binWidthY;
     }
     if (by >= pc.resolution) by = pc.resolution - 1;
     

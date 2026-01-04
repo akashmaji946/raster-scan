@@ -1,4 +1,8 @@
 #version 450
+#extension GL_KHR_shader_subgroup_basic : enable
+#extension GL_KHR_shader_subgroup_ballot : enable
+#extension GL_KHR_shader_subgroup_arithmetic : enable
+#extension GL_KHR_shader_subgroup_vote : enable
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
@@ -11,40 +15,65 @@ layout(std430, binding = 3) buffer PointsBuffer {
 };
 
 layout(push_constant) uniform PushConstants {
-    uint minVal[3];
+    uint minX; uint minY; uint minZ;
     uint resolution;
-    uint maxVal[3];
+    uint maxX; uint maxY; uint maxZ;
     uint npoints;
+    uint binWidthX; uint binWidthY; uint binWidthZ;
 } pc;
 
 void main() {
     uint gid = gl_GlobalInvocationID.x;
-    if (gid >= pc.npoints) return;
+    
+    // Bounds check
+    bool isActive = (gid < pc.npoints);
+    uint binIdx = 0;
+    
+    if (isActive) {
+        // Read point (Column Major: [X... | Y... | Z...])
+        uint x = points[gid];
+        uint y = points[gid + pc.npoints];
+        uint z = points[gid + 2 * pc.npoints];
 
-    // Read point
-    uint x = points[gid * 3 + 0];
-    uint y = points[gid * 3 + 1];
-    uint z = points[gid * 3 + 2];
-
-    // Determine bin
-    uint bx = 0;
-    if (x >= pc.minVal[0]) {
-        uint range = pc.maxVal[0] - pc.minVal[0];
-        if (range > 0)
-            bx = (x - pc.minVal[0]) * pc.resolution / range;
+        // Determine bin
+        uint bx = 0;
+        if (x >= pc.minX) {
+            bx = (x - pc.minX) / pc.binWidthX;
+        }
+        if (bx >= pc.resolution) bx = pc.resolution - 1;
+        
+        uint by = 0;
+        if (y >= pc.minY) {
+            by = (y - pc.minY) / pc.binWidthY;
+        }
+        if (by >= pc.resolution) by = pc.resolution - 1;
+        
+        binIdx = by * pc.resolution + bx;
     }
-    if (bx >= pc.resolution) bx = pc.resolution - 1;
     
-    uint by = 0;
-    if (y >= pc.minVal[1]) {
-        uint range = pc.maxVal[1] - pc.minVal[1];
-        if (range > 0)
-            by = (y - pc.minVal[1]) * pc.resolution / range;
+    // Subgroup Aggregation
+    // Loop until all active threads have processed their bin
+    while (subgroupAny(isActive)) {
+        // Pick the highest bin index among active threads (avoids dynamic broadcast issue)
+        // If a thread is inactive, it contributes 0.
+        // Since loop condition ensures at least one active thread, max will be valid.
+        uint targetBin = subgroupMax(isActive ? binIdx : 0);
+        
+        // Check which threads map to this bin
+        bool isTarget = isActive && (binIdx == targetBin);
+        
+        if (isTarget) {
+            // Count how many threads map to this bin
+            // subgroupAdd reduces over all active invocations in this control flow block
+            uint aggCount = subgroupAdd(1);
+            
+            // Leader performs single atomic add
+            if (subgroupElect()) {
+                atomicAdd(count[targetBin], aggCount);
+            }
+            
+            // Mark these threads as done
+            isActive = false;
+        }
     }
-    if (by >= pc.resolution) by = pc.resolution - 1;
-    
-    uint binIdx = by * pc.resolution + bx;
-    
-    // Atomic increment count
-    atomicAdd(count[binIdx], 1);
 }
