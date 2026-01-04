@@ -8,7 +8,7 @@
 #include <memory>
 
 // INITIAL_SCALE_FACTOR - allocate 2x space per bin for inserts
-#define COMPACT_INITIAL_SCALE_FACTOR 2
+#define COMPACT_INITIAL_SCALE_FACTOR 8
 #define COMPACT_GROW_SCALE_FACTOR 2
 
 // CompactEntry structure (GPU layout) - same as RasterScan2D's uvec4
@@ -74,8 +74,16 @@ public:
     // Stats Buffer (2 uints: min, max)
     vkcore::PBuffer statsBuffer;
 
-    // Capacity Buffer (1024*1024 uints)
+    // Capacity Buffer (1024*1024 uints) - max capacity per bin
     vkcore::PBuffer capacityBuffer;
+    
+    // Valid Count Buffer (1024*1024 uints) - actual valid entries per bin
+    // Updated on insert/delete, used by query shader for efficient iteration
+    vkcore::PBuffer validCountBuffer;
+    
+    // Min/Max valid count across all bins (for texture sizing)
+    uint32_t cmin; // Minimum valid count in any bin
+    uint32_t cmax; // Maximum valid count in any bin
     
     // Global Free Offset (for growing bins)
     uint64_t globalFreeOffset;

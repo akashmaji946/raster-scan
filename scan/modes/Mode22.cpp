@@ -9,7 +9,7 @@
 
 void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op) {
     
-    dataId = 0;  // Use uniform dataset with multiple queries
+    dataId = 4;  // Use uniform dataset with multiple queries
     std::cerr << "\n========================================\n";
     std::cerr << "MODE 22: Compact Index Test with Comparison (RasterScan2D)\n";
     std::cerr << "Dataset " << dataId << " (" << datasets[dataId] << ")\n";
