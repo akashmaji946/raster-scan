@@ -5,17 +5,17 @@
 #version 450
 
 layout(push_constant) uniform ConstantBlock {
-    uint texSize;    // ceil(sqrt(maxCount)) - texture dimension
-    uint ncols;      // number of columns (unused, for compatibility)
+    uint res;    // INDEX_RESOLUTION (texture dimension)
+    uint ncols;  // number of columns
 } consts;
 
 // Input: [st, en) pairs from pass 1 (edgeBuffer)
-layout (location = 0) in uint stpos_in;
-layout (location = 1) in uint enpos_in;
+layout (location = 0) in uvec2 erange;
 
 // Output to geometry shader
-layout (location = 0) flat out uint stpos;
-layout (location = 1) flat out uvec2 binrange;
+layout (location = 0) flat out uint qind;
+layout (location = 1) flat out uint stpos;
+layout (location = 2) flat out uvec2 binrange;
 
 out gl_PerVertex {
     vec4 gl_Position;
@@ -27,20 +27,40 @@ float getcoord(uint ind, bool floor) {
     if (!floor) {
         pos++;
     }
-    float rb2 = float(consts.texSize) / 2.0;
+    float rb2 = float(consts.res) / 2.0;
     float loc = (pos - rb2) / rb2;
     return loc;
 }
 
 void main() {
-    stpos = stpos_in;
-    binrange = uvec2(stpos_in, enpos_in);
+    stpos = erange.x;
+    uint stbin = (erange.x - stpos);  // = 0
+    uint enbin = (erange.y - stpos);  // = en - st = count
     
-    // Calculate how many entries in this range
-    uint cnt = enpos_in - stpos_in;
+    uint sxbin = stbin % consts.res;
+    uint exbin = enbin % consts.res;
     
-    // Position covers a square of size ceil(sqrt(cnt)) x ceil(sqrt(cnt))
-    // But we use the global texSize for simplicity (full screen quad)
-    gl_Position = vec4(-1.0, -1.0, 1.0, 1.0);  // Diagonal for geometry shader
+    uint sybin = stbin / consts.res;
+    uint eybin = enbin / consts.res;
+    
+    float x1, y1, x2, y2;
+    
+    if (sybin == eybin) {
+        // Single row - edge case
+        x1 = getcoord(sxbin, true);
+        x2 = getcoord(exbin, false);
+    } else {
+        // Multiple rows - full width quad
+        x1 = -1.0;
+        x2 = 1.0;
+    }
+    y1 = getcoord(sybin, true);
+    y2 = getcoord(eybin, false);
+    
+    qind = gl_VertexIndex;
+    binrange = erange;
+    
+    // Pack diagonal into gl_Position for geometry shader
+    gl_Position = vec4(x1, y1, x2, y2);
     gl_PointSize = 1.0;
 }

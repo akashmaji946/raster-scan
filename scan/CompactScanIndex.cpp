@@ -274,8 +274,8 @@ void CompactScanIndex::setupPipelines() {
         if(!vkcore::readShader(SHADER_FOLDER + "/compact_query_gfx.geom.spv", geomCode)) {
             throw std::runtime_error("Failed to load compact_query_gfx.geom.spv");
         }
-        if(!vkcore::readShader(SHADER_FOLDER + "/compact_query_gfx.frag.spv", fragCode)) {
-            throw std::runtime_error("Failed to load compact_query_gfx.frag.spv");
+        if(!vkcore::readShader(SHADER_FOLDER + "/compact_range.frag.spv", fragCode)) {
+            throw std::runtime_error("Failed to load compact_range.frag.spv");
         }
         
         vk::ShaderModuleCreateInfo vertInfo({}, vertCode.size() * sizeof(uint32_t), vertCode.data());
@@ -307,13 +307,13 @@ void CompactScanIndex::setupPipelines() {
         queryGfxPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         queryGfxPipelineProps.setInputAssemblyFlag();
         
-        // Bindings: startAddr (0), data (2), result (3), validCount (7)
-        // validCount is used for efficient iteration (actual valid entries, not allocated capacity)
+        // Bindings for compact_range.frag (Pass 1 - collect ranges):
+        // 0: startAddr, 1: extent, 2: resct (maxBuffer), 3: result (edgeBuffer)
         queryGfxPipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
+            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
             vk::DescriptorSetLayoutBinding{2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-            vk::DescriptorSetLayoutBinding{3, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-            vk::DescriptorSetLayoutBinding{7, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
+            vk::DescriptorSetLayoutBinding{3, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
         };
         queryGfxPipelineProps.poolSizes = {
             vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 4}
@@ -359,15 +359,14 @@ void CompactScanIndex::setupPipelines() {
         };
         edgePipelineProps.setShaderStageFlag();
         
-        // Input: [st, en) pairs from edgeBuffer (2 uints per vertex)
+        // Input: [st, en) pairs from edgeBuffer (uvec2 per vertex)
         edgePipelineProps.vertexInputBindingDescriptions = {
             vk::VertexInputBindingDescription(0, 2 * sizeof(uint32_t))
         };
         edgePipelineProps.setInputBindingFlag();
         
         edgePipelineProps.vertexInputAttributeDescriptions = {
-            vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32Uint, 0),  // st
-            vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32Uint, sizeof(uint32_t))  // en
+            vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32G32Uint, 0)  // erange (uvec2)
         };
         edgePipelineProps.setInputAttrFlag();
         
@@ -663,44 +662,87 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
 }
 
 void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer) {
-    // Single-pass graphics query (with loop in fragment shader)
-    // Bindings: startAddr (0), data (2), result (3), extent (7)
-    // extent[bin] = highest index written, used for efficient iteration
-    vk::DescriptorBufferInfo tInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::DescriptorBufferInfo dInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::DescriptorBufferInfo rInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
-    
-    std::vector<vk::WriteDescriptorSet> writes = {
-        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &tInfo},
-        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo},
-        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rInfo},
-        vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo}
-    };
-    vd->device->updateDescriptorSets(writes, nullptr);
+    // Two-pass graphics query like RasterScan2D
+    // Pass 1 (Range): Collect [st, en) pairs for bins in query range
+    // Pass 2 (Edge): One fragment per entry, check validity and range
     
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
     
-    // Setup rendering
-    vk::RenderingAttachmentInfo colorInfo;
-    vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
+    // Clear maxBuffer: [0]=numRanges for drawIndirect
+    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
     
-    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, queryGfxPipeline.get());
-    vd->commandBuffer->beginRendering(&renderingInfo);
-    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, queryGfxPipelineProps.pipelineLayout.get(), 0, queryGfxPipelineProps.descriptorSet.get(), nullptr);
+    // ========== PASS 1: Range - collect [st, en) pairs ==========
+    {
+        // Bindings for compact_range.frag: 0=startAddr, 1=extent, 2=resct(maxBuffer), 3=result(edgeBuffer)
+        vk::DescriptorBufferInfo startInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo resctInfo(maxBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo edgeInfo(edgeBuffer->buf, 0, VK_WHOLE_SIZE);
+        
+        std::vector<vk::WriteDescriptorSet> writes = {
+            vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startInfo},
+            vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo},
+            vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resctInfo},
+            vk::WriteDescriptorSet{queryGfxPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeInfo}
+        };
+        vd->device->updateDescriptorSets(writes, nullptr);
+        
+        vk::RenderingAttachmentInfo colorInfo;
+        vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
+        
+        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, queryGfxPipeline.get());
+        vd->commandBuffer->beginRendering(&renderingInfo);
+        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, queryGfxPipelineProps.pipelineLayout.get(), 0, queryGfxPipelineProps.descriptorSet.get(), nullptr);
+        
+        // Push constants: minVal[3], resolution, binWidth[3], nqueries
+        uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, binWidth[0], binWidth[1], binWidth[2], nqueries };
+        vd->commandBuffer->pushConstants<uint32_t>(queryGfxPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc);
+        
+        vk::DeviceSize offset = 0;
+        vd->commandBuffer->bindVertexBuffers(0, queryBuffer->buf, offset);
+        vd->commandBuffer->draw(nqueries, 1, 0, 0);
+        vd->commandBuffer->endRendering();
+    }
     
-    // Push constants: minVal[3], resolution, binWidth[3], nqueries
-    uint32_t pc[8] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, binWidth[0], binWidth[1], binWidth[2], nqueries };
-    vd->commandBuffer->pushConstants<uint32_t>(queryGfxPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc);
+    // Barrier: Pass 1 write -> Pass 2 read
+    maxBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader, vk::PipelineStageFlagBits::eDrawIndirect,
+                       vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eIndirectCommandRead);
+    edgeBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader, vk::PipelineStageFlagBits::eVertexInput,
+                        vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eVertexAttributeRead);
     
-    // Bind query buffer as vertex buffer
-    vk::DeviceSize offset = 0;
-    vd->commandBuffer->bindVertexBuffers(0, queryBuffer->buf, offset);
-    
-    // Draw one point per query (geometry shader expands to quad)
-    vd->commandBuffer->draw(nqueries, 1, 0, 0);
-    vd->commandBuffer->endRendering();
+    // ========== PASS 2: Edge - one fragment per entry ==========
+    {
+        // Bindings for compact_edge.frag: 0=data, 1=result, 2=query
+        vk::DescriptorBufferInfo dataInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo resInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo qInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
+        
+        std::vector<vk::WriteDescriptorSet> writes = {
+            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo},
+            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo},
+            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &qInfo}
+        };
+        vd->device->updateDescriptorSets(writes, nullptr);
+        
+        vk::RenderingAttachmentInfo colorInfo;
+        vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
+        
+        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, edgePipeline.get());
+        vd->commandBuffer->beginRendering(&renderingInfo);
+        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, edgePipelineProps.pipelineLayout.get(), 0, edgePipelineProps.descriptorSet.get(), nullptr);
+        
+        // Push constants: res, ncols
+        uint32_t pc2[2] = { INDEX_RESOLUTION, 3 };  // 3 columns (x, y, z)
+        vd->commandBuffer->pushConstants<uint32_t>(edgePipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc2);
+        
+        vk::DeviceSize offset = 0;
+        vd->commandBuffer->bindVertexBuffers(0, edgeBuffer->buf, offset);
+        
+        // Indirect draw: numRanges vertices from edgeBuffer
+        vd->commandBuffer->drawIndirect(maxBuffer->buf, 0, 1, 4 * sizeof(uint32_t));
+        vd->commandBuffer->endRendering();
+    }
     
     vd->commandBuffer->end();
     

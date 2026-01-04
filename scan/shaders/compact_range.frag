@@ -16,9 +16,9 @@ layout (std430, binding = 0) buffer StartAddrBuffer {
     uint startAddr[];
 };
 
-// Binding 1: Count per bin (actual count, not capacity)
-layout (std430, binding = 1) buffer CountBuffer {
-    uint count[];
+// Binding 1: Extent per bin (highest index written, used for iteration)
+layout (std430, binding = 1) buffer ExtentBuffer {
+    uint extent[];
 };
 
 // Binding 2: Result count buffer - VkDrawIndirectCommand format
@@ -43,10 +43,10 @@ void main() {
     uint binIdx = coord.x + coord.y * consts.resolution;
     
     uint st = startAddr[binIdx];
-    uint cnt = count[binIdx];
-    uint en = st + cnt;
+    uint ext = extent[binIdx];
+    uint en = st + ext;
     
-    if (cnt > 0) {
+    if (ext > 0) {
         // Atomically get index for this bin's result
         // resct[0] = vertexCount for VkDrawIndirectCommand
         uint ind = atomicAdd(resct[0], 1);
