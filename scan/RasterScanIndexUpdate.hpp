@@ -44,7 +44,7 @@
 
 // #define MAX_PAGES (1 << 25)  // 32M pages = 768MB page buffer (safe for comparison mode)
 
-#define MAX_PAGES (1 << 25) // 128M pages = 1.536GB page buffer 
+#define MAX_PAGES (1 << 27) // 128M pages = 1.536GB page buffer 
 
 // Bitmap size for tracking free pages
 // 128M pages / 32 bits per uint = 4M uints = 16MB bitmap
