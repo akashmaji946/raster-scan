@@ -41,6 +41,7 @@ int main(int argc, char* argv[]) {
     // Default values
     int m = 50;  // millions of rows
     int c = 3;   // columns
+    int d = 0;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
 
@@ -54,6 +55,8 @@ int main(int argc, char* argv[]) {
             testFolder = argv[++i];
         } else if (strcmp(argv[i], "-g") == 0 && i + 1 < argc) {
             gpuVendor = argv[++i][0];
+        } else if (strcmp(argv[i], "-d") == 0 && i + 1 < argc) {
+            d = atoi(argv[++i]);
         } else {
             printUsage(argv[0]);
             return 1;
@@ -66,7 +69,7 @@ int main(int argc, char* argv[]) {
     g_opfolder = PROJECT_DIR + "encodedData/data_" + std::to_string(m) + "m_" + std::to_string(c) + "c/";
     g_qfolder = PROJECT_DIR + "tests/" + testFolder + "/";
 
-    std::cerr << "[Configuration] m=" << m << ", c=" << c << ", testFolder=" << testFolder << ", gpuVendor=" << gpuVendor << "\n";
+    std::cerr << "[Configuration] m=" << m << ", c=" << c << ", d=" << d << ", testFolder=" << testFolder << ", gpuVendor=" << gpuVendor << "\n";
     std::cerr << "[Configuration] Data folder: " << g_opfolder << "\n";
     std::cerr << "[Configuration] Test folder: " << g_qfolder << "\n";
 
@@ -113,7 +116,7 @@ int main(int argc, char* argv[]) {
 #elif USE_INDEX_UPDATE_PIPELINE == 21
     testCompactIndex(0, vd, staging, op); // Hardcoded dataId 0 (normal) for test
 #elif USE_INDEX_UPDATE_PIPELINE == 22
-    testCompactIndexAndCompare(0, vd, staging, op);
+    testCompactIndexAndCompare(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 12
     std::cerr << "\n*** Robustness Test: Delete/Insert + Compact + Reverse Cycles (Varying Batch Sizes) ***\n";
     testRobustnessWithReverseCyclesVarying(vd, staging);

@@ -502,8 +502,10 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // Clear count buffer
     countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
     
-    // Clear data buffer (to ensure padding is invalid)
-    dataBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
+    // NOTE: Data buffer clear removed - not needed because:
+    // 1. Query shader only reads entries up to extent[bin] (actual count)
+    // 2. Insert shader writes valid data to all used positions
+    // 3. Clearing large buffers (npoints * SCALE_FACTOR * 16 bytes) is very slow
     
     // ========== PASS 1: Count Points per Bin (Graphics Pipeline) ==========
     {
@@ -666,15 +668,9 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     // Pass 1 (Range): Collect [st, en) pairs for bins in query range
     // Pass 2 (Edge): One fragment per entry, check validity and range
     
-    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
-    vd->commandBuffer->begin(beginInfo);
-    
-    // Clear maxBuffer: [0]=numRanges for drawIndirect
-    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
-    
-    // ========== PASS 1: Range - collect [st, en) pairs ==========
-    {
-        // Bindings for compact_range.frag: 0=startAddr, 1=extent, 2=resct(maxBuffer), 3=result(edgeBuffer)
+    // Initialize query descriptors once (Pass 1 descriptors never change)
+    if (!queryDescriptorsInitialized) {
+        // Pass 1 bindings: 0=startAddr, 1=extent, 2=resct(maxBuffer), 3=result(edgeBuffer)
         vk::DescriptorBufferInfo startInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::DescriptorBufferInfo resctInfo(maxBuffer->buf, 0, VK_WHOLE_SIZE);
@@ -688,6 +684,41 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
         };
         vd->device->updateDescriptorSets(writes, nullptr);
         
+        // Pass 2 binding 0 (data) never changes
+        vk::DescriptorBufferInfo dataInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::WriteDescriptorSet dataWrite{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo};
+        vd->device->updateDescriptorSets({dataWrite}, nullptr);
+        
+        // Create reusable fence
+        queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
+        
+        queryDescriptorsInitialized = true;
+    }
+    
+    // Only update Pass 2 bindings that change (result buffer and query buffer)
+    if (lastResultBuffer != resultBuffer) {
+        vk::DescriptorBufferInfo resInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::WriteDescriptorSet resWrite{edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo};
+        vd->device->updateDescriptorSets({resWrite}, nullptr);
+        lastResultBuffer = resultBuffer;
+    }
+    
+    // Always update query buffer binding (changes per query)
+    vk::DescriptorBufferInfo qInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
+    vk::WriteDescriptorSet qWrite{edgePipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &qInfo};
+    vd->device->updateDescriptorSets({qWrite}, nullptr);
+    
+    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    vd->commandBuffer->begin(beginInfo);
+    
+    // Clear result buffer (included in timing like RasterScan2D)
+    resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
+    
+    // Clear maxBuffer: [0]=numRanges for drawIndirect
+    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
+    
+    // ========== PASS 1: Range - collect [st, en) pairs ==========
+    {
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
         
@@ -713,18 +744,6 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     
     // ========== PASS 2: Edge - one fragment per entry ==========
     {
-        // Bindings for compact_edge.frag: 0=data, 1=result, 2=query
-        vk::DescriptorBufferInfo dataInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::DescriptorBufferInfo resInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::DescriptorBufferInfo qInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
-        
-        std::vector<vk::WriteDescriptorSet> writes = {
-            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo},
-            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo},
-            vk::WriteDescriptorSet{edgePipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &qInfo}
-        };
-        vd->device->updateDescriptorSets(writes, nullptr);
-        
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
         
@@ -746,13 +765,14 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     
     vd->commandBuffer->end();
     
+    // Reuse fence (reset before use)
+    vd->device->resetFences({queryFence.get()});
+    
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
-    vk::Fence fence = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo, fence, false);
-    vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence);
+    vd->submit(submitInfo, queryFence.get(), false);
+    vd->waitForFences(queryFence.get(), VK_TRUE, UINT64_MAX);
 }
 
 void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t ndeletes) {

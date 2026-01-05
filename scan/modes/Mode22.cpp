@@ -6,32 +6,158 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
+#include <sys/stat.h>
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
 #define RUNRASTER 0
 #endif
 
+// Distribution names for dataId 0-4
+static const std::vector<std::string> distributionFiles = {
+    "uniform.bin",
+    "normal.bin",
+    "zipf1.1.bin",
+    "zipf1.3.bin",
+    "zipf1.5.bin"
+};
+
+static const std::vector<std::string> distributionNames = {
+    "uniform",
+    "normal",
+    "zipf1.1",
+    "zipf1.3",
+    "zipf1.5"
+};
+
+// Query generation strategy based on distribution type
+enum class QueryStrategy {
+    CENTERED,    // For uniform/normal: center queries in data range
+    FROM_MIN     // For zipf: start queries from minimum (where data clusters)
+};
+
+// Get appropriate query strategy for each distribution
+static QueryStrategy getQueryStrategy(int dataId) {
+    // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
+    switch (dataId) {
+        case 0: return QueryStrategy::CENTERED;  // Uniform: data spread evenly
+        case 1: return QueryStrategy::CENTERED;  // Normal: data centered around mean
+        case 2: return QueryStrategy::FROM_MIN;  // Zipf 1.1: data clusters at low values
+        case 3: return QueryStrategy::FROM_MIN;  // Zipf 1.3: more skewed
+        case 4: return QueryStrategy::FROM_MIN;  // Zipf 1.5: most skewed
+        default: return QueryStrategy::CENTERED;
+    }
+}
+
+// Generate queries with specific selectivities and save to file
+// Selectivity = fraction of data range covered per dimension
+// Strategy depends on distribution type
+static void generateAndSaveQueries(
+    const std::vector<uint32_t>& minval, 
+    const std::vector<uint32_t>& maxval,
+    int ncols,
+    const std::string& outputFile,
+    int dataId,
+    int numQueries = 10
+) {
+    // Create output directory if needed
+    std::string dir = outputFile.substr(0, outputFile.find_last_of('/'));
+    mkdir(dir.c_str(), 0755);
+    
+    std::ofstream out(outputFile);
+    if (!out.is_open()) {
+        std::cerr << "ERROR: Cannot create query file: " << outputFile << "\n";
+        return;
+    }
+    
+    QueryStrategy strategy = getQueryStrategy(dataId);
+    std::cerr << "Query strategy: " << (strategy == QueryStrategy::CENTERED ? "CENTERED" : "FROM_MIN") << "\n";
+    
+    // Generate 10 queries with selectivities 10%, 20%, ..., 100%
+    // For 3D data: per-dimension selectivity = cbrt(overall_selectivity)
+    for (int q = 0; q < numQueries; q++) {
+        double overallSelectivity = (q + 1) * 0.1;  // 10%, 20%, ..., 100%
+        double perDimSelectivity = std::pow(overallSelectivity, 1.0 / ncols);
+        
+        for (int c = 0; c < ncols; c++) {
+            uint64_t range = (uint64_t)maxval[c] - (uint64_t)minval[c];
+            uint64_t queryRange = (uint64_t)(range * perDimSelectivity);
+            
+            uint32_t lo, hi;
+            if (strategy == QueryStrategy::CENTERED) {
+                // Center the query in the data range (for uniform/normal)
+                uint64_t margin = (range - queryRange) / 2;
+                lo = minval[c] + (uint32_t)margin;
+                hi = minval[c] + (uint32_t)(margin + queryRange);
+            } else {
+                // Start from minimum (for zipf - data clusters at low values)
+                lo = minval[c];
+                hi = minval[c] + (uint32_t)queryRange;
+            }
+            
+            // Write in "lt <value>" format (less than)
+            out << "lt " << lo << "\n";
+            out << "lt " << hi << "\n";
+        }
+        // Fill remaining dimensions if ncols < 3
+        for (int c = ncols; c < 3; c++) {
+            out << "lt 0\n";
+            out << "lt 4294967295\n";
+        }
+    }
+    
+    out.close();
+    std::cerr << "Saved " << numQueries << " queries to: " << outputFile << "\n";
+}
+
 void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op) {
     
-    dataId = 4;  // Use uniform dataset with multiple queries
+    // Validate dataId (0-4 for the 5 distributions)
+    if (dataId < 0 || dataId >= (int)distributionFiles.size()) {
+        std::cerr << "ERROR: Invalid dataId " << dataId << ". Must be 0-4.\n";
+        std::cerr << "  0: uniform, 1: normal, 2: zipf1.1, 3: zipf1.3, 4: zipf1.5\n";
+        return;
+    }
+    
+    // Construct plain data folder path: data/data_Xm_Yc/
+    uint32_t millions = g_npoints / 1000000;
+    std::string plainDataFolder = PROJECT_DIR + "data/data_" + std::to_string(millions) + "m_" + std::to_string(g_dim) + "c";
+    std::string dataFile = plainDataFolder + "/" + distributionFiles[dataId];
+    
     std::cerr << "\n========================================\n";
-    std::cerr << "MODE 22: Compact Index Test with Comparison (RasterScan2D)\n";
-    std::cerr << "Dataset " << dataId << " (" << datasets[dataId] << ")\n";
+    std::cerr << "MODE 22: Compact Index Test (Plain Data)\n";
+    std::cerr << "Distribution: " << distributionNames[dataId] << " (dataId=" << dataId << ")\n";
+    std::cerr << "Data file: " << dataFile << "\n";
+    std::cerr << "Columns: " << g_dim << "\n";
     std::cerr << "========================================\n";
 
-    // 1. Read Dataset
-    int32_t ncols;
+    // 1. Read Plain Dataset
+    int32_t ncols = g_dim;
     uint32_t npoints;
     std::vector<uint32_t> minval, maxval;
-    std::vector<std::map<uint32_t, uint32_t>> rowMap;
     std::vector<uint32_t> points;
-    vkcore::PBuffer pointsBuffer = readEncodedData(g_opfolder + datasets[dataId], vd, staging, npoints, minval, maxval, rowMap, points, ncols);
+    vkcore::PBuffer pointsBuffer = readPlainData(dataFile, vd, staging, npoints, minval, maxval, points, ncols);
     std::cerr << "Dataset: " << npoints << " points\n";
 
-    // Read Queries
-    std::vector<uint32_t> targets;
-    readQueries(g_qfolder + querysets[dataId], qct[dataId], targets, rowMap);
+    // 2. Generate and save queries with selectivities 10%, 20%, ..., 100%
+    std::string queryFolder = PROJECT_DIR + "tests/test1";
+    std::string queryFile = queryFolder + "/" + distributionNames[dataId] + ".txt";
+    int numQueries = 10;
+    generateAndSaveQueries(minval, maxval, ncols, queryFile, dataId, numQueries);
+    
+    // 3. Load queries into targets vector
+    std::vector<uint32_t> targets(numQueries * 6);
+    {
+        std::ifstream qf(queryFile);
+        std::string cmd;
+        uint32_t val;
+        int idx = 0;
+        while (qf >> cmd >> val && idx < numQueries * 6) {
+            targets[idx++] = val;
+        }
+    }
+    std::cerr << "Loaded " << numQueries << " queries (selectivity 10%-100%)\n";
 
 
     // Result Buffer
@@ -74,12 +200,12 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     std::cerr << ">>> RasterScan2D Index build time: " << (rsBuildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
 
-    std::vector<std::vector<uint32_t>> rasterResults(qct[dataId]);
+    std::vector<std::vector<uint32_t>> rasterResults(numQueries);
     
     std::cerr << "\n--- RasterScan2D Query Performance ---\n";
     double rsTotTime = 0;
 
-    for (int i = 0; i < qct[dataId]; i++) {
+    for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // Mode 0 format: x1, y1, x2, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+2], targets[in+1], targets[in+3], targets[in+4], targets[in+5]};
@@ -87,6 +213,8 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         
         CPUTimer rsQTimer;
         rsQTimer.start();
+        // Clear result buffer before query (for fair comparison with CompactIndex)
+        bufs->resBuffer->clearBuffer();
         rs.runRangeQueries(rsIndex, queryBuffer, 1);
         double t = double(rsQTimer.stop()) / 1000000.0;
         rsTotTime += t;
@@ -99,7 +227,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         for(uint32_t val : rasterResults[i]) count += __builtin_popcount(val);
         std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(6) << t << " s, Result Count: " << count << "\n";
     }
-    std::cerr << ">>> Average Query Time: " << std::fixed << std::setprecision(6) << (rsTotTime / qct[dataId]) << " s\n";
+    std::cerr << ">>> Average Query Time: " << std::fixed << std::setprecision(6) << (rsTotTime / numQueries) << " s\n";
     
     // Clean up RasterScan2D resources
     bufs->destroy();
@@ -139,29 +267,17 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         MemoryType::Internal);
     
     // Store Compact Results
-    std::vector<std::vector<uint32_t>> compactResults(qct[dataId]); 
+    std::vector<std::vector<uint32_t>> compactResults(numQueries); 
     
     std::cerr << "\n--- Compact Index Query Performance ---\n";
     double compactTotTime = 0;
-    for (int i = 0; i < qct[dataId]; i++) {
+    for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // Mode 21 format: x1, x2, y1, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
         loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
 
-        // Clear result buffer
-        vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
-        vd->commandBuffer->begin(beginInfo);
-        compactResultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
-        vd->commandBuffer->end();
-        vk::SubmitInfo submitInfo;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &vd->commandBuffer.get();
-        vk::Fence fence = vd->device->createFence(vk::FenceCreateInfo());
-        vd->submit(submitInfo, fence, false);
-        vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
-        vd->device->destroyFence(fence);
-
+        // Result buffer clear is now done inside runRangeQueries (included in timing)
         CPUTimer qTimer;
         qTimer.start();
         compactIndex->runRangeQueries(queryBuffer, 1, compactResultBuffer);
@@ -177,7 +293,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         for(uint32_t val : compactResults[i]) count += __builtin_popcount(val);
         std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(6) << t << " s, Result Count: " << count << "\n";
     }
-    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(6) << (compactTotTime / qct[dataId]) << " s\n";
+    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(6) << (compactTotTime / numQueries) << " s\n";
     
     // =========================================================
     // Delete/Insert Performance (CompactScanIndex)
