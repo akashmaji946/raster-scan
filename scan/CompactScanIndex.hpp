@@ -8,7 +8,7 @@
 #include <memory>
 
 // INITIAL_SCALE_FACTOR - allocate 2x space per bin for inserts
-#define COMPACT_INITIAL_SCALE_FACTOR 8
+#define COMPACT_INITIAL_SCALE_FACTOR 1
 #define COMPACT_GROW_SCALE_FACTOR 2
 
 // CompactEntry structure (GPU layout) - same as RasterScan2D's uvec4
