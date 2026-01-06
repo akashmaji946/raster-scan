@@ -49,3 +49,9 @@ void testCompactIndex(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging,
 
 // Mode 22: Mode 21 + RasterScan2D Comparison
 void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 23: Batch Delete/Insert Cycles with CPU Verification
+void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 24: TPC-C Customer Table Benchmark
+void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

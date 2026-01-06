@@ -34,8 +34,10 @@ using namespace vkcore;
 
 // 21 = Compact Index Mode (Contiguous memory per bin)
 // 22 = CompactIndex + RasterScan2D Comparison
+// 23 = Batch Delete/Insert Cycles with CPU Verification
+// 24 = TPC-C Customer Table Benchmark
 
-#define USE_INDEX_UPDATE_PIPELINE 22
+#define USE_INDEX_UPDATE_PIPELINE 24
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -44,6 +46,7 @@ int main(int argc, char* argv[]) {
     int d = 0;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
+    bool useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
 
     // Parse command-line arguments
     for (int i = 1; i < argc; i++) {
@@ -57,6 +60,8 @@ int main(int argc, char* argv[]) {
             gpuVendor = argv[++i][0];
         } else if (strcmp(argv[i], "-d") == 0 && i + 1 < argc) {
             d = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "-s") == 0) {
+            useSkewedPipeline = true;  // Use indexed delete for skewed distributions
         } else {
             printUsage(argv[0]);
             return 1;
@@ -68,8 +73,9 @@ int main(int argc, char* argv[]) {
     g_npoints = uint32_t(m) * 1000000;
     g_opfolder = PROJECT_DIR + "encodedData/data_" + std::to_string(m) + "m_" + std::to_string(c) + "c/";
     g_qfolder = PROJECT_DIR + "tests/" + testFolder + "/";
+    g_useSkewedPipeline = useSkewedPipeline;
 
-    std::cerr << "[Configuration] m=" << m << ", c=" << c << ", d=" << d << ", testFolder=" << testFolder << ", gpuVendor=" << gpuVendor << "\n";
+    std::cerr << "[Configuration] m=" << m << ", c=" << c << ", d=" << d << ", testFolder=" << testFolder << ", gpuVendor=" << gpuVendor << ", skewedPipeline=" << (useSkewedPipeline ? "ON" : "OFF") << "\n";
     std::cerr << "[Configuration] Data folder: " << g_opfolder << "\n";
     std::cerr << "[Configuration] Test folder: " << g_qfolder << "\n";
 
@@ -113,6 +119,10 @@ int main(int argc, char* argv[]) {
     
 #if USE_INDEX_UPDATE_PIPELINE == 13
     testCPUVerificationVarying(vd, staging);
+#elif USE_INDEX_UPDATE_PIPELINE == 24
+    testTPCCBenchmark(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 23
+    testCompactIndexBatchCycles(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 21
     testCompactIndex(0, vd, staging, op); // Hardcoded dataId 0 (normal) for test
 #elif USE_INDEX_UPDATE_PIPELINE == 22

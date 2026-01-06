@@ -1,12 +1,13 @@
 #include "ModeUtils.hpp"
 
 // Global variables definitions
-const std::string PROJECT_DIR = "/home/akashmaji/Device/IMPORTANT/raster-scan/";
+const std::string PROJECT_DIR = "/home/akashmaji/Documents/RasterDB/raster-scan/";
 std::string g_opfolder;
 std::string g_qfolder;
 int32_t g_dim = 3;
 uint32_t g_npoints = uint32_t(50e6);
 int32_t nDataset = 5;
+bool g_useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
 
 std::vector<std::string> datasets = {
     "normal",

@@ -117,6 +117,15 @@ void CompactScanIndex::allocateBuffers(uint32_t npoints) {
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
         MemoryType::Internal);
     
+    // Index Map Buffer - maps pointIndex → globalDataIndex for O(1) delete
+    // Only allocated if useIndexedDelete is enabled (via -s flag)
+    if (useIndexedDelete) {
+        indexMapBuffer = std::make_shared<Buffer>(vd);
+        indexMapBuffer->create(npoints * sizeof(uint32_t), 
+            vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+            MemoryType::Internal);
+    }
+    
     auto allocEnd = std::chrono::high_resolution_clock::now();
     double allocMs = std::chrono::duration<double, std::milli>(allocEnd - allocStart).count();
     
@@ -138,6 +147,7 @@ void CompactScanIndex::setupPipelines() {
     bindings.push_back(vk::DescriptorSetLayoutBinding(5, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Stats
     bindings.push_back(vk::DescriptorSetLayoutBinding(6, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Capacity
     bindings.push_back(vk::DescriptorSetLayoutBinding(7, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // Extent
+    bindings.push_back(vk::DescriptorSetLayoutBinding(8, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute)); // IndexMap
     
     vk::DescriptorSetLayoutCreateInfo layoutInfo({}, (uint32_t)bindings.size(), bindings.data());
     descSetLayout = vd->device->createDescriptorSetLayoutUnique(layoutInfo);
@@ -439,7 +449,7 @@ void CompactScanIndex::setupPipelines() {
         queryPipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
     }
     
-    // Delete Pipeline
+    // Delete Pipeline (linear scan)
     {
         std::vector<uint32_t> code;
         if(!vkcore::readShader(SHADER_FOLDER + "/compact_delete.comp.spv", code)) {
@@ -451,6 +461,20 @@ void CompactScanIndex::setupPipelines() {
         vk::PipelineShaderStageCreateInfo stageInfo({}, vk::ShaderStageFlagBits::eCompute, deleteShader.get(), "main");
         vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, pipelineLayout.get());
         deletePipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
+    }
+    
+    // Delete Indexed Pipeline (O(1) using index map)
+    {
+        std::vector<uint32_t> code;
+        if(!vkcore::readShader(SHADER_FOLDER + "/compact_delete_indexed.comp.spv", code)) {
+             throw std::runtime_error("Failed to load compact_delete_indexed.comp.spv");
+        }
+        vk::ShaderModuleCreateInfo createInfo({}, code.size() * sizeof(uint32_t), code.data());
+        deleteIndexedShader = vd->device->createShaderModuleUnique(createInfo);
+        
+        vk::PipelineShaderStageCreateInfo stageInfo({}, vk::ShaderStageFlagBits::eCompute, deleteIndexedShader.get(), "main");
+        vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, pipelineLayout.get());
+        deleteIndexedPipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
     }
     
     // Insert Pipeline (compute, for incremental updates)
@@ -484,10 +508,13 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // Calculate binRange like RasterScan2D
     uint32_t binRange0 = uint32_t(ceil(double(maxVal[0] - minVal[0]) / INDEX_RESOLUTION));
     uint32_t binRange1 = uint32_t(ceil(double(maxVal[1] - minVal[1]) / INDEX_RESOLUTION));
+    uint32_t binRange2 = uint32_t(ceil(double(maxVal[2] - minVal[2]) / INDEX_RESOLUTION));
     if(binRange0 == 0) binRange0 = 1;
     if(binRange1 == 0) binRange1 = 1;
+    if(binRange2 == 0) binRange2 = 1;
     binWidth[0] = binRange0;
     binWidth[1] = binRange1;
+    binWidth[2] = binRange2;
     
     // Push constants: minVal[2], binRange[2], res (5 uints) - like RasterScan2D
     std::array<uint32_t, 5> gfxPC = {minVal[0], minVal[1], binRange0, binRange1, INDEX_RESOLUTION};
@@ -661,6 +688,46 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     vd->submit(submitInfo, fence, false);
     vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence);
+    
+    // Build index map if enabled (for O(1) delete)
+    // Read back data buffer and create pointIndex → globalDataIndex mapping
+    if (useIndexedDelete && indexMapBuffer) {
+        // Create staging buffer large enough for full data buffer readback
+        // Note: Data buffer has totalAllocatedCapacity entries (npoints * SCALE_FACTOR)
+        // but only npoints entries are valid after build
+        vkcore::PBuffer stagingBuf = std::make_shared<Buffer>(vd);
+        size_t dataSize = totalAllocatedCapacity * sizeof(CompactEntry);
+        stagingBuf->create(dataSize, 
+            vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
+            MemoryType::ReadOnly);
+        
+        // Read full data buffer to CPU
+        std::vector<CompactEntry> entries(totalAllocatedCapacity);
+        readUsingStagingBuf((char*)entries.data(), dataSize, dataBuffer, stagingBuf, vd);
+        
+        // Build index map on CPU
+        std::vector<uint32_t> indexMapData(npoints, 0xFFFFFFFF);  // Initialize to invalid
+        uint32_t validCount = 0;
+        
+        for (uint64_t i = 0; i < totalAllocatedCapacity; i++) {
+            uint32_t rowId = entries[i].rowId;
+            if (rowId & 0x80000000u) {  // Valid entry
+                uint32_t pointIndex = rowId & 0x7FFFFFFFu;  // Extract original point index
+                if (pointIndex < npoints) {
+                    indexMapData[pointIndex] = (uint32_t)i;  // Map pointIndex → globalDataIndex
+                    validCount++;
+                }
+            }
+        }
+        
+        // Upload index map to GPU
+        loadUsingStagingBuf((char*)indexMapData.data(), npoints * sizeof(uint32_t), 
+                           indexMapBuffer, stagingBuf, vd, 0);
+        
+        stagingBuf->destroy();
+        
+        std::cerr << "[CompactIndex] Index map built for O(1) delete (" << validCount << " entries mapped)\n";
+    }
 }
 
 void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer) {
@@ -892,7 +959,7 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t n
     uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], ndeletes, binWidth[0], binWidth[1], binWidth[2], 0 };
     vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
     
-    // Group size 256
+    // One thread per delete request, linear scan within bin
     uint32_t groups = (ndeletes + 255) / 256;
     vd->commandBuffer->dispatch(groups, 1, 1);
     
@@ -908,6 +975,59 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t n
 
     // Report stats after delete
     // computeAndPrintStats("[GPU Stats - After Delete]");
+}
+
+void CompactScanIndex::deletePointsIndexed(vkcore::PBuffer deleteIndicesBuffer, uint32_t ndeletes) {
+    // O(1) delete using index map
+    // deleteIndicesBuffer contains original point indices (0..npoints-1)
+    
+    if (!useIndexedDelete || !indexMapBuffer) {
+        std::cerr << "[CompactIndex] ERROR: deletePointsIndexed called but index map not available!\n";
+        std::cerr << "[CompactIndex] Use -s flag to enable indexed delete.\n";
+        return;
+    }
+    
+    // Update Descriptor Set
+    std::vector<vk::WriteDescriptorSet> writes;
+    
+    // Binding 2: Data buffer
+    vk::DescriptorBufferInfo dataInfo(this->dataBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo));
+    
+    // Binding 3: Delete indices buffer
+    vk::DescriptorBufferInfo dInfo(deleteIndicesBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
+    
+    // Binding 8: Index map buffer
+    vk::DescriptorBufferInfo mapInfo(indexMapBuffer->buf, 0, VK_WHOLE_SIZE);
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 8, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &mapInfo));
+    
+    vd->device->updateDescriptorSets(writes, nullptr);
+    
+    // Dispatch
+    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    vd->commandBuffer->begin(beginInfo);
+    
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, deleteIndexedPipeline.get());
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
+    
+    // Push constant: just ndeletes
+    uint32_t pc[1] = { ndeletes };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(uint32_t), pc);
+    
+    // One thread per delete request - O(1) lookup
+    uint32_t groups = (ndeletes + 255) / 256;
+    vd->commandBuffer->dispatch(groups, 1, 1);
+    
+    vd->commandBuffer->end();
+    
+    vk::SubmitInfo submitInfo;
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &vd->commandBuffer.get();
+    vk::Fence fence = vd->device->createFence(vk::FenceCreateInfo());
+    vd->submit(submitInfo, fence, false);
+    vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
+    vd->device->destroyFence(fence);
 }
 
 void CompactScanIndex::insertPoints(vkcore::PBuffer pointsBuffer, uint32_t npoints) {
