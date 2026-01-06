@@ -34,8 +34,9 @@ using namespace vkcore;
 
 // 21 = Compact Index Mode (Contiguous memory per bin)
 // 22 = CompactIndex + RasterScan2D Comparison
+// 23 = Batch Delete/Insert Cycles with CPU Verification
 
-#define USE_INDEX_UPDATE_PIPELINE 22
+#define USE_INDEX_UPDATE_PIPELINE 23
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -113,6 +114,8 @@ int main(int argc, char* argv[]) {
     
 #if USE_INDEX_UPDATE_PIPELINE == 13
     testCPUVerificationVarying(vd, staging);
+#elif USE_INDEX_UPDATE_PIPELINE == 23
+    testCompactIndexBatchCycles(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 21
     testCompactIndex(0, vd, staging, op); // Hardcoded dataId 0 (normal) for test
 #elif USE_INDEX_UPDATE_PIPELINE == 22

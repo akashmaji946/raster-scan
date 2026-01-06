@@ -103,10 +103,13 @@ void main() {
             // How many threads for this bin?
             uint aggCount = subgroupAdd(1);
             
-            // Get base offset for the group using one atomic
+            // Get base offset for the group using one atomic on extent buffer
+            // extent[bin] tracks the next available slot (highest index + 1)
+            // After build: extent[bin] = original count (all entries 0..count-1 are used)
+            // After insert: extent[bin] = highest index + 1
             uint groupBase = 0;
             if (subgroupElect()) {
-                groupBase = atomicAdd(count[targetBin], aggCount);
+                groupBase = atomicAdd(extent[targetBin], aggCount);
             }
             groupBase = subgroupBroadcastFirst(groupBase);
             
@@ -135,9 +138,8 @@ void main() {
                 
                 data[globalIdx] = entry;
                 
-                // Update extent for this bin: extent = max(extent, offsetInBin + 1)
-                // This tracks the highest index written in the bin
-                atomicMax(extent[targetBin], offsetInBin + 1);
+                // Note: extent is already updated by atomicAdd above
+                // No need for atomicMax here since we're using atomicAdd for allocation
             }
             // If over capacity, the insert is silently dropped (could add overflow handling)
             

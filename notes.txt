@@ -1,0 +1,6 @@
+in mode 22 and 23, I want to use a parameter -f (points to delete per batch instead of hardcoding ndeletes) [value between 0 ...N] to show how many faraction of points to delete
+1 means 1 of N points
+10 means 10
+
+also for mode 23, run cycle 2 times only
+also for mode 22, add random points option and -f values as ndeletes

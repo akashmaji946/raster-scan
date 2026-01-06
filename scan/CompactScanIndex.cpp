@@ -484,10 +484,13 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // Calculate binRange like RasterScan2D
     uint32_t binRange0 = uint32_t(ceil(double(maxVal[0] - minVal[0]) / INDEX_RESOLUTION));
     uint32_t binRange1 = uint32_t(ceil(double(maxVal[1] - minVal[1]) / INDEX_RESOLUTION));
+    uint32_t binRange2 = uint32_t(ceil(double(maxVal[2] - minVal[2]) / INDEX_RESOLUTION));
     if(binRange0 == 0) binRange0 = 1;
     if(binRange1 == 0) binRange1 = 1;
+    if(binRange2 == 0) binRange2 = 1;
     binWidth[0] = binRange0;
     binWidth[1] = binRange1;
+    binWidth[2] = binRange2;
     
     // Push constants: minVal[2], binRange[2], res (5 uints) - like RasterScan2D
     std::array<uint32_t, 5> gfxPC = {minVal[0], minVal[1], binRange0, binRange1, INDEX_RESOLUTION};

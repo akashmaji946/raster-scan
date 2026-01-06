@@ -64,7 +64,7 @@ void main() {
     if (by >= pc.resolution) by = pc.resolution - 1;
     
     uint binIdx = by * pc.resolution + bx;
-    uint cnt = count[binIdx];
+    uint cnt = extent[binIdx];  // Use extent (actual count), not count (prefix sum)
     uint start = startAddr[binIdx];
     
     // Linear scan of bin with race-condition safe deletion
@@ -99,8 +99,8 @@ void main() {
                 if (oldRowId == currentRowId) {
                     // Successfully invalidated this entry
                     // Note: extent is NOT decremented (entries not shifted)
-                    // Continue scanning for duplicates (don't return)
-                    break;
+                    // Return after deleting ONE entry (don't delete all duplicates)
+                    return;
                 }
                 // else: another thread modified rowId, retry the check
             }

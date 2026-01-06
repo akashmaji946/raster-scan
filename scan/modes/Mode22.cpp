@@ -299,7 +299,32 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     // Delete/Insert Performance (CompactScanIndex)
     // =========================================================
     
-    uint32_t ndeletes = 100000;
+    // Verify initial count after build
+    {
+        uint64_t capacity = compactIndex->totalAllocatedCapacity;
+        std::vector<CompactEntry> hostData(capacity);
+        readUsingStagingBuf((char*)hostData.data(), capacity * sizeof(CompactEntry), compactIndex->dataBuffer, staging, vd);
+        uint32_t validCount = 0;
+        uint32_t invalidCount = 0;
+        for(const auto& entry : hostData) {
+            if(entry.rowId & 0x80000000) validCount++;
+            else if(entry.x != 0 || entry.y != 0 || entry.z != 0) invalidCount++; // Non-zero but invalid
+        }
+        std::cerr << "\n[DEBUG] After build: Expected=" << npoints << ", Valid=" << validCount << ", InvalidNonZero=" << invalidCount << "\n";
+        
+        // Check extent buffer
+        uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
+        std::vector<uint32_t> extentData(totalBins);
+        readUsingStagingBuf((char*)extentData.data(), totalBins * sizeof(uint32_t), compactIndex->extentBuffer, staging, vd);
+        uint32_t maxExtent = 0, sumExtent = 0;
+        for(uint32_t e : extentData) {
+            if(e > maxExtent) maxExtent = e;
+            sumExtent += e;
+        }
+        std::cerr << "[DEBUG] Extent: max=" << maxExtent << ", sum=" << sumExtent << "\n";
+    }
+    
+    uint32_t ndeletes = 1000; // npoints/10;
     if(ndeletes > npoints) ndeletes = npoints;
     
     std::cerr << "\n--- Delete Performance ---\n";
