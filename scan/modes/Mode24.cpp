@@ -12,7 +12,7 @@
 
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
-#define USE_RASTER 1
+#define USE_RASTER 0
 #endif
 
 // TPC-C Constants
@@ -127,6 +127,8 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // 4 = 50M customers (~1667 warehouses)
     // 5 = 75M customers (~2500 warehouses)
     // 6 = 100M customers (~3334 warehouses)
+    // 7 = 500M customers (~16666 warehouses)
+    // 8 = 1B customers (~33333 warehouses)
     
     static const std::vector<int64_t> scaleFactors = {
         100000,      // 100K
@@ -135,11 +137,13 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         25000000,    // 25M
         50000000,    // 50M
         75000000,    // 75M
-        100000000    // 100M
+        100000000,   // 100M
+        500000000,   // 500M
+        1000000000   // 1B
     };
     
     static const std::vector<std::string> scaleNames = {
-        "100K", "1M", "10M", "25M", "50M", "75M", "100M"
+        "100K", "1M", "10M", "25M", "50M", "75M", "100M", "500M", "1B"
     };
     
     int scaleIdx = std::min(dataId, (int)scaleFactors.size() - 1);
@@ -330,7 +334,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // =========================================================
     
     // Configuration
-    const uint32_t NUM_BATCHES = 100000;
+    const uint32_t NUM_BATCHES = 10000000;
     const int RUNS = 2;
     const bool USE_RANDOM_BATCHES = true;
     const bool CPU_CHECK = false;

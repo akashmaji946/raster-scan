@@ -118,9 +118,9 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     // =========================================================
     
     // Configuration
-    const uint32_t NUM_BATCHES = 1;
-    const int RUNS = 1;
-    const bool USE_RANDOM_BATCHES = false;  // Toggle: true = random, false = sequential (like Mode 22)
+    const uint32_t NUM_BATCHES = 10;
+    const int RUNS = 2;
+    const bool USE_RANDOM_BATCHES = true;  // Toggle: true = random, false = sequential (like Mode 22)
     const bool CPU_CHECK = false;  // Toggle: true = verify GPU results against CPU, false = skip verification
     uint32_t batchSize = npoints / NUM_BATCHES;
     
@@ -180,7 +180,9 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     //           << std::setw(8) << "Status" << "\n";
     // std::cerr << std::string(82, '-') << "\n";
     
-    for (uint32_t b = 0; b < RUNS; b++) {
+    for (uint32_t r = 0; r < RUNS; r++) {
+        // Use modulo to wrap around batches when RUNS > NUM_BATCHES
+        uint32_t b = r % NUM_BATCHES;
         uint32_t startIdx = b * batchSize;
         uint32_t endIdx = (b == NUM_BATCHES - 1) ? npoints : (b + 1) * batchSize;
         uint32_t currentBatchSize = endIdx - startIdx;
@@ -262,7 +264,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
             
             if (passed) totalPassed++;
             
-            std::cerr << std::setw(6) << (b + 1)
+            std::cerr << std::setw(6) << (r + 1)
                       << std::setw(10) << currentBatchSize
                       << std::setw(12) << std::fixed << std::setprecision(3) << (delTime * 1000.0)
                       << std::setw(12) << std::fixed << std::setprecision(3) << (insTime * 1000.0)
@@ -295,7 +297,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
             }
         } else {
             // No CPU check - just print timing
-            std::cerr << std::setw(6) << (b + 1)
+            std::cerr << std::setw(6) << (r + 1)
                       << std::setw(10) << currentBatchSize
                       << std::setw(12) << std::fixed << std::setprecision(3) << (delTime * 1000.0)
                       << std::setw(12) << std::fixed << std::setprecision(3) << (insTime * 1000.0)
