@@ -1,0 +1,56 @@
+#version 450
+
+// O(1) delete using index mapping
+// Each thread handles one delete request
+// Uses indexMap[pointIndex] to directly find the data entry
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+// CompactEntry: 4 uints (16 bytes)
+// Valid bit is MSB of rowId (0x80000000)
+struct CompactEntry {
+    uint x;
+    uint y;
+    uint z;
+    uint rowId;  // MSB is valid bit
+};
+
+layout(std430, binding = 2) buffer DataBuffer {
+    CompactEntry data[];
+};
+
+layout(std430, binding = 3) buffer DeleteIndicesBuffer {
+    uint deleteIndices[];  // Original point indices to delete
+};
+
+// Binding 8: Index Map - maps pointIndex → globalDataIndex
+layout(std430, binding = 8) buffer IndexMapBuffer {
+    uint indexMap[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint ndeletes;
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.ndeletes) return;
+    
+    // Get the original point index to delete
+    uint pointIndex = deleteIndices[gid];
+    
+    // Look up the global data index directly - O(1)
+    uint dataIndex = indexMap[pointIndex];
+    
+    // Check if valid (might have been deleted already)
+    if (dataIndex == 0xFFFFFFFF) return;  // Already deleted or invalid
+    
+    // Atomically clear the valid bit
+    uint currentRowId = data[dataIndex].rowId;
+    if ((currentRowId & 0x80000000u) != 0u) {
+        uint newRowId = currentRowId & 0x7FFFFFFFu;
+        atomicCompSwap(data[dataIndex].rowId, currentRowId, newRowId);
+    }
+    
+    // Mark as deleted in index map (optional, for future lookups)
+    // indexMap[pointIndex] = 0xFFFFFFFF;
+}

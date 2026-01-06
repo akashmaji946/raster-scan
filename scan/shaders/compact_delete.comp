@@ -1,5 +1,7 @@
 #version 450
 
+// Simple delete: one thread per delete request, linear scan within bin
+// For skewed distributions, this can be slow but is correct
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
 // CompactEntry: 4 uints (16 bytes) - same as RasterScan2D
@@ -67,42 +69,31 @@ void main() {
     uint cnt = extent[binIdx];  // Use extent (actual count), not count (prefix sum)
     uint start = startAddr[binIdx];
     
-    // Linear scan of bin with race-condition safe deletion
-    // Uses atomicCompSwap to ensure only one thread successfully invalidates each entry
-    // If another thread invalidates an entry first, this thread sees it as invalid and moves on
-    
+    // Linear scan of bin - find and delete ONE matching entry
     for (uint i = 0; i < cnt; i++) {
         uint idx = start + i;
         
-        // Read coordinates first (these don't change)
+        // Read coordinates
         uint ex = data[idx].x;
         uint ey = data[idx].y;
         uint ez = data[idx].z;
         
         // Check if coordinates match
         if (ex == dx && ey == dy && ez == dz) {
-            // Coordinates match - try to atomically invalidate
-            // Loop until we either successfully invalidate or see it's already invalid
-            while (true) {
-                uint currentRowId = data[idx].rowId;
-                
-                // Check if already invalid (another thread got it first)
-                if ((currentRowId & 0x80000000u) == 0u) {
-                    // Already invalid, move on to find next matching entry
-                    break;
-                }
-                
-                // Try to atomically clear the valid bit
+            // Try to atomically invalidate
+            uint currentRowId = data[idx].rowId;
+            
+            // Check if valid
+            if ((currentRowId & 0x80000000u) != 0u) {
                 uint newRowId = currentRowId & 0x7FFFFFFFu;
                 uint oldRowId = atomicCompSwap(data[idx].rowId, currentRowId, newRowId);
                 
                 if (oldRowId == currentRowId) {
-                    // Successfully invalidated this entry
-                    // Note: extent is NOT decremented (entries not shifted)
-                    // Return after deleting ONE entry (don't delete all duplicates)
+                    // Successfully deleted - return immediately
                     return;
                 }
-                // else: another thread modified rowId, retry the check
+                // If CAS failed, the entry was modified by another thread
+                // It might have been invalidated, so continue searching
             }
         }
     }

@@ -36,9 +36,14 @@ public:
     // outputBuffer stores results (bitmask or count)
     void runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer);
 
-    // Delete points (mark invalid)
+    // Delete points (mark invalid) - linear scan, O(bin_size) per delete
     // dataBuffer contains points to delete: [x, y, z]
     void deletePoints(vkcore::PBuffer dataBuffer, uint32_t ndeletes);
+    
+    // Delete points using index mapping - O(1) per delete
+    // deleteIndicesBuffer contains original point indices (0..npoints-1)
+    // Requires useIndexedDelete=true during buildIndex
+    void deletePointsIndexed(vkcore::PBuffer deleteIndicesBuffer, uint32_t ndeletes);
 
     // Insert new points
     // pointsBuffer contains new points [x, y, z] (raw)
@@ -116,12 +121,20 @@ public:
     vk::UniquePipeline statsPipeline;
     vk::UniquePipeline queryPipeline; // Compute query (fallback)
     vk::UniquePipeline deletePipeline;
+    vk::UniquePipeline deleteIndexedPipeline;  // O(1) delete using index map
     vk::UniquePipeline insertPipeline;
     vk::UniqueShaderModule scaleShader;
     vk::UniqueShaderModule statsShader;
     vk::UniqueShaderModule queryShader;
     vk::UniqueShaderModule deleteShader;
+    vk::UniqueShaderModule deleteIndexedShader;  // O(1) delete shader
     vk::UniqueShaderModule insertShader;
+    
+    // Index Map Buffer: maps original pointIndex → globalDataIndex
+    // Used for O(1) delete in skewed distributions
+    // Size: npoints * sizeof(uint32_t)
+    vkcore::PBuffer indexMapBuffer;
+    bool useIndexedDelete = false;  // Set by -s flag
     
     // Compute pipeline layout
     vk::UniqueDescriptorSetLayout descSetLayout;
