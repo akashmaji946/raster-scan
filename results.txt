@@ -259,4 +259,83 @@ Avg delete throughput: 324.950 us/point
 Avg insert throughput: 137.400 us/point
 
 
+----------------
 
+Compact Index build time: 42.0 ms
+
+// 1000000
+Avg delete time per batch: 41.213 ms
+Avg insert time per batch: 6.784 ms
+Avg delete throughput: 0.001 us/point
+Avg insert throughput: 0.000 us/point
+
+// 100000
+Avg delete time per batch: 6.833 ms
+Avg insert time per batch: 3.488 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 10000
+Avg delete time per batch: 2.256 ms
+Avg insert time per batch: 4.198 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 1000
+Avg delete time per batch: 1.848 ms
+Avg insert time per batch: 1.510 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 100
+Avg delete time per batch: 1.846 ms
+Avg insert time per batch: 1.662 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 10
+Avg delete time per batch: 1.708 ms
+Avg insert time per batch: 1.220 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+
+// 75
+Avg delete time per batch: 1.546 ms
+Avg insert time per batch: 1.335 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 750
+Avg delete time per batch: 2.118 ms
+Avg insert time per batch: 1.731 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 7500
+Avg delete time per batch: 3.289 ms
+Avg insert time per batch: 3.134 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 75000
+Avg delete time per batch: 4.657 ms
+Avg insert time per batch: 2.715 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 750000
+Avg delete time per batch: 25.786 ms
+Avg insert time per batch: 5.933 ms
+Avg delete throughput: 0.001 us/point
+Avg insert throughput: 0.000 us/point
+
+// 7500000
+Avg delete time per batch: 119.489 ms
+Avg insert time per batch: 5.087 ms
+Avg delete throughput: 0.003 us/point
+Avg insert throughput: 0.000 us/point
+
+
+RasterScan2D Index build time: 30.1 ms
+CompactScan2D Index build time: 34.4 ms

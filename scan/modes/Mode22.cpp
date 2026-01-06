@@ -11,7 +11,8 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 0
+#define RUNRASTER 1
+
 #endif
 
 // Distribution names for dataId 0-4
