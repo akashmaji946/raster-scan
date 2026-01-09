@@ -12,12 +12,12 @@
 
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
-#define USE_RASTER 0
+#define USE_RASTER 1
 #endif
 
 // TPC-C Constants
-static constexpr int32_t kDistrictsPerWarehouse = 10;
-static constexpr int32_t kCustomerPerDistrict   = 3000;
+static constexpr int32_t kDistrictsPerWarehouse = 100;
+static constexpr int32_t kCustomerPerDistrict   = 30000;
 static constexpr int64_t kCustomersPerWarehouse = kDistrictsPerWarehouse * kCustomerPerDistrict; // 30,000
 
 // Generate TPC-C Customer table data with 3 columns: W_ID, D_ID, C_ID
@@ -127,8 +127,10 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // 4 = 50M customers (~1667 warehouses)
     // 5 = 75M customers (~2500 warehouses)
     // 6 = 100M customers (~3334 warehouses)
-    // 7 = 500M customers (~16666 warehouses)
-    // 8 = 1B customers (~33333 warehouses)
+    // 7 = 250M customers (~6667 warehouses)
+    // 8 = 500M customers (~16666 warehouses)
+    // 9 = 750M customers
+    // 10 = 1B customers (~33333 warehouses)
     
     static const std::vector<int64_t> scaleFactors = {
         100000,      // 100K
@@ -138,12 +140,14 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         50000000,    // 50M
         75000000,    // 75M
         100000000,   // 100M
+        250000000,   // 250M
         500000000,   // 500M
+        750000000,   // 750M
         1000000000   // 1B
     };
     
     static const std::vector<std::string> scaleNames = {
-        "100K", "1M", "10M", "25M", "50M", "75M", "100M", "500M", "1B"
+        "100K", "1M", "10M", "25M", "50M", "75M", "100M", "250M", "500M", "750M", "1B"
     };
     
     int scaleIdx = std::min(dataId, (int)scaleFactors.size() - 1);
@@ -273,7 +277,6 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         
         CPUTimer qTimer;
         qTimer.start();
-        bufs->resBuffer->clearBuffer();
         rs.runRangeQueries(rsIndex, queryBuffer, 1);
         double t = double(qTimer.stop()) / 1000000.0;
         rsTotTime += t;
