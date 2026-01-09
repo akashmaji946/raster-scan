@@ -27,6 +27,13 @@ vk::UniquePipeline ComputePipelineProperties::createPipeline(VulkanDevice *vd) {
         exit(-3);
     }
 
+    // Important: release old descriptor set BEFORE destroying/replacing its pool.
+    // Otherwise vkFreeDescriptorSets will be called with an invalid pool handle.
+    descriptorSet.reset();
+    descriptorPool.reset();
+    descriptorSetLayout.reset();
+    pipelineLayout.reset();
+
     descriptorSetLayout = vd->device->createDescriptorSetLayoutUnique({
         {},
         uint32_t(setLayoutBindings.size()),

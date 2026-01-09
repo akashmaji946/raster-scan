@@ -50,6 +50,9 @@ void CommonBufferPool::destroy() {
     rctBuffer->destroy();
     rctBuffer.reset();
 
+    edgeBuffer->destroy();
+    edgeBuffer.reset();
+
     vd.reset();
     valid = false;
 }
@@ -87,6 +90,10 @@ void IndexBuffers::destroy() {
     cstartBuffer.reset();
     cendBuffer->destroy();
     cendBuffer.reset();
+
+    indexBuffer->destroy();
+    indexBuffer.reset();
+
     vd.reset();
     valid = false;
 }

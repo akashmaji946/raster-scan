@@ -12,8 +12,16 @@
 
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
-#define USE_RASTER 1
+#define USE_RASTER 0
 
+#endif
+
+#ifndef BUILD_COUNT
+#define BUILD_COUNT 5
+#endif
+
+#ifndef QUERY_COUNT
+#define QUERY_COUNT 11
 #endif
 
 // TPC-C Constants
@@ -207,27 +215,39 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     std::cerr << "\n--- [RasterScan2D] ---\n";
     
     vkcore::ReduceMax *reduce = (vkcore::ReduceMax *) op.getFunction(vkcore::FunctionType::ReduceMax);
-    PBufferCache bufs(new CommonBufferPool(vd));
-    
-    RasterScan2D rs(vd, bufs, scan, reduce, ncols);
-    rs.initalize();
+
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
-    
-    std::cerr << "\nBuilding RasterScan2D Index (taking median of 5 runs)...\n";
+
+    std::cerr << "\nBuilding RasterScan2D Index (taking median of " << BUILD_COUNT << " runs)...\n";
     std::vector<double> rsBuildTimes;
-    rsBuildTimes.reserve(5);
-    PRasterIndex rsIndex;
-    for(int k=0; k<5; k++) {
+    rsBuildTimes.reserve(BUILD_COUNT);
+    for(int k=0; k<BUILD_COUNT; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+
+        PBufferCache bufsRun(new CommonBufferPool(vd));
+        RasterScan2D rsRun(vd, bufsRun, scan, reduce, ncols);
+        rsRun.initalize();
+
         CPUTimer buildTimer;
         buildTimer.start();
-        rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+        PRasterIndex tmpIndex = rsRun.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
         double bt = double(buildTimer.stop()) / 1000000.0;
         rsBuildTimes.push_back(bt);
+
+        tmpIndex.reset();
+        bufsRun->destroy();
+        bufsRun.reset();
+        vd->device->waitIdle();
     }
+
     std::sort(rsBuildTimes.begin(), rsBuildTimes.end());
     double buildTime = rsBuildTimes[rsBuildTimes.size() / 2];
     std::cerr << "\n\n==> RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n";
+
+    PBufferCache bufs(new CommonBufferPool(vd));
+    RasterScan2D rs(vd, bufs, scan, reduce, ncols);
+    rs.initalize();
+    PRasterIndex rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
     
 #else
@@ -236,32 +256,38 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // =========================================================
     std::cerr << "\n--- [CompactScanIndex] ---\n";
     
-    PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
-    compactIndex->useIndexedDelete = g_useSkewedPipeline;  // Enable O(1) delete if -s flag
-    compactIndex->initialize();
-    
     if (g_useSkewedPipeline) {
         std::cerr << "[Mode24] Using INDEXED delete (O(1) per delete)\n";
     } else {
         std::cerr << "[Mode24] Using LINEAR SCAN delete (O(bin_size) per delete)\n";
     }
-    
+
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before CompactScanIndex build");
-    
-    std::cerr << "\nBuilding Compact Index (taking median of 5 runs)...\n";
+
+    std::cerr << "\nBuilding Compact Index (taking median of " << BUILD_COUNT << " runs)...\n";
     std::vector<double> compactBuildTimes;
-    compactBuildTimes.reserve(5);
-    for(int k=0; k<5; k++) {
+    compactBuildTimes.reserve(BUILD_COUNT);
+    for(int k=0; k<BUILD_COUNT; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+        PCompactScanIndex compactRun = std::make_shared<CompactScanIndex>(vd, ncols, scan);
+        compactRun->useIndexedDelete = g_useSkewedPipeline;
+        compactRun->initialize();
         CPUTimer buildTimer;
         buildTimer.start();
-        compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+        compactRun->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
         double bt = double(buildTimer.stop()) / 1000000.0;
         compactBuildTimes.push_back(bt);
+        compactRun.reset();
+        vd->device->waitIdle();
     }
     std::sort(compactBuildTimes.begin(), compactBuildTimes.end());
     double buildTime = compactBuildTimes[compactBuildTimes.size() / 2];
     std::cerr << "\n\n ==> Compact Index Build time: " << (buildTime * 1000.0) << " ms\n";
+
+    PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
+    compactIndex->useIndexedDelete = g_useSkewedPipeline;
+    compactIndex->initialize();
+    compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 #endif
     
@@ -286,19 +312,26 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // =========================================================
     // RasterScan2D Query Performance
     // =========================================================
-    std::cerr << "\n--- RasterScan2D Query Performance ---\n";
+    std::cerr << "\n--- RasterScan2D Query Performance (median of " << QUERY_COUNT << ") ---\n";
     
     double rsTotTime = 0;
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // RasterScan2D format: x1, y1, x2, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+2], targets[in+1], targets[in+3], targets[in+4], targets[in+5]};
-        loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
-        
-        CPUTimer qTimer;
-        qTimer.start();
-        rs.runRangeQueries(rsIndex, queryBuffer, 1);
-        double t = double(qTimer.stop()) / 1000000.0;
+
+        std::vector<double> qt;
+        qt.reserve(QUERY_COUNT);
+        for(int r = 0; r < QUERY_COUNT; r++) {
+            loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+            CPUTimer qTimer;
+            qTimer.start();
+            rs.runRangeQueries(rsIndex, queryBuffer, 1);
+            double t = double(qTimer.stop()) / 1000000.0;
+            qt.push_back(t);
+        }
+        std::sort(qt.begin(), qt.end());
+        double t = qt[qt.size() / 2];
         rsTotTime += t;
         
         // Read back and count
@@ -328,18 +361,25 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
         MemoryType::Internal);
     
-    std::cerr << "\n--- Compact Index Query Performance ---\n";
+    std::cerr << "\n--- Compact Index Query Performance (median of " << QUERY_COUNT << ") ---\n";
     double compactTotTime = 0;
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // CompactScanIndex format: x1, x2, y1, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
-        loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
-        
-        CPUTimer qTimer;
-        qTimer.start();
-        compactIndex->runRangeQueries(queryBuffer, 1, resultBuffer);
-        double t = double(qTimer.stop()) / 1000000.0;
+
+        std::vector<double> qt;
+        qt.reserve(QUERY_COUNT);
+        for(int r = 0; r < QUERY_COUNT; r++) {
+            loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+            CPUTimer qTimer;
+            qTimer.start();
+            compactIndex->runRangeQueries(queryBuffer, 1, resultBuffer);
+            double t = double(qTimer.stop()) / 1000000.0;
+            qt.push_back(t);
+        }
+        std::sort(qt.begin(), qt.end());
+        double t = qt[qt.size() / 2];
         compactTotTime += t;
         
         // Read back and count

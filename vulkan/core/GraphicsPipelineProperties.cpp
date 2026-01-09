@@ -105,6 +105,13 @@ vk::UniquePipeline GraphicsPipelineProperties::createPipeline(PVkDevice vd, vk::
         dynamicStates.data()
     );
 
+    // Important: release old descriptor set BEFORE destroying/replacing its pool.
+    // Otherwise vkFreeDescriptorSets will be called with an invalid pool handle.
+    descriptorSet.reset();
+    descriptorPool.reset();
+    descriptorSetLayout.reset();
+    pipelineLayout.reset();
+
     descriptorSetLayout = vd->device->createDescriptorSetLayoutUnique(
         {
             {},
