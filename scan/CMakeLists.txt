@@ -79,6 +79,7 @@ set(scan_shader_src
     shaders/compact_insert.comp
     shaders/compact_query.comp
     shaders/compact_delete.comp
+    shaders/compact_delete_indexed.comp
     shaders/compact_count.comp
     shaders/compact_stats.comp
     shaders/compact_count_gfx.vert

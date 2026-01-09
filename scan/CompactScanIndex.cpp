@@ -546,6 +546,7 @@ void CompactScanIndex::setupPipelines() {
     
     // Create dummy FBO for graphics pipelines (must match INDEX_RESOLUTION)
     dummyFbo = std::make_shared<FrameBuffer>(vd);
+    dummyFbo->create(vk::Format::eR8Sint, INDEX_RESOLUTION, INDEX_RESOLUTION, 1, MemoryType::Internal);
 }
 
 void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints, uint32_t *minVal, uint32_t *maxVal) {
@@ -1031,20 +1032,17 @@ void CompactScanIndex::deletePointsIndexed(vkcore::PBuffer deleteIndicesBuffer, 
     }
     
     // Update Descriptor Set
+    // Note: dataBuffer is accessed via buffer device address in the shader to avoid >4GB descriptor limits.
     std::vector<vk::WriteDescriptorSet> writes;
-    
-    // Binding 2: Data buffer
-    vk::DescriptorBufferInfo dataInfo(this->dataBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo));
-    
+
     // Binding 3: Delete indices buffer
     vk::DescriptorBufferInfo dInfo(deleteIndicesBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
-    
+
     // Binding 8: Index map buffer
     vk::DescriptorBufferInfo mapInfo(indexMapBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 8, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &mapInfo));
-    
+
     vd->device->updateDescriptorSets(writes, nullptr);
     
     // Dispatch
@@ -1054,9 +1052,14 @@ void CompactScanIndex::deletePointsIndexed(vkcore::PBuffer deleteIndicesBuffer, 
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, deleteIndexedPipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
     
-    // Push constant: just ndeletes
-    uint32_t pc[1] = { ndeletes };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(uint32_t), pc);
+    // Push constants: ndeletes, dataBufferAddr[2]
+    uint64_t dataAddr = dataBuffer->getDeviceAddress();
+    uint32_t pc[3] = {
+        ndeletes,
+        static_cast<uint32_t>(dataAddr & 0xFFFFFFFF),
+        static_cast<uint32_t>(dataAddr >> 32)
+    };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 3 * sizeof(uint32_t), pc);
     
     // One thread per delete request - O(1) lookup
     uint32_t groups = (ndeletes + 255) / 256;

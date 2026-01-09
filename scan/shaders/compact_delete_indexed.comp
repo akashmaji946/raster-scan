@@ -1,21 +1,16 @@
 #version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
 
 // O(1) delete using index mapping
 // Each thread handles one delete request
 // Uses indexMap[pointIndex] to directly find the data entry
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
 
-// CompactEntry: 4 uints (16 bytes)
-// Valid bit is MSB of rowId (0x80000000)
-struct CompactEntry {
-    uint x;
-    uint y;
-    uint z;
-    uint rowId;  // MSB is valid bit
-};
-
-layout(std430, binding = 2) buffer DataBuffer {
-    CompactEntry data[];
+// Buffer reference for rowId field (we only need 4-byte atomic on rowId)
+layout(buffer_reference, std430, buffer_reference_align = 4) buffer RowIdRef {
+    uint value;
 };
 
 layout(std430, binding = 3) buffer DeleteIndicesBuffer {
@@ -29,6 +24,7 @@ layout(std430, binding = 8) buffer IndexMapBuffer {
 
 layout(push_constant) uniform PushConstants {
     uint ndeletes;
+    uvec2 dataBufferAddr;  // 64-bit buffer device address (split)
 } pc;
 
 void main() {
@@ -44,11 +40,16 @@ void main() {
     // Check if valid (might have been deleted already)
     if (dataIndex == 0xFFFFFFFF) return;  // Already deleted or invalid
     
+    // Compute rowId address via buffer device address + 64-bit pointer arithmetic
+    uint64_t baseAddr = uint64_t(pc.dataBufferAddr.x) | (uint64_t(pc.dataBufferAddr.y) << 32);
+    uint64_t byteOffset = uint64_t(dataIndex) * 16u + 12u;  // rowId field
+    RowIdRef rowIdRef = RowIdRef(baseAddr + byteOffset);
+
     // Atomically clear the valid bit
-    uint currentRowId = data[dataIndex].rowId;
+    uint currentRowId = rowIdRef.value;
     if ((currentRowId & 0x80000000u) != 0u) {
         uint newRowId = currentRowId & 0x7FFFFFFFu;
-        atomicCompSwap(data[dataIndex].rowId, currentRowId, newRowId);
+        atomicCompSwap(rowIdRef.value, currentRowId, newRowId);
     }
     
     // Mark as deleted in index map (optional, for future lookups)

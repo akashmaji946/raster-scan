@@ -8,6 +8,8 @@
 #include <cmath>
 #include <fstream>
 #include <sys/stat.h>
+#include <algorithm>
+#include <random>
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
@@ -226,9 +228,9 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         
         uint32_t count = 0;
         for(uint32_t val : rasterResults[i]) count += __builtin_popcount(val);
-        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(6) << t << " s, Result Count: " << count << "\n";
+        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
     }
-    std::cerr << ">>> Average Query Time: " << std::fixed << std::setprecision(6) << (rsTotTime / numQueries) << " s\n";
+    std::cerr << ">>> Average Query Time: " << std::fixed << std::setprecision(3) << ((rsTotTime * 1000.0) / numQueries) << " ms\n";
     
     // Clean up RasterScan2D resources
     bufs->destroy();
@@ -292,9 +294,9 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         // Log count
         uint32_t count = 0;
         for(uint32_t val : compactResults[i]) count += __builtin_popcount(val);
-        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(6) << t << " s, Result Count: " << count << "\n";
+        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
     }
-    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(6) << (compactTotTime / numQueries) << " s\n";
+    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << ((compactTotTime * 1000.0) / numQueries) << " ms\n";
     
     // =========================================================
     // Delete/Insert Performance (CompactScanIndex)
@@ -325,42 +327,33 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         std::cerr << "[DEBUG] Extent: max=" << maxExtent << ", sum=" << sumExtent << "\n";
     }
     
-    uint32_t ndeletes = 10000; // npoints/10;
-    if(ndeletes > npoints) ndeletes = npoints;
-    
-    std::cerr << "\n--- Delete Performance ---\n";
-    std::cerr << "Deleting " << ndeletes << " points...\n";
-    
-    vkcore::PBuffer deleteDataBuffer(new Buffer(vd));
-    deleteDataBuffer->create(ndeletes * 3 * sizeof(uint32_t), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
-        MemoryType::Internal);
-        
-    std::vector<uint32_t> deleteData(ndeletes * 3);
-    for(uint32_t i=0; i<ndeletes; i++) {
-        deleteData[i*3 + 0] = points[i]; // x
-        deleteData[i*3 + 1] = points[npoints + i]; // y
-        deleteData[i*3 + 2] = points[2*npoints + i]; // z
+    // Split dataset into K batches after shuffling indices, then delete/insert each batch once.
+    const int K = 10000;
+
+    std::vector<uint32_t> indices(npoints);
+    std::iota(indices.begin(), indices.end(), 0);
+    {
+        std::mt19937 rng(42);
+        std::shuffle(indices.begin(), indices.end(), rng);
     }
-    
-    loadUsingStagingBuf((char*)deleteData.data(), deleteData.size() * sizeof(uint32_t), deleteDataBuffer, staging, vd, 0);
+
+    const uint32_t batchSize = std::max<uint32_t>(1u, npoints / (uint32_t)K);
+
+    std::cerr << "\n--- Delete Performance ---\n";
+    std::cerr << "K: " << K << "\n";
+    std::cerr << "Batch size: " << batchSize << " (last batch may be larger due to remainder)\n";
+
+    vkcore::PBuffer deleteDataBuffer(new Buffer(vd));
+    deleteDataBuffer->create(batchSize * 3 * sizeof(uint32_t), 
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+        MemoryType::Internal);
+
+    std::vector<uint32_t> deleteData(batchSize * 3);
     
     // Lambda for count verification
     auto verifyCount = [&](uint32_t expected, const std::string& label) {
         uint64_t capacity = compactIndex->totalAllocatedCapacity;
         std::vector<CompactEntry> hostData(capacity);
-        // Ensure staging buffer is large enough or read in chunks. 
-        // capacity * 16 bytes. For 10M points -> 160MB. Staging is 16MB?
-        // readUsingStagingBuf handles loop? No, it usually handles staging size if implemented correctly, 
-        // but if data > staging, it might fail if implementation is simple.
-        // Let's check vkutils.cpp for readUsingStagingBuf implementation.
-        // Assuming it handles it or staging is large enough.
-        // Wait, staging buffer size is printed as 16MB. 10M points is 160MB.
-        // I should re-create staging buffer if needed or rely on robust implementation.
-        // I'll assume readUsingStagingBuf is robust or resize staging.
-        // Actually, let's just resize staging to be safe.
-        // Or check if I can use a loop.
-        // For now, I'll rely on readUsingStagingBuf.
         
         readUsingStagingBuf((char*)hostData.data(), capacity * sizeof(CompactEntry), compactIndex->dataBuffer, staging, vd);
         
@@ -373,24 +366,56 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         std::cerr << label << ": Expected=" << expected << ", Actual=" << validCount << " [" << (expected==validCount ? "PASS" : "FAIL") << "]\n";
     };
 
-    CPUTimer delTimer;
-    delTimer.start();
-    compactIndex->deletePoints(deleteDataBuffer, ndeletes);
-    double delTime = double(delTimer.stop()) / 1000000.0;
-    std::cerr << ">>> Delete Time: " << (delTime*1000.0) << " ms (" << (delTime * 1000000.0 / ndeletes) << " us/point)\n";
-    
-    verifyCount(npoints - ndeletes, "Delete Verification");
+    double totalDelTime = 0.0;
+    double totalInsTime = 0.0;
+    uint64_t totalProcessedPoints = 0;
 
-    // --- Insert Performance ---
-    std::cerr << "\n--- Insert Performance ---\n";
-    std::cerr << "Re-inserting " << ndeletes << " points...\n";
-    CPUTimer insTimer;
-    insTimer.start();
-    compactIndex->insertPoints(deleteDataBuffer, ndeletes);
-    double insTime = double(insTimer.stop()) / 1000000.0;
-    std::cerr << ">>>Insert Time: " << (insTime*1000.0) << " ms (" << (insTime * 1000000.0 / ndeletes) << " us/point)\n";
-    
-    verifyCount(npoints, "Insert Verification");
+    // --- Delete/Insert Performance ---
+    for (int k = 0; k < K; k++) {
+        uint32_t startIdx = (uint32_t)k * batchSize;
+        uint32_t endIdx = (k == K - 1) ? npoints : std::min(npoints, (uint32_t)(k + 1) * batchSize);
+        uint32_t currentBatchSize = endIdx - startIdx;
+        if (currentBatchSize == 0) continue;
+
+        for (uint32_t i = 0; i < currentBatchSize; i++) {
+            uint32_t pointIdx = indices[startIdx + i];
+            deleteData[i * 3 + 0] = points[pointIdx];
+            deleteData[i * 3 + 1] = points[npoints + pointIdx];
+            deleteData[i * 3 + 2] = points[2 * npoints + pointIdx];
+        }
+
+        loadUsingStagingBuf((char*)deleteData.data(), currentBatchSize * 3 * sizeof(uint32_t), deleteDataBuffer, staging, vd, 0);
+
+        CPUTimer delTimer;
+        delTimer.start();
+        compactIndex->deletePoints(deleteDataBuffer, currentBatchSize);
+        double delTime = double(delTimer.stop()) / 1000000.0;
+        totalDelTime += delTime;
+        totalProcessedPoints += currentBatchSize;
+
+        // Verify after every delete (full data readback)
+        std::cerr << ">>> Delete Time: " << (delTime * 1000.0) << " ms (" << (delTime * 1000000.0 / currentBatchSize) << " us/point)\n";
+        verifyCount(npoints - currentBatchSize, "Delete Verification");
+
+        CPUTimer insTimer;
+        insTimer.start();
+        compactIndex->insertPoints(deleteDataBuffer, currentBatchSize);
+        double insTime = double(insTimer.stop()) / 1000000.0;
+        totalInsTime += insTime;
+
+        // Verify after every insert (full data readback)
+        std::cerr << ">>>Insert Time: " << (insTime * 1000.0) << " ms (" << (insTime * 1000000.0 / currentBatchSize) << " us/point)\n";
+        verifyCount(npoints, "Insert Verification");
+
+        std::cout << std::endl;
+    }
+
+    std::cerr << "\n--- Delete/Insert (K cycles) Summary ---\n";
+    std::cerr << "K: " << K << " (nominal batch size " << batchSize << ")\n";
+    std::cerr << "Total delete time: " << std::fixed << std::setprecision(3) << (totalDelTime * 1000.0) << " ms\n";
+    std::cerr << "Total insert time: " << std::fixed << std::setprecision(3) << (totalInsTime * 1000.0) << " ms\n";
+    std::cerr << "Avg delete time: " << std::fixed << std::setprecision(3) << ((totalDelTime * 1000.0) / K) << " ms (" << (totalProcessedPoints ? (totalDelTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
+    std::cerr << "Avg insert time: " << std::fixed << std::setprecision(3) << ((totalInsTime * 1000.0) / K) << " ms (" << (totalProcessedPoints ? (totalInsTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
     
     // Final cleanup
     deleteDataBuffer->destroy();

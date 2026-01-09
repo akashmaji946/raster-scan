@@ -119,10 +119,10 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     
     // Configuration
     const uint32_t NUM_BATCHES = 10000;
-    const int RUNS = 2;
+    const int RUNS = 10;
     const bool USE_RANDOM_BATCHES = true;  // Toggle: true = random, false = sequential (like Mode 22)
     const bool CPU_CHECK = false;  // Toggle: true = verify GPU results against CPU, false = skip verification
-    uint32_t batchSize = npoints / NUM_BATCHES;
+    uint32_t batchSize = 50000; // npoints / NUM_BATCHES;
     
     std::cerr << "\n--- Batch Delete/Insert Cycles ---\n";
     std::cerr << "Total points: " << npoints << "\n";
@@ -148,7 +148,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     // Allocate batch buffer (row-major: [x0,y0,z0, x1,y1,z1, ...])
     vkcore::PBuffer batchBuffer(new Buffer(vd));
     batchBuffer->create(batchSize * 3 * sizeof(uint32_t), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
         MemoryType::Internal);
     
     // Batch data storage
@@ -168,6 +168,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     // Summary statistics
     uint32_t totalPassed = 0;
     double totalDelTime = 0, totalInsTime = 0;
+    uint64_t totalProcessedPoints = 0;
     
     // std::cerr << "\n";
     // std::cerr << std::setw(6) << "Batch" 
@@ -214,6 +215,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
         }
         double delTime = double(delTimer.stop()) / 1000000.0;
         totalDelTime += delTime;
+        totalProcessedPoints += currentBatchSize;
         
         // Update CPU reference (mark deleted) - only if CPU_CHECK
         if (CPU_CHECK) {
@@ -317,8 +319,12 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     std::cerr << "Total insert time: " << std::fixed << std::setprecision(3) << (totalInsTime * 1000.0) << " ms\n";
     std::cerr << "Avg delete time per batch: " << std::fixed << std::setprecision(3) << (totalDelTime * 1000.0 / RUNS) << " ms\n";
     std::cerr << "Avg insert time per batch: " << std::fixed << std::setprecision(3) << (totalInsTime * 1000.0 / RUNS) << " ms\n";
-    std::cerr << "Avg delete throughput: " << std::fixed << std::setprecision(3) << (totalDelTime * 1000000.0 / npoints) << " us/point\n";
-    std::cerr << "Avg insert throughput: " << std::fixed << std::setprecision(3) << (totalInsTime * 1000000.0 / npoints) << " us/point\n";
+    const double delUsPerPoint = (totalProcessedPoints > 0) ? (totalDelTime * 1000000.0 / (double)totalProcessedPoints) : 0.0;
+    const double insUsPerPoint = (totalProcessedPoints > 0) ? (totalInsTime * 1000000.0 / (double)totalProcessedPoints) : 0.0;
+    const double delMPointsPerSec = (totalDelTime > 0.0) ? ((double)totalProcessedPoints / (totalDelTime * 1000000.0)) : 0.0;
+    const double insMPointsPerSec = (totalInsTime > 0.0) ? ((double)totalProcessedPoints / (totalInsTime * 1000000.0)) : 0.0;
+    std::cerr << "Avg delete throughput: " << std::fixed << std::setprecision(3) << delUsPerPoint << " us/point (" << delMPointsPerSec << " Mpoints/s)\n";
+    std::cerr << "Avg insert throughput: " << std::fixed << std::setprecision(3) << insUsPerPoint << " us/point (" << insMPointsPerSec << " Mpoints/s)\n";
     
     // Final cleanup
     batchBuffer->destroy();

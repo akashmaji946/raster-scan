@@ -365,7 +365,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // Allocate batch buffer (row-major: [x0,y0,z0, x1,y1,z1, ...])
     vkcore::PBuffer batchBuffer(new Buffer(vd));
     batchBuffer->create(batchSize * 3 * sizeof(uint32_t), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
         MemoryType::Internal);
     
     std::vector<uint32_t> batchData(batchSize * 3);
