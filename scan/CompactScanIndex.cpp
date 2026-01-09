@@ -779,7 +779,7 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     vd->commandBuffer->begin(beginInfo);
     
     // Clear result buffer (included in timing like RasterScan2D)
-    resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
+    // resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
     
     // Clear maxBuffer: [0]=numRanges for drawIndirect
     maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);

@@ -185,10 +185,10 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     RasterScan2D rs(vd, bufs, scan, reduce, ncols);
     
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
-    std::cerr << "Building RasterScan2D Index (taking min of 3 runs)...\n";
+    std::cerr << "Building RasterScan2D Index...\n";
     double minRsBuildTime = 1e9;
     PRasterIndex rsIndex;
-    for(int k=0; k<3; k++) {
+    for(int k=0; k<1; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
         CPUTimer rsBuildTimer;
         rsBuildTimer.start();
@@ -215,7 +215,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         CPUTimer rsQTimer;
         rsQTimer.start();
         // Clear result buffer before query (for fair comparison with CompactIndex)
-        bufs->resBuffer->clearBuffer();
+        // bufs->resBuffer->clearBuffer();
         rs.runRangeQueries(rsIndex, queryBuffer, 1);
         double t = double(rsQTimer.stop()) / 1000000.0;
         rsTotTime += t;

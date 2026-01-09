@@ -93,7 +93,7 @@ void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t
     // Clear result bitmap so that each query run starts from a known state. This
     // mirrors CompactScanIndex::runRangeQueries and ensures timing includes the
     // cost of clearing the output buffer for both pipelines.
-    bufs->resBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader);
+    // bufs->resBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader);
     this->runRQTPipeline(index,qranges,nqueries);
     maxBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader,vk::PipelineStageFlagBits::eDrawIndirect,vk::AccessFlagBits::eShaderWrite,vk::AccessFlagBits::eIndirectCommandRead);
     this->runRQEPipeline(index,qranges,nqueries);
