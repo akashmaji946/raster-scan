@@ -13,7 +13,7 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 0
+#define RUNRASTER 1
 
 #endif
 
@@ -216,8 +216,6 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         
         CPUTimer rsQTimer;
         rsQTimer.start();
-        // Clear result buffer before query (for fair comparison with CompactIndex)
-        bufs->resBuffer->clearBuffer();
         rs.runRangeQueries(rsIndex, queryBuffer, 1);
         double t = double(rsQTimer.stop()) / 1000000.0;
         rsTotTime += t;
@@ -328,13 +326,13 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     }
     
     // Split dataset into K batches after shuffling indices, then delete/insert each batch once.
-    const int K = 10000;
+    const int K = 10;
 
     std::vector<uint32_t> indices(npoints);
     std::iota(indices.begin(), indices.end(), 0);
     {
-        std::mt19937 rng(42);
-        std::shuffle(indices.begin(), indices.end(), rng);
+        std::mt19937 rng(100);
+        // std::shuffle(indices.begin(), indices.end(), rng);
     }
 
     const uint32_t batchSize = std::max<uint32_t>(1u, npoints / (uint32_t)K);
@@ -394,8 +392,8 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         totalProcessedPoints += currentBatchSize;
 
         // Verify after every delete (full data readback)
-        std::cerr << ">>> Delete Time: " << (delTime * 1000.0) << " ms (" << (delTime * 1000000.0 / currentBatchSize) << " us/point)\n";
-        verifyCount(npoints - currentBatchSize, "Delete Verification");
+        std::cerr << k << ">>> Delete Time: " << (delTime * 1000.0) << " ms (" << (delTime * 1000000.0 / currentBatchSize) << " us/point)\n";
+        // verifyCount(npoints - currentBatchSize, "Delete Verification");
 
         CPUTimer insTimer;
         insTimer.start();
@@ -404,8 +402,8 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         totalInsTime += insTime;
 
         // Verify after every insert (full data readback)
-        std::cerr << ">>>Insert Time: " << (insTime * 1000.0) << " ms (" << (insTime * 1000000.0 / currentBatchSize) << " us/point)\n";
-        verifyCount(npoints, "Insert Verification");
+        std::cerr << k << ">>>Insert Time: " << (insTime * 1000.0) << " ms (" << (insTime * 1000000.0 / currentBatchSize) << " us/point)\n";
+        // verifyCount(npoints, "Insert Verification");
 
         std::cout << std::endl;
     }

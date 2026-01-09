@@ -3,10 +3,16 @@
 
 #version 450
 
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
 layout(push_constant) uniform ConstantBlock {
     uvec2 minVal;
     uvec2 binRange;
     uint res;
+    uint pad;
+    uvec2 indexBufferAddr;
 } consts;
 
 layout (binding = 0) buffer countBuffer
@@ -14,9 +20,8 @@ layout (binding = 0) buffer countBuffer
     int count[];
 };
 
-layout (binding = 1) buffer indexBuffer
-{
-    uvec4 index[];
+layout(buffer_reference, std430, buffer_reference_align = 16) buffer IndexBufferRef {
+    uvec4 index;
 };
 
 // TODO For now vertex position is RowID
@@ -30,11 +35,16 @@ out gl_PerVertex {
 };
 
 void main() {
+    uint64_t baseAddr = uint64_t(consts.indexBufferAddr.x) | (uint64_t(consts.indexBufferAddr.y) << 32);
+
     uvec2 val = uvec2(valx,valy);
     uvec2 binid = (val - consts.minVal) / consts.binRange;
     uint bin = binid.x + binid.y * consts.res;
     uint pos = atomicAdd(count[bin],1);
-    index[pos] = uvec4(val,valz,gl_VertexIndex);
+
+    uint64_t byteOffset = uint64_t(pos) * 16u;
+    IndexBufferRef indexRef = IndexBufferRef(baseAddr + byteOffset);
+    indexRef.index = uvec4(val, valz, gl_VertexIndex);
 
     gl_Position = vec4(-5,-5,0,1);
     gl_PointSize = 1;

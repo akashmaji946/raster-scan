@@ -239,16 +239,16 @@ void RasterScan2D::setupBuildPipeline() {
 
     bPipelineProps.setLayoutBindings = {
         vk::DescriptorSetLayoutBinding{ 0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
-        vk::DescriptorSetLayoutBinding{ 1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
     };
 
     bPipelineProps.poolSizes = {
         vk::DescriptorPoolSize{ vk::DescriptorType::eStorageBuffer, 1},
-        vk::DescriptorPoolSize{ vk::DescriptorType::eStorageBuffer, 1}
     };
 
     bPipelineProps.pushConstantRange = {
-        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex,0,sizeof(int32_t) * 5)
+        // build2D.vert now uses BDA for indexBuffer writes, so push constants include indexBuffer device address.
+        // ConstantBlock: minVal(uvec2), binRange(uvec2), res(uint), pad(uint), indexBufferAddr(uvec2) = 8 uints
+        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex,0,sizeof(uint32_t) * 8)
     };
     bPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
 
@@ -338,19 +338,19 @@ void RasterScan2D::setupRQEPipeline() {
     rqePipelineProps.setInputAssemblyFlag();
 
     rqePipelineProps.setLayoutBindings = {
+        // edge2D.frag now reads indexBuffer via BDA, so only bind result + query buffers.
         vk::DescriptorSetLayoutBinding{ 0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
         vk::DescriptorSetLayoutBinding{ 1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-        vk::DescriptorSetLayoutBinding{ 2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
     };
 
     rqePipelineProps.poolSizes = {
         vk::DescriptorPoolSize{ vk::DescriptorType::eStorageBuffer, 1},
         vk::DescriptorPoolSize{ vk::DescriptorType::eStorageBuffer, 1},
-        vk::DescriptorPoolSize{ vk::DescriptorType::eStorageBuffer, 1},
     };
 
     rqePipelineProps.pushConstantRange = {
-        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment,0,2 * sizeof(int32_t))
+        // ConstantBlock: res, ncols, indexBufferAddr(uvec2) = 4 uints
+        vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment,0,4 * sizeof(uint32_t))
     };
     rqePipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
 
@@ -419,16 +419,22 @@ void RasterScan2D::build(vkcore::PBuffer pointsBuffer, PRasterIndex index) {
     vd->commandBuffer->beginRendering(&renderingInfo);
 
     vk::DescriptorBufferInfo countDescriptor{ index->cendBuffer->buf, 0, VK_WHOLE_SIZE };
-    vk::DescriptorBufferInfo indexDescriptor{ index->indexBuffer->buf, 0, VK_WHOLE_SIZE };
 
     std::vector<vk::WriteDescriptorSet> descriptorSets = {
         vk::WriteDescriptorSet{ bPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countDescriptor},
-        vk::WriteDescriptorSet{ bPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &indexDescriptor},
     };
     vd->device->updateDescriptorSets(descriptorSets, nullptr);
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, bPipelineProps.pipelineLayout.get(), 0, bPipelineProps.descriptorSet.get(), nullptr);
 
-    std::array<uint32_t,5> consts = {index->minVal[0], index->minVal[1], index->binRange[0], index->binRange[1], INDEX_RESOLUTION};
+    uint64_t indexAddr = index->indexBuffer->getDeviceAddress();
+    std::array<uint32_t,8> consts = {
+        index->minVal[0], index->minVal[1],
+        index->binRange[0], index->binRange[1],
+        INDEX_RESOLUTION,
+        0,
+        static_cast<uint32_t>(indexAddr & 0xFFFFFFFF),
+        static_cast<uint32_t>(indexAddr >> 32)
+    };
     vd->commandBuffer->pushConstants<uint32_t>(bPipelineProps.pipelineLayout.get(),vk::ShaderStageFlagBits::eVertex,0,consts);
 
     vk::DeviceSize offset = 0;
@@ -484,20 +490,24 @@ void RasterScan2D::runRQEPipeline(PRasterIndex index, vkcore::PBuffer qranges, u
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, rqePipeline.get());
     vd->commandBuffer->beginRendering(&renderingInfo);
 
-    vk::DescriptorBufferInfo indexDescriptor{ index->indexBuffer->buf, 0, VK_WHOLE_SIZE };
     vk::DescriptorBufferInfo resDescriptor{ bufs->resBuffer->buf, 0, VK_WHOLE_SIZE };
     vk::DescriptorBufferInfo rangeDescriptor{ qranges->buf, 0, VK_WHOLE_SIZE };
 
     std::vector<vk::WriteDescriptorSet> descriptorSets = {
-        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &indexDescriptor},
-        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resDescriptor},
-        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rangeDescriptor},
+        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resDescriptor},
+        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rangeDescriptor},
     };
 
     vd->device->updateDescriptorSets(descriptorSets, nullptr);
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, rqePipelineProps.pipelineLayout.get(), 0, rqePipelineProps.descriptorSet.get(), nullptr);
 
-    std::array<uint32_t,2> consts = {INDEX_RESOLUTION, static_cast<uint32_t>(ncols)};
+    uint64_t indexAddr = index->indexBuffer->getDeviceAddress();
+    std::array<uint32_t,4> consts = {
+        INDEX_RESOLUTION,
+        static_cast<uint32_t>(ncols),
+        static_cast<uint32_t>(indexAddr & 0xFFFFFFFF),
+        static_cast<uint32_t>(indexAddr >> 32)
+    };
     vd->commandBuffer->pushConstants<uint32_t>(rqePipelineProps.pipelineLayout.get(),vk::ShaderStageFlagBits::eVertex|vk::ShaderStageFlagBits::eFragment,0,consts);
 
     vk::DeviceSize offset = 0;
