@@ -1,19 +1,6 @@
 #version 450
-#extension GL_KHR_shader_subgroup_basic : enable
-#extension GL_KHR_shader_subgroup_ballot : enable
-#extension GL_KHR_shader_subgroup_arithmetic : enable
-#extension GL_KHR_shader_subgroup_vote : enable
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
-
-// CompactEntry: 4 uints (16 bytes) - same as RasterScan2D
-// Valid bit is MSB of rowId (0x80000000)
-struct CompactEntry {
-    uint x;
-    uint y;
-    uint z;
-    uint rowId;  // MSB is valid bit
-};
 
 layout(std430, binding = 0) buffer StartAddrBuffer {
     uint startAddr[];
@@ -23,8 +10,9 @@ layout(std430, binding = 1) buffer CountBuffer {
     uint count[];
 };
 
+// Binding 2: Data buffer (using descriptor binding)
 layout(std430, binding = 2) buffer DataBuffer {
-    CompactEntry data[];
+    uvec4 data[];
 };
 
 layout(std430, binding = 3) buffer PointsBuffer {
@@ -36,7 +24,6 @@ layout(std430, binding = 6) buffer CapacityBuffer {
 };
 
 // Binding 7: extentBuffer - highest index written per bin
-// Updated with atomicMax when an entry is successfully inserted
 layout(std430, binding = 7) buffer ExtentBuffer {
     uint extent[];
 };
@@ -53,97 +40,50 @@ layout(push_constant) uniform PushConstants {
 
 void main() {
     uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.npoints) return;
     
-    bool isActive = (gid < pc.npoints);
-    uint binIdx = 0;
-    
-    uint x = 0;
-    uint y = 0;
-    uint z = 0;
-    
-    if (isActive) {
-        // Read point based on layout
-        if (pc.useRowMajor != 0u) {
-            // Row-major: [x0, y0, z0, x1, y1, z1, ...]
-            x = points[gid * 3 + 0];
-            y = points[gid * 3 + 1];
-            z = points[gid * 3 + 2];
-        } else {
-            // Column-major: [X... | Y... | Z...]
-            x = points[gid];
-            y = points[gid + pc.npoints];
-            z = points[gid + 2 * pc.npoints];
-        }
-
-        // Determine bin
-        uint bx = 0;
-        if (x >= pc.minX) {
-            bx = (x - pc.minX) / pc.binWidthX;
-        }
-        if (bx >= pc.resolution) bx = pc.resolution - 1;
-        
-        uint by = 0;
-        if (y >= pc.minY) {
-            by = (y - pc.minY) / pc.binWidthY;
-        }
-        if (by >= pc.resolution) by = pc.resolution - 1;
-        
-        binIdx = by * pc.resolution + bx;
+    // Read point based on layout
+    uint x, y, z;
+    if (pc.useRowMajor != 0u) {
+        // Row-major: [x0, y0, z0, x1, y1, z1, ...]
+        x = points[gid * 3 + 0];
+        y = points[gid * 3 + 1];
+        z = points[gid * 3 + 2];
+    } else {
+        // Column-major: [X... | Y... | Z...]
+        x = points[gid];
+        y = points[gid + pc.npoints];
+        z = points[gid + 2 * pc.npoints];
     }
+
+    // Determine bin
+    uint bx = 0;
+    if (x >= pc.minX) {
+        bx = (x - pc.minX) / pc.binWidthX;
+    }
+    if (bx >= pc.resolution) bx = pc.resolution - 1;
     
-    // Subgroup Aggregation
-    while (subgroupAny(isActive)) {
-        // Pick the highest bin index among active threads
-        uint targetBin = subgroupMax(isActive ? binIdx : 0);
+    uint by = 0;
+    if (y >= pc.minY) {
+        by = (y - pc.minY) / pc.binWidthY;
+    }
+    if (by >= pc.resolution) by = pc.resolution - 1;
+    
+    uint binIdx = by * pc.resolution + bx;
+    
+    // Get slot in bin using atomic on extent buffer
+    uint offsetInBin = atomicAdd(extent[binIdx], 1);
+    
+    // Check capacity before writing
+    uint origCount = capacity[binIdx];
+    uint binCapacity = origCount * pc.scaleFactor;
+    
+    if (offsetInBin < binCapacity) {
+        // Global index
+        uint start = startAddr[binIdx];
+        uint globalIdx = start + offsetInBin;
         
-        // Identify participants
-        bool isTarget = isActive && (binIdx == targetBin);
-        
-        if (isTarget) {
-            // How many threads for this bin?
-            uint aggCount = subgroupAdd(1);
-            
-            // Get base offset for the group using one atomic on extent buffer
-            // extent[bin] tracks the next available slot (highest index + 1)
-            // After build: extent[bin] = original count (all entries 0..count-1 are used)
-            // After insert: extent[bin] = highest index + 1
-            uint groupBase = 0;
-            if (subgroupElect()) {
-                groupBase = atomicAdd(extent[targetBin], aggCount);
-            }
-            groupBase = subgroupBroadcastFirst(groupBase);
-            
-            // Calculate thread-local offset
-            uint localOffset = subgroupExclusiveAdd(1);
-            
-            // Check capacity before writing
-            // capacity[bin] stores original count, actual capacity = count * scaleFactor
-            // For bins with 0 original count, we can't insert (no space allocated)
-            uint origCount = capacity[targetBin];
-            uint binCapacity = origCount * pc.scaleFactor;
-            uint offsetInBin = groupBase + localOffset;
-            
-            // Allow insert if within capacity
-            if (offsetInBin < binCapacity) {
-                // Global index
-                uint start = startAddr[targetBin];
-                uint globalIdx = start + offsetInBin;
-                
-                // Write to data buffer (4 uints, valid bit in MSB of rowId)
-                CompactEntry entry;
-                entry.x = x;
-                entry.y = y;
-                entry.z = z;
-                entry.rowId = gid | 0x80000000u; // rowId with valid bit set in MSB
-                
-                data[globalIdx] = entry;
-                
-                // Note: extent is already updated by atomicAdd above
-                // No need for atomicMax here since we're using atomicAdd for allocation
-            }
-            // If over capacity, the insert is silently dropped (could add overflow handling)
-            
-            isActive = false;
-        }
+        // Write to data buffer using descriptor binding
+        data[globalIdx] = uvec4(x, y, z, gid | 0x80000000u);
     }
 }

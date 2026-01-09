@@ -11,7 +11,7 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 1
+#define RUNRASTER 0
 
 #endif
 
@@ -325,7 +325,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         std::cerr << "[DEBUG] Extent: max=" << maxExtent << ", sum=" << sumExtent << "\n";
     }
     
-    uint32_t ndeletes = 1000; // npoints/10;
+    uint32_t ndeletes = 10000; // npoints/10;
     if(ndeletes > npoints) ndeletes = npoints;
     
     std::cerr << "\n--- Delete Performance ---\n";

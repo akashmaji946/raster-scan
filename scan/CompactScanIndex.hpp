@@ -96,14 +96,17 @@ public:
     // Graphics Pipelines (for fast build like RasterScan2D)
     vkcore::GraphicsPipelineProperties bcPipelineProps; // Build Count
     vkcore::GraphicsPipelineProperties bPipelineProps;  // Build Insert
+    vkcore::GraphicsPipelineProperties insPipelineProps; // Insert (graphics) for >4GB
     vkcore::GraphicsPipelineProperties queryGfxPipelineProps; // Query Pass 1 (range)
     vkcore::GraphicsPipelineProperties edgePipelineProps;     // Query Pass 2 (edge)
     vk::UniquePipeline bcPipeline; // Build Count
     vk::UniquePipeline bPipeline;  // Build Insert
+    vk::UniquePipeline insPipeline; // Insert (graphics)
     vk::UniquePipeline queryGfxPipeline; // Query Pass 1 (range)
     vk::UniquePipeline edgePipeline;     // Query Pass 2 (edge)
     vk::UniqueShaderModule bcVertexShader;
     vk::UniqueShaderModule bVertexShader;
+    vk::UniqueShaderModule insVertexShader;
     vk::UniqueShaderModule fragmentShader; // Dummy fragment shader
     vk::UniqueShaderModule queryGfxVertexShader;
     vk::UniqueShaderModule queryGfxGeomShader;

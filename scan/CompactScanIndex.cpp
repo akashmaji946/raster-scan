@@ -93,7 +93,7 @@ void CompactScanIndex::allocateBuffers(uint32_t npoints) {
     
     dataBuffer = std::make_shared<Buffer>(vd);
     dataBuffer->create(totalAllocatedCapacity * sizeof(CompactEntry), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eShaderDeviceAddress, 
         MemoryType::Internal);
         
     // Stats Buffer
@@ -252,7 +252,7 @@ void CompactScanIndex::setupPipelines() {
         bPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         bPipelineProps.setInputAssemblyFlag();
         
-        // Bindings: count buffer (0) and index buffer (1) - like RasterScan2D
+        // Bindings: count buffer (0), startAddr buffer (1) - data buffer uses buffer device address
         bPipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
             vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex}
@@ -260,9 +260,9 @@ void CompactScanIndex::setupPipelines() {
         bPipelineProps.poolSizes = {
             vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 2}
         };
-        // Push constants: minVal[2], binRange[2], res (5 uints) - like RasterScan2D
+        // Push constants: minVal[2], binRange[2], res, pad, dataBufferAddr[2] (8 uints)
         bPipelineProps.pushConstantRange = {
-            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 5 * sizeof(uint32_t))
+            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 8 * sizeof(uint32_t))
         };
         bPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
         
@@ -273,6 +273,59 @@ void CompactScanIndex::setupPipelines() {
         
         vk::UniqueRenderPass dummyRenderPass;
         bPipeline = bPipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
+    }
+
+    // ========== GRAPHICS PIPELINE: Insert (incremental) ==========
+    {
+        std::vector<uint32_t> vshader;
+        validate(readShader(SHADER_FOLDER + "/compact_insert_gfx.vert.spv", vshader), "compact insert gfx vertex shader");
+        vk::ShaderModuleCreateInfo createInfo({}, vshader.size() * sizeof(uint32_t), vshader.data());
+        insVertexShader = vd->device->createShaderModuleUnique(createInfo);
+
+        insPipelineProps.pipelineShaderStageCreateInfos = {
+            vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eVertex, insVertexShader.get(), "main"),
+            vk::PipelineShaderStageCreateInfo({}, vk::ShaderStageFlagBits::eFragment, fragmentShader.get(), "main")
+        };
+        insPipelineProps.setShaderStageFlag();
+
+        // Row-major vertex input: one binding with stride = 3 uints (x,y,z)
+        insPipelineProps.vertexInputBindingDescriptions = {
+            vk::VertexInputBindingDescription(0, 3 * sizeof(uint32_t))
+        };
+        insPipelineProps.setInputBindingFlag();
+
+        insPipelineProps.vertexInputAttributeDescriptions = {
+            vk::VertexInputAttributeDescription(0, 0, vk::Format::eR32Uint, 0),
+            vk::VertexInputAttributeDescription(1, 0, vk::Format::eR32Uint, sizeof(uint32_t)),
+            vk::VertexInputAttributeDescription(2, 0, vk::Format::eR32Uint, 2 * sizeof(uint32_t))
+        };
+        insPipelineProps.setInputAttrFlag();
+
+        insPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
+        insPipelineProps.setInputAssemblyFlag();
+
+        // Bindings: startAddr(0), extent(1), capacity(2) - data buffer uses buffer device address
+        insPipelineProps.setLayoutBindings = {
+            vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+            vk::DescriptorSetLayoutBinding{2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex}
+        };
+        insPipelineProps.poolSizes = {
+            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 3}
+        };
+        // Push constants: minVal[2], binWidth[2], res, scaleFactor, dataBufferAddr[2] (8 uints)
+        insPipelineProps.pushConstantRange = {
+            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 8 * sizeof(uint32_t))
+        };
+        insPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
+
+        vk::PipelineRenderingCreateInfo rpCreateInfo;
+        rpCreateInfo.colorAttachmentCount = 1;
+        vk::Format colorFormat = vk::Format::eR8Sint;
+        rpCreateInfo.pColorAttachmentFormats = &colorFormat;
+
+        vk::UniqueRenderPass dummyRenderPass;
+        insPipeline = insPipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
     }
     
     // ========== GRAPHICS QUERY PIPELINE (single-pass with loop) ==========
@@ -383,17 +436,17 @@ void CompactScanIndex::setupPipelines() {
         edgePipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         edgePipelineProps.setInputAssemblyFlag();
         
-        // Bindings: data, result, query
+        // Bindings: result, query (data buffer now uses buffer device address)
         edgePipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment},
-            vk::DescriptorSetLayoutBinding{2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
+            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eFragment}
         };
         edgePipelineProps.poolSizes = {
-            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 3}
+            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 2}
         };
+        // Push constants: res, ncols, dataBufferAddr[2] (4 uints total)
         edgePipelineProps.pushConstantRange = {
-            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, 2 * sizeof(uint32_t))
+            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, 4 * sizeof(uint32_t))
         };
         edgePipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
         
@@ -632,9 +685,8 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader,
                              vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
     
-    // Barrier: Transfer -> Vertex shader (for insert atomicAdd on countBuffer)
-    countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eVertexShader,
-                         vk::AccessFlagBits::eTransferRead, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    // Clear countBuffer to 0 before build pass (so atomicAdd returns local positions starting from 0)
+    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader, 0);
     
     // ========== PASS 3: Insert Points (Graphics Pipeline) ==========
     {
@@ -643,17 +695,22 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, bPipeline.get());
         vd->commandBuffer->beginRendering(&renderingInfo);
         
-        // Update descriptor sets - binding 0: countBuffer, binding 1: dataBuffer (like RasterScan2D)
+        // Update descriptor sets - binding 0: countBuffer, binding 1: startAddrBuffer (data buffer uses buffer device address)
         vk::DescriptorBufferInfo countDesc{countBuffer->buf, 0, VK_WHOLE_SIZE};
-        vk::DescriptorBufferInfo dataDesc{dataBuffer->buf, 0, VK_WHOLE_SIZE};
+        vk::DescriptorBufferInfo startDesc{startAddrBuffer->buf, 0, VK_WHOLE_SIZE};
         std::vector<vk::WriteDescriptorSet> descriptorSets = {
             vk::WriteDescriptorSet{bPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countDesc},
-            vk::WriteDescriptorSet{bPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataDesc}
+            vk::WriteDescriptorSet{bPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startDesc}
         };
         vd->device->updateDescriptorSets(descriptorSets, nullptr);
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, bPipelineProps.pipelineLayout.get(), 0, bPipelineProps.descriptorSet.get(), nullptr);
         
-        vd->commandBuffer->pushConstants<uint32_t>(bPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, gfxPC);
+        // Push constants: minVal[2], binRange[2], res, pad, dataBufferAddr[2] (8 uints)
+        uint64_t dataAddr = dataBuffer->getDeviceAddress();
+        std::array<uint32_t, 8> gfxPCWithAddr = {gfxPC[0], gfxPC[1], gfxPC[2], gfxPC[3], gfxPC[4], 0, 
+                                                  static_cast<uint32_t>(dataAddr & 0xFFFFFFFF), 
+                                                  static_cast<uint32_t>(dataAddr >> 32)};
+        vd->commandBuffer->pushConstants<uint32_t>(bPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, gfxPCWithAddr);
         
         // Bind vertex buffers
         vk::DeviceSize offset = 0;
@@ -751,10 +808,7 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
         };
         vd->device->updateDescriptorSets(writes, nullptr);
         
-        // Pass 2 binding 0 (data) never changes
-        vk::DescriptorBufferInfo dataInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::WriteDescriptorSet dataWrite{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo};
-        vd->device->updateDescriptorSets({dataWrite}, nullptr);
+        // Data buffer now uses buffer device address - no descriptor binding needed
         
         // Create reusable fence
         queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
@@ -763,16 +817,17 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     }
     
     // Only update Pass 2 bindings that change (result buffer and query buffer)
+    // Binding 0 = result buffer, Binding 1 = query buffer (data buffer uses buffer device address)
     if (lastResultBuffer != resultBuffer) {
         vk::DescriptorBufferInfo resInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::WriteDescriptorSet resWrite{edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo};
+        vk::WriteDescriptorSet resWrite{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo};
         vd->device->updateDescriptorSets({resWrite}, nullptr);
         lastResultBuffer = resultBuffer;
     }
     
     // Always update query buffer binding (changes per query)
     vk::DescriptorBufferInfo qInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::WriteDescriptorSet qWrite{edgePipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &qInfo};
+    vk::WriteDescriptorSet qWrite{edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &qInfo};
     vd->device->updateDescriptorSets({qWrite}, nullptr);
     
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
@@ -818,8 +873,9 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
         vd->commandBuffer->beginRendering(&renderingInfo);
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, edgePipelineProps.pipelineLayout.get(), 0, edgePipelineProps.descriptorSet.get(), nullptr);
         
-        // Push constants: res, ncols
-        uint32_t pc2[2] = { INDEX_RESOLUTION, 3 };  // 3 columns (x, y, z)
+        // Push constants: res, ncols, dataBufferAddr[2] (4 uints total)
+        uint64_t dataAddr = dataBuffer->getDeviceAddress();
+        uint32_t pc2[4] = { INDEX_RESOLUTION, 3, static_cast<uint32_t>(dataAddr & 0xFFFFFFFF), static_cast<uint32_t>(dataAddr >> 32) };
         vd->commandBuffer->pushConstants<uint32_t>(edgePipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc2);
         
         vk::DeviceSize offset = 0;
@@ -854,29 +910,13 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t n
     vk::DescriptorBufferInfo cInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
     writes.push_back(vk::WriteDescriptorSet(descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cInfo));
     
-    // Binding 2: Data buffer (index data)
-    vk::DescriptorBufferInfo dataInfo(this->dataBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dataInfo));
-    
-    // Binding 3: Input data to delete
+    // Binding 2: Input data to delete (data buffer now uses buffer device address)
     vk::DescriptorBufferInfo dInfo(deleteDataBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
     
-    // Binding 4: Output (Dummy/MaxBuffer)
-    vk::DescriptorBufferInfo outInfo(maxBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 4, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &outInfo));
-    
-    // Binding 5: Stats
-    vk::DescriptorBufferInfo sInfo(statsBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 5, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &sInfo));
-    
-    // Binding 6: Capacity
-    vk::DescriptorBufferInfo cpInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 6, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cpInfo));
-    
-    // Binding 7: Extent (not modified on delete - entries not shifted)
+    // Binding 3: Extent (not modified on delete - entries not shifted)
     vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo));
+    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo));
     
     vd->device->updateDescriptorSets(writes, nullptr);
     
@@ -956,8 +996,11 @@ void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t n
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, deletePipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
     
-    uint32_t pc[12] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], ndeletes, binWidth[0], binWidth[1], binWidth[2], 0 };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 12 * sizeof(uint32_t), pc);
+    // Push constants: minVal[3], resolution, maxVal[3], ndeletes, binWidth[3], pad, dataBufferAddr[2] (14 uints)
+    uint64_t dataAddr = dataBuffer->getDeviceAddress();
+    uint32_t pc[14] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], ndeletes, binWidth[0], binWidth[1], binWidth[2], 0,
+                        static_cast<uint32_t>(dataAddr & 0xFFFFFFFF), static_cast<uint32_t>(dataAddr >> 32) };
+    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 14 * sizeof(uint32_t), pc);
     
     // One thread per delete request, linear scan within bin
     uint32_t groups = (ndeletes + 255) / 256;
@@ -1031,72 +1074,46 @@ void CompactScanIndex::deletePointsIndexed(vkcore::PBuffer deleteIndicesBuffer, 
 }
 
 void CompactScanIndex::insertPoints(vkcore::PBuffer pointsBuffer, uint32_t npoints) {
-    // Update Descriptor Set with new Points
-    std::vector<vk::WriteDescriptorSet> writes;
-    
-    // Binding 3: Points
-    vk::DescriptorBufferInfo pInfo(pointsBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &pInfo));
-    
-    // Bind StartAddr(0), Count(1), Data(2), Capacity(6) if needed? 
-    // They should be persistent in descSet unless overwritten by other modes?
-    // Mode21 runs sequentially.
-    // However, `deletePoints` overwrote Binding 3 with `DeleteDataBuffer`.
-    // So writing Binding 3 here is correct.
-    // What about Binding 0, 1, 2, 6?
-    // `runRangeQueries` overwrites 3 and 4.
-    // `deletePoints` overwrites 3.
-    // So 0, 1, 2, 6 are safe? 
-    // Wait, `deletePoints` uses Binding 3 for `DeleteDataBuffer`.
-    // `insertPoints` uses Binding 3 for `PointsBuffer`.
-    // `compact_insert.comp` uses Binding 0,1,2,3,6.
-    // We should ensure they are bound.
-    // Since `buildIndex` bound them, and `descSet` is unique per object, they persist unless overwritten.
-    // I will re-bind them just to be absolutely safe (and robust against future changes).
-    
-    vk::DescriptorBufferInfo tInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &tInfo));
-    
-    vk::DescriptorBufferInfo cInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cInfo));
-    
-    vk::DescriptorBufferInfo dInfo(dataBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &dInfo));
-    
-    vk::DescriptorBufferInfo cpInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 6, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cpInfo));
-    
-    // Binding 4: Output (Dummy)
-    vk::DescriptorBufferInfo outInfo(maxBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 4, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &outInfo));
-    
-    // Binding 5: Stats
-    vk::DescriptorBufferInfo sInfo(statsBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 5, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &sInfo));
-    
-    // Binding 7: Extent (updated with atomicMax on insert)
-    vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
-    writes.push_back(vk::WriteDescriptorSet(descSet.get(), 7, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extInfo));
-    
-    vd->device->updateDescriptorSets(writes, nullptr);
-    
-    // Dispatch
+    // Graphics-based insert avoids >4GB maxStorageBufferRange on dataBuffer.
+    // It writes to dataBuffer via buffer device address in the vertex shader.
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
-    
-    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, insertPipeline.get());
-    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
-    
-    // Push constants: minVal[3], resolution, maxVal[3], npoints, binWidth[3], useRowMajor, scaleFactor
-    // useRowMajor = 1 for row-major input (insert), 0 for column-major (build)
-    uint32_t pc[13] = { minVal[0], minVal[1], minVal[2], INDEX_RESOLUTION, maxVal[0], maxVal[1], maxVal[2], npoints, binWidth[0], binWidth[1], binWidth[2], 1 /* useRowMajor */, COMPACT_INITIAL_SCALE_FACTOR };
-    vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, 13 * sizeof(uint32_t), pc);
-    
-    uint32_t groups = (npoints + 255) / 256;
-    vd->commandBuffer->dispatch(groups, 1, 1);
-    
+
+    vk::RenderingAttachmentInfo colorInfo;
+    vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, insPipeline.get());
+    vd->commandBuffer->beginRendering(&renderingInfo);
+
+    vk::DescriptorBufferInfo startDesc{startAddrBuffer->buf, 0, VK_WHOLE_SIZE};
+    vk::DescriptorBufferInfo extDesc{extentBuffer->buf, 0, VK_WHOLE_SIZE};
+    vk::DescriptorBufferInfo capDesc{capacityBuffer->buf, 0, VK_WHOLE_SIZE};
+    std::vector<vk::WriteDescriptorSet> descriptorSets = {
+        vk::WriteDescriptorSet{insPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startDesc},
+        vk::WriteDescriptorSet{insPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extDesc},
+        vk::WriteDescriptorSet{insPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &capDesc}
+    };
+    vd->device->updateDescriptorSets(descriptorSets, nullptr);
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, insPipelineProps.pipelineLayout.get(), 0, insPipelineProps.descriptorSet.get(), nullptr);
+
+    uint64_t dataAddr = dataBuffer->getDeviceAddress();
+    uint32_t scaleFactorInt = (uint32_t)(COMPACT_INITIAL_SCALE_FACTOR + 0.5);
+    if (scaleFactorInt < 1) scaleFactorInt = 1;
+    std::array<uint32_t, 8> pc = {
+        minVal[0], minVal[1],
+        binWidth[0], binWidth[1],
+        INDEX_RESOLUTION,
+        scaleFactorInt,
+        static_cast<uint32_t>(dataAddr & 0xFFFFFFFF),
+        static_cast<uint32_t>(dataAddr >> 32)
+    };
+    vd->commandBuffer->pushConstants<uint32_t>(insPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, pc);
+
+    vd->commandBuffer->bindVertexBuffers(0, pointsBuffer->buf, vk::DeviceSize(0));
+    vd->commandBuffer->draw(npoints, 1, 0, 0);
+    vd->commandBuffer->endRendering();
+
     vd->commandBuffer->end();
-    
+
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
@@ -1104,9 +1121,6 @@ void CompactScanIndex::insertPoints(vkcore::PBuffer pointsBuffer, uint32_t npoin
     vd->submit(submitInfo, fence, false);
     vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence);
-    
-    // Report stats after insert
-    // computeAndPrintStats("[GPU Stats - After Insert]");
 }
 
 void CompactScanIndex::computeAndPrintStats(const std::string& phase) {

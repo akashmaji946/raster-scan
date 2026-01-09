@@ -95,6 +95,9 @@ public:
     void clearBufferWithBarrier(vk::PipelineStageFlagBits dstStage, uint32_t fillVal=0);
 
     void copyFrom(size_t size, size_t srcOffset, size_t dstOffset, PBuffer buf, int32_t transferQueue = -1);
+    
+    // Get device address for buffer device address feature (bypasses 4GB maxStorageBufferRange limit)
+    uint64_t getDeviceAddress();
 
 public:
     vk::Buffer buf;

@@ -13,7 +13,7 @@
 #define INDEX_RESOLUTION 1024
 
 // requires 1 GB space for storing results
-#define MAX_RESULT_SIZE (1 << 28)
+#define MAX_RESULT_SIZE (1 << 30)
 #define MAX_QUERIES (1 << 24)
 
 class CommonBufferPool {

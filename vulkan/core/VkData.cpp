@@ -522,6 +522,12 @@ void Buffer::unmap() {
     mapped = false;
 }
 
+uint64_t Buffer::getDeviceAddress() {
+    vk::BufferDeviceAddressInfo addressInfo;
+    addressInfo.buffer = buf;
+    return vd->device->getBufferAddress(addressInfo);
+}
+
 ImageBuffer::ImageBuffer(PVkDevice vd) : Buffer(vd) {
 }
 

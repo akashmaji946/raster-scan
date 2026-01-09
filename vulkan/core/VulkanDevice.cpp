@@ -183,6 +183,7 @@ bool VulkanDevice::initDevice() {
     features12.shaderStorageTexelBufferArrayDynamicIndexing = VK_TRUE;
     features12.shaderBufferInt64Atomics = VK_TRUE;
     features12.shaderSharedInt64Atomics = VK_TRUE;
+    features12.bufferDeviceAddress = VK_TRUE;  // Enable buffer device address to bypass 4GB limit
 
     vk::DeviceCreateInfo info;
     info.pEnabledFeatures = &features;
@@ -200,6 +201,7 @@ bool VulkanDevice::initDevice() {
     std::vector<const char*> extensions;
     extensions.push_back(VK_KHR_EXTERNAL_MEMORY_EXTENSION_NAME);
     extensions.push_back(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
+    extensions.push_back(VK_KHR_BUFFER_DEVICE_ADDRESS_EXTENSION_NAME);  // For >4GB buffers
 //    extensions.push_back(VK_KHR_SHADER_ATOMIC_INT64_EXTENSION_NAME);
 #ifdef WIN32
     extensions.push_back(VK_KHR_EXTERNAL_MEMORY_WIN32_EXTENSION_NAME);
@@ -302,6 +304,7 @@ void VulkanDevice::setupVMA() {
     allocatorCreateInfo.device = device.get();
     allocatorCreateInfo.instance = VkEngine::getEngine()->getVulkanInstance();
     allocatorCreateInfo.pVulkanFunctions = &vulkanFunctions;
+    allocatorCreateInfo.flags = VMA_ALLOCATOR_CREATE_BUFFER_DEVICE_ADDRESS_BIT;  // Enable buffer device address
     vmaCreateAllocator(&allocatorCreateInfo, &allocator);
 
     if(props.deviceType == vk::PhysicalDeviceType::eDiscreteGpu) {

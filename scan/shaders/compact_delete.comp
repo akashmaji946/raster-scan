@@ -1,4 +1,7 @@
 #version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
 
 // Simple delete: one thread per delete request, linear scan within bin
 // For skewed distributions, this can be slow but is correct
@@ -13,6 +16,11 @@ struct CompactEntry {
     uint rowId;  // MSB is valid bit
 };
 
+// Buffer reference for >4GB data buffer access - single element for 64-bit pointer arithmetic
+layout(buffer_reference, std430, buffer_reference_align = 16) buffer DataBufferRef {
+    CompactEntry data;  // Single element, we'll use pointer arithmetic for 64-bit indexing
+};
+
 layout(std430, binding = 0) buffer StartAddrBuffer {
     uint startAddr[];
 };
@@ -21,17 +29,13 @@ layout(std430, binding = 1) buffer CountBuffer {
     uint count[];
 };
 
-layout(std430, binding = 2) buffer DataBuffer {
-    CompactEntry data[];
-};
-
-layout(std430, binding = 3) buffer DeleteDataBuffer {
+layout(std430, binding = 2) buffer DeleteDataBuffer {
     uint deletePoints[]; // [x, y, z] triples
 };
 
-// Binding 7: extentBuffer - highest index written per bin
+// Binding 3: extentBuffer - highest index written per bin
 // NOT modified on delete (entries not shifted, just marked invalid)
-layout(std430, binding = 7) buffer ExtentBuffer {
+layout(std430, binding = 3) buffer ExtentBuffer {
     uint extent[];
 };
 
@@ -41,11 +45,16 @@ layout(push_constant) uniform PushConstants {
     uint maxX; uint maxY; uint maxZ;
     uint ndeletes;
     uint binWidthX; uint binWidthY; uint binWidthZ;
+    uint pad;  // padding for alignment
+    uvec2 dataBufferAddr;  // 64-bit buffer device address
 } pc;
 
 void main() {
     uint gid = gl_GlobalInvocationID.x;
     if (gid >= pc.ndeletes) return;
+    
+    // Reconstruct 64-bit buffer base address from push constants
+    uint64_t baseAddr = uint64_t(pc.dataBufferAddr.x) | (uint64_t(pc.dataBufferAddr.y) << 32);
     
     // Read point to delete
     uint dx = deletePoints[gid * 3 + 0];
@@ -73,20 +82,26 @@ void main() {
     for (uint i = 0; i < cnt; i++) {
         uint idx = start + i;
         
-        // Read coordinates
-        uint ex = data[idx].x;
-        uint ey = data[idx].y;
-        uint ez = data[idx].z;
+        // Use 64-bit pointer arithmetic to bypass 4GB indexing limit
+        // Each entry is 16 bytes (CompactEntry), so byte offset = idx * 16
+        uint64_t byteOffset = uint64_t(idx) * 16u;
+        uint64_t elementAddr = baseAddr + byteOffset;
+        DataBufferRef dataRef = DataBufferRef(elementAddr);
+        
+        // Read coordinates via buffer reference (bypasses 4GB limit)
+        uint ex = dataRef.data.x;
+        uint ey = dataRef.data.y;
+        uint ez = dataRef.data.z;
         
         // Check if coordinates match
         if (ex == dx && ey == dy && ez == dz) {
             // Try to atomically invalidate
-            uint currentRowId = data[idx].rowId;
+            uint currentRowId = dataRef.data.rowId;
             
             // Check if valid
             if ((currentRowId & 0x80000000u) != 0u) {
                 uint newRowId = currentRowId & 0x7FFFFFFFu;
-                uint oldRowId = atomicCompSwap(data[idx].rowId, currentRowId, newRowId);
+                uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
                 
                 if (oldRowId == currentRowId) {
                     // Successfully deleted - return immediately

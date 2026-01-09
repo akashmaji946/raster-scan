@@ -118,7 +118,7 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
     // =========================================================
     
     // Configuration
-    const uint32_t NUM_BATCHES = 10;
+    const uint32_t NUM_BATCHES = 10000;
     const int RUNS = 2;
     const bool USE_RANDOM_BATCHES = true;  // Toggle: true = random, false = sequential (like Mode 22)
     const bool CPU_CHECK = false;  // Toggle: true = verify GPU results against CPU, false = skip verification
