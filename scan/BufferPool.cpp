@@ -75,7 +75,7 @@ void IndexBuffers::initialize() {
 
     uint32_t ncols = singleColumn? 2 : 4;
     indexBuffer.reset(new Buffer(vd));
-    indexBuffer->create(ncols * npoints * sizeof(uint32_t), vk::BufferUsageFlagBits::eStorageBuffer|vk::BufferUsageFlagBits::eTransferDst|vk::BufferUsageFlagBits::eTransferSrc,MemoryType::Internal);
+    indexBuffer->create(ncols * npoints * sizeof(uint32_t), vk::BufferUsageFlagBits::eStorageBuffer|vk::BufferUsageFlagBits::eTransferDst|vk::BufferUsageFlagBits::eTransferSrc|vk::BufferUsageFlagBits::eShaderDeviceAddress,MemoryType::Internal);
     valid = true;
 }
 
