@@ -12,7 +12,7 @@
 
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
-#define USE_RASTER 0
+#define USE_RASTER 1
 
 #endif
 

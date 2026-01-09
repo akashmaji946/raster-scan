@@ -213,7 +213,8 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     }
     std::sort(rsBuildTimes.begin(), rsBuildTimes.end());
     double rsBuildTime = rsBuildTimes[rsBuildTimes.size() / 2];
-    std::cerr << ">>> RasterScan2D Index build time: " << (rsBuildTime * 1000.0) << " ms\n";
+
+    std::cerr << "\n\n>>> RasterScan2D Index build time: " << (rsBuildTime * 1000.0) << " ms\n\n";
 
     PBufferCache bufs(new CommonBufferPool(vd));
     RasterScan2D rs(vd, bufs, scan, reduce, ncols);
@@ -287,7 +288,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     }
     std::sort(compactBuildTimes.begin(), compactBuildTimes.end());
     double buildTime = compactBuildTimes[compactBuildTimes.size() / 2];
-    std::cerr << "Compact Index build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "\n\n>>>Compact Index build time: " << (buildTime * 1000.0) << " ms\n\n";
 
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
     compactIndex->initialize();

@@ -37,7 +37,7 @@ using namespace vkcore;
 // 23 = Batch Delete/Insert Cycles with CPU Verification
 // 24 = TPC-C Customer Table Benchmark
 
-#define USE_INDEX_UPDATE_PIPELINE 24
+#define USE_INDEX_UPDATE_PIPELINE 22
 
 int main(int argc, char* argv[]) {
     // Default values
