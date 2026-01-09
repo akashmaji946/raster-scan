@@ -13,6 +13,7 @@
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
 #define USE_RASTER 1
+
 #endif
 
 // TPC-C Constants
@@ -209,14 +210,24 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     PBufferCache bufs(new CommonBufferPool(vd));
     
     RasterScan2D rs(vd, bufs, scan, reduce, ncols);
-    
+    rs.initalize();
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
     
-    CPUTimer buildTimer;
-    buildTimer.start();
-    PRasterIndex rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
-    double buildTime = double(buildTimer.stop()) / 1000000.0;
-    std::cerr << "RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "\nBuilding RasterScan2D Index (taking median of 5 runs)...\n";
+    std::vector<double> rsBuildTimes;
+    rsBuildTimes.reserve(5);
+    PRasterIndex rsIndex;
+    for(int k=0; k<5; k++) {
+        if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+        CPUTimer buildTimer;
+        buildTimer.start();
+        rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+        double bt = double(buildTimer.stop()) / 1000000.0;
+        rsBuildTimes.push_back(bt);
+    }
+    std::sort(rsBuildTimes.begin(), rsBuildTimes.end());
+    double buildTime = rsBuildTimes[rsBuildTimes.size() / 2];
+    std::cerr << "\n\n==> RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
     
 #else
@@ -237,11 +248,20 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before CompactScanIndex build");
     
-    CPUTimer buildTimer;
-    buildTimer.start();
-    compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
-    double buildTime = double(buildTimer.stop()) / 1000000.0;
-    std::cerr << "Compact Index Build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "\nBuilding Compact Index (taking median of 5 runs)...\n";
+    std::vector<double> compactBuildTimes;
+    compactBuildTimes.reserve(5);
+    for(int k=0; k<5; k++) {
+        if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
+        CPUTimer buildTimer;
+        buildTimer.start();
+        compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+        double bt = double(buildTimer.stop()) / 1000000.0;
+        compactBuildTimes.push_back(bt);
+    }
+    std::sort(compactBuildTimes.begin(), compactBuildTimes.end());
+    double buildTime = compactBuildTimes[compactBuildTimes.size() / 2];
+    std::cerr << "\n\n ==> Compact Index Build time: " << (buildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 #endif
     

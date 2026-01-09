@@ -187,19 +187,21 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     RasterScan2D rs(vd, bufs, scan, reduce, ncols);
     
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
-    std::cerr << "Building RasterScan2D Index ...\n";
-    double minRsBuildTime = 1e9;
+    std::cerr << "Building RasterScan2D Index (taking median of 5)...\n";
+    std::vector<double> rsBuildTimes;
+    rsBuildTimes.reserve(5);
     PRasterIndex rsIndex;
-    for(int k=0; k<3; k++) {
+    for(int k=0; k<5; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
         CPUTimer rsBuildTimer;
         rsBuildTimer.start();
         rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
         double bt = double(rsBuildTimer.stop()) / 1000000.0;
-        if(bt < minRsBuildTime) minRsBuildTime = bt;
+        rsBuildTimes.push_back(bt);
         if(k < 2) rsIndex.reset();
     }
-    double rsBuildTime = minRsBuildTime;
+    std::sort(rsBuildTimes.begin(), rsBuildTimes.end());
+    double rsBuildTime = rsBuildTimes[rsBuildTimes.size() / 2];
     std::cerr << ">>> RasterScan2D Index build time: " << (rsBuildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
 
@@ -248,17 +250,19 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
     GPUMemoryTool::printGPUMemoryStatus(vd, "Before CompactScanIndex build");
     
-    std::cerr << "\nBuilding Compact Index (taking min of 3 runs)...\n";
-    double minBuildTime = 1e9;
-    for(int k=0; k<3; k++) {
+    std::cerr << "\nBuilding Compact Index (taking median of 5 runs)...\n";
+    std::vector<double> compactBuildTimes;
+    compactBuildTimes.reserve(5);
+    for(int k=0; k<5; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
         CPUTimer buildTimer;
         buildTimer.start();
         compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
         double bt = double(buildTimer.stop()) / 1000000.0;
-        if(bt < minBuildTime) minBuildTime = bt;
+        compactBuildTimes.push_back(bt);
     }
-    double buildTime = minBuildTime;
+    std::sort(compactBuildTimes.begin(), compactBuildTimes.end());
+    double buildTime = compactBuildTimes[compactBuildTimes.size() / 2];
     std::cerr << "Compact Index build time: " << (buildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 
