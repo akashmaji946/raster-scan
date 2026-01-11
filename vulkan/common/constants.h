@@ -9,7 +9,7 @@
 
 #define SHADER_FOLDER std::string("../shaders")
 
-#define N_TIMERS 100
+#define N_TIMERS 1000
 #define NUM_STAGING_ARRAYS 5
 
 // Setting 16MB for now
