@@ -2,9 +2,14 @@
 // Licensed under the MIT License.
 
 #include "RasterScan2D.hpp"
-
-#include <core/GPUTimer.hpp>
+#include <iostream>
+#include <chrono>
 #include <cmath>
+#include <iostream>
+
+#ifndef VERBOSE_RASTER
+#define VERBOSE_RASTER 0
+#endif
 
 using namespace vkcore;
 
@@ -33,6 +38,18 @@ void RasterScan2D::initalize() {
 }
 
 PRasterIndex RasterScan2D::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t *minVal, uint32_t *maxVal) {
+
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Starting buildIndex..." << std::endl;
+    auto buildStart = std::chrono::high_resolution_clock::now();
+#endif
+
+
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Starting buildIndex index initialization..." << std::endl;
+    auto initStart = std::chrono::high_resolution_clock::now();
+#endif
+
     PRasterIndex index(new IndexBuffers(vd, npoints, false, scan->getBufSizeDivisor()));
     index->minVal[0] = minVal[0];
     index->maxVal[0] = maxVal[0];
@@ -41,34 +58,68 @@ PRasterIndex RasterScan2D::buildIndex(PBuffer pointsBuffer, uint32_t npoints, ui
     index->maxVal[1] = maxVal[1];
     index->binRange[1] = uint32_t(ceil(double(maxVal[1] - minVal[1])/ (INDEX_RESOLUTION)));
 
-    GPUTimer countTimer, copyTimer, prefixTimer, buildTimer;
+#if VERBOSE_RASTER
+    auto initEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> initDuration = initEnd - initStart;
+    std::cout << "[RasterScan2D] Index initialization time: " << initDuration.count() << " ms" << std::endl;
+#endif   
+
+
 
     vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
     vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
     index->cstartBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
 
     // first compute the layer count fbo
-    countTimer.start(vd);
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Step 1: Building histogram..." << std::endl;
+    auto histogramStart = std::chrono::high_resolution_clock::now();
+#endif
     this->buildHistogram(pointsBuffer,index);
-    countTimer.stop();
+#if VERBOSE_RASTER
+    auto histogramEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> histogramDuration = histogramEnd - histogramStart;
+    std::cout << "[RasterScan2D] Histogram build time: " << histogramDuration.count() << " ms" << std::endl;
+#endif
 
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Step 2: Computing max bin count..." << std::endl;
+#endif
     index->cstartBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader,vk::PipelineStageFlagBits::eComputeShader,vk::AccessFlagBits::eShaderWrite,vk::AccessFlagBits::eShaderRead);
     reduce->reduce(index->cstartBuffer, maxBuffer, index->indexSize);
     index->cstartBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader,vk::PipelineStageFlagBits::eComputeShader,vk::AccessFlagBits::eShaderRead,vk::AccessFlagBits::eShaderRead|vk::AccessFlagBits::eShaderWrite);
 
     // prefix sum to get offsets to write
-    prefixTimer.start(vd);
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Step 3: Computing prefix sum..." << std::endl;
+    auto prefixStart = std::chrono::high_resolution_clock::now();
+#endif
     scan->prefixSum(index->cstartBuffer->buf,index->countBufSize);
     index->cstartBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader,vk::PipelineStageFlagBits::eTransfer,vk::AccessFlagBits::eShaderWrite,vk::AccessFlagBits::eTransferWrite);
     index->cendBuffer->copyFrom(index->countBufSize * sizeof(uint32_t),0,0,index->cstartBuffer);
     index->cendBuffer->barrier(vk::PipelineStageFlagBits::eTransfer,vk::PipelineStageFlagBits::eVertexShader,vk::AccessFlagBits::eTransferWrite,vk::AccessFlagBits::eShaderRead);
-    prefixTimer.stop();
+#if VERBOSE_RASTER
+    auto prefixEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> prefixDuration = prefixEnd - prefixStart;
+    std::cout << "[RasterScan2D] Prefix sum time: " << prefixDuration.count() << " ms" << std::endl;
+#endif
 
     // build hash table
-    buildTimer.start(vd);
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Step 4: Building hash table..." << std::endl;
+    auto hashStart = std::chrono::high_resolution_clock::now();
+#endif
     this->build(pointsBuffer, index);
-    buildTimer.stop();
+#if VERBOSE_RASTER
+    auto hashEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> hashDuration = hashEnd - hashStart;
+    std::cout << "[RasterScan2D] Hash table build time: " << hashDuration.count() << " ms" << std::endl;
+#endif
 
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Step 5: Command buffer submission and GPU execution..." << std::endl;
+    auto submitStart = std::chrono::high_resolution_clock::now();
+#endif
 
     vd->commandBuffer->end();
     vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
@@ -77,14 +128,32 @@ PRasterIndex RasterScan2D::buildIndex(PBuffer pointsBuffer, uint32_t npoints, ui
 
     maxBuffer->readData((char *)&(index->maxBinCt), sizeof(uint32_t));
 
-    // TODO store timings
+#if VERBOSE_RASTER
+    auto submitEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> submitDuration = submitEnd - submitStart;
+    std::cout << "[RasterScan2D] GPU execution and fence wait time: " << submitDuration.count() << " ms" << std::endl;
+#endif
 
+#if VERBOSE_RASTER
+    auto buildEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> totalDuration = buildEnd - buildStart;
+    std::cout << "[RasterScan2D] Total buildIndex (START-END) time: " << totalDuration.count() << " ms" << std::endl;
+    std::cout << "[RasterScan2D] Total buildIndex (PARTS) time: " << initDuration.count() + histogramDuration.count() + prefixDuration.count() + hashDuration.count() + submitDuration.count() << " ms" << std::endl;
+    std::cout << "[RasterScan2D] Max bin count: " << index->maxBinCt << std::endl;
+#endif
+
+    // TODO store timings
     return index;
 }
 
 void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t nqueries) {
     vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
     vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
+
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Starting runRangeQueries for " << nqueries << " queries..." << std::endl;
+    auto queryStart = std::chrono::high_resolution_clock::now();
+#endif
 
     vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
     // Clear maxBuffer used for indirect draw and statistics
@@ -94,12 +163,40 @@ void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t
     // mirrors CompactScanIndex::runRangeQueries and ensures timing includes the
     // cost of clearing the output buffer for both pipelines.
     bufs->resBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader);
+
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Query Pass 1: Range query pipeline..." << std::endl;
+    auto rqtStart = std::chrono::high_resolution_clock::now();
+#endif
     this->runRQTPipeline(index,qranges,nqueries);
+#if VERBOSE_RASTER
+    auto rqtEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> rqtDuration = rqtEnd - rqtStart;
+    std::cout << "[RasterScan2D] Range query pipeline time: " << rqtDuration.count() << " ms" << std::endl;
+#endif
+
     maxBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader,vk::PipelineStageFlagBits::eDrawIndirect,vk::AccessFlagBits::eShaderWrite,vk::AccessFlagBits::eIndirectCommandRead);
+
+#if VERBOSE_RASTER
+    std::cout << "[RasterScan2D] Query Pass 2: Edge query pipeline..." << std::endl;
+    auto rqeStart = std::chrono::high_resolution_clock::now();
+#endif
     this->runRQEPipeline(index,qranges,nqueries);
+#if VERBOSE_RASTER
+    auto rqeEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> rqeDuration = rqeEnd - rqeStart;
+    std::cout << "[RasterScan2D] Edge query pipeline time: " << rqeDuration.count() << " ms" << std::endl;
+#endif
+
     vd->commandBuffer->end();
     vd->submit(submitInfo,drawFence.get(),false);
     vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
+
+#if VERBOSE_RASTER
+    auto queryEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> queryDuration = queryEnd - queryStart;
+    std::cout << "[RasterScan2D] Total runRangeQueries time: " << queryDuration.count() << " ms" << std::endl;
+#endif
 }
 
 void RasterScan2D::initShaders() {

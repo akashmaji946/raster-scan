@@ -5,6 +5,10 @@
 #include <cstring>
 #include <chrono>
 
+#ifndef VERBOSE_COMPACT
+#define VERBOSE_COMPACT 0
+#endif
+
 using namespace vkcore;
 
 // Helper function for graphics pipeline rendering (same as RasterScan2D)
@@ -70,7 +74,7 @@ void CompactScanIndex::allocateBuffers(uint32_t npoints) {
     
     // Calculate count buffer size to be compatible with prefix sum
     // Must be a multiple of scan->getBufSizeDivisor()
-    size_t scanBufSize = scan ? scan->getBufSizeDivisor() : 4096;
+    size_t scanBufSize = scan->getBufSizeDivisor();
     countBufSize = size_t(std::ceil(double(totalBins + 1) / scanBufSize) * scanBufSize);
     
     auto allocStart = std::chrono::high_resolution_clock::now();
@@ -550,8 +554,27 @@ void CompactScanIndex::setupPipelines() {
 }
 
 void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints, uint32_t *minVal, uint32_t *maxVal) {
+
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Starting buildIndex..." << std::endl;
+    auto buildStart = std::chrono::high_resolution_clock::now();
+#endif
+
+    #ifdef VERBOSE_COMPACT
+        auto initTimeStart = std::chrono::high_resolution_clock::now();
+    #endif
+
     // Allocate buffers (Count and StartAddr)
     allocateBuffers(npoints);
+    initialize();
+
+    #ifdef VERBOSE_COMPACT
+        auto initTimeEnd = std::chrono::high_resolution_clock::now();
+        double initTime = std::chrono::duration<double, std::milli>(initTimeEnd - initTimeStart).count();
+        std::cerr << "[CompactScan] Index initialization time: " << initTime << " ms\n";
+    #endif
+
+
     
     // Store min/max values
     for(int i=0; i<3; i++) {
@@ -589,6 +612,10 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // 3. Clearing large buffers (npoints * SCALE_FACTOR * 16 bytes) is very slow
     
     // ========== PASS 1: Count Points per Bin (Graphics Pipeline) ==========
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 1: Counting points per bin..." << std::endl;
+    auto countStart = std::chrono::high_resolution_clock::now();
+#endif
     {
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
@@ -615,6 +642,15 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         vd->commandBuffer->endRendering();
     }
     
+#if VERBOSE_COMPACT
+    auto countEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> countDuration = countEnd - countStart;
+    std::cout << "[CompactScan] Point counting time: " << countDuration.count() << " ms" << std::endl;
+    
+    std::cout << "[CompactScan] Step 1.5: Post-counting barriers and copies..." << std::endl;
+    auto postCountStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Barrier: Vertex shader write -> Transfer (for copy to capacityBuffer)
     countBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
@@ -636,8 +672,18 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
     extentBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                           vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+
+#if VERBOSE_COMPACT
+    auto postCountEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> postCountDuration = postCountEnd - postCountStart;
+    std::cout << "[CompactScan] Post-counting barriers and copies time: " << postCountDuration.count() << " ms" << std::endl;
+#endif
     
     // Scale counts by INITIAL_SCALE_FACTOR to reserve extra space per bin
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 1.6: Scaling counts..." << std::endl;
+    auto scaleStart = std::chrono::high_resolution_clock::now();
+#endif
     {
         // Bind countBuffer to descSet binding 1 for scale shader
         vk::DescriptorBufferInfo countInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
@@ -657,16 +703,37 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         vd->commandBuffer->dispatch(groups, 1, 1);
     }
     
+#if VERBOSE_COMPACT
+    auto scaleEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> scaleDuration = scaleEnd - scaleStart;
+    std::cout << "[CompactScan] Scale counts time: " << scaleDuration.count() << " ms" << std::endl;
+#endif
+
     // capacityBuffer now contains original counts (before scaling)
     // The insert shader will compute actual capacity as capacity[bin] * scaleFactor
     
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 1.7: Pre-prefix sum barriers..." << std::endl;
+    auto prePrefixStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Barrier: Scale shader write -> Prefix sum read
     countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eComputeShader,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+
+#if VERBOSE_COMPACT
+    auto prePrefixEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> prePrefixDuration = prePrefixEnd - prePrefixStart;
+    std::cout << "[CompactScan] Pre-prefix sum barriers time: " << prePrefixDuration.count() << " ms" << std::endl;
+#endif
     
     // ========== PASS 2: GPU Prefix Sum (on scaled counts) ==========
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 2: Computing prefix sum..." << std::endl;
+    auto prefixStart = std::chrono::high_resolution_clock::now();
+#endif
     if(scan) {
         scan->prefixSum(countBuffer->buf, countBufSize);
     } else {
@@ -682,14 +749,33 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // Copy prefix sum to startAddrBuffer (like RasterScan2D's copyFrom)
     startAddrBuffer->copyFrom(countBufSize * sizeof(uint32_t), 0, 0, countBuffer);
     
+#if VERBOSE_COMPACT
+    auto prefixEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> prefixDuration = prefixEnd - prefixStart;
+    std::cout << "[CompactScan] Prefix sum time: " << prefixDuration.count() << " ms" << std::endl;
+    
+    std::cout << "[CompactScan] Step 2.5: Post-prefix sum barriers and setup..." << std::endl;
+    auto postPrefixStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Barrier: startAddrBuffer ready, countBuffer ready for insert
     startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader,
                              vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
     
     // Clear countBuffer to 0 before build pass (so atomicAdd returns local positions starting from 0)
     countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader, 0);
+
+#if VERBOSE_COMPACT
+    auto postPrefixEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> postPrefixDuration = postPrefixEnd - postPrefixStart;
+    std::cout << "[CompactScan] Post-prefix sum barriers and setup time: " << postPrefixDuration.count() << " ms" << std::endl;
+#endif
     
     // ========== PASS 3: Insert Points (Graphics Pipeline) ==========
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 3: Inserting points into bins..." << std::endl;
+    auto insertStart = std::chrono::high_resolution_clock::now();
+#endif
     {
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
@@ -725,6 +811,15 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         vd->commandBuffer->endRendering();
     }
     
+#if VERBOSE_COMPACT
+    auto insertEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> insertDuration = insertEnd - insertStart;
+    std::cout << "[CompactScan] Point insertion time: " << insertDuration.count() << " ms" << std::endl;
+    
+    std::cout << "[CompactScan] Step 3.5: Post-insert barriers and cleanup..." << std::endl;
+    auto postInsertStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Barrier: Insert pass write -> Transfer (for copying capacity back to count)
     countBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferWrite);
@@ -735,9 +830,20 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     // After build, count[bin] = startAddr[bin] + original_count, which is wrong for inserts
     // We need count[bin] = original_count so that atomicAdd returns the correct offset
     countBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, capacityBuffer);
+
+#if VERBOSE_COMPACT
+    auto postInsertEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> postInsertDuration = postInsertEnd - postInsertStart;
+    std::cout << "[CompactScan] Post-insert barriers and cleanup time: " << postInsertDuration.count() << " ms" << std::endl;
+#endif
     
     vd->commandBuffer->end();
     
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Step 4: Command buffer submission and GPU execution..." << std::endl;
+    auto submitStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Single fence wait for entire build
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
@@ -746,6 +852,12 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     vd->submit(submitInfo, fence, false);
     vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence);
+
+#if VERBOSE_COMPACT
+    auto submitEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> submitDuration = submitEnd - submitStart;
+    std::cout << "[CompactScan] GPU execution and fence wait time: " << submitDuration.count() << " ms" << std::endl;
+#endif
     
     // Build index map if enabled (for O(1) delete)
     // Read back data buffer and create pointIndex → globalDataIndex mapping
@@ -786,9 +898,22 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         
         std::cerr << "[CompactIndex] Index map built for O(1) delete (" << validCount << " entries mapped)\n";
     }
+    
+#if VERBOSE_COMPACT
+    auto buildEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> buildDuration = buildEnd - buildStart;
+    std::cout << "[CompactScan] Total buildIndex time (START-END): " << buildDuration.count() << " ms" << std::endl;
+    std::cout << "[CompactScan] Total buildIndex time (PARTS): " << initTime + countDuration.count() + postInsertDuration.count() + prePrefixDuration.count() + prefixDuration.count() + submitDuration.count() << " ms" << std::endl;
+    
+#endif
 }
 
 void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqueries, vkcore::PBuffer resultBuffer) {
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Starting runRangeQueries for " << nqueries << " queries..." << std::endl;
+    auto queryStart = std::chrono::high_resolution_clock::now();
+#endif
+
     // Two-pass graphics query like RasterScan2D
     // Pass 1 (Range): Collect [st, en) pairs for bins in query range
     // Pass 2 (Edge): One fragment per entry, check validity and range
@@ -841,6 +966,10 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
     
     // ========== PASS 1: Range - collect [st, en) pairs ==========
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Query Pass 1: Range collection..." << std::endl;
+    auto rangeStart = std::chrono::high_resolution_clock::now();
+#endif
     {
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
@@ -859,6 +988,12 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
         vd->commandBuffer->endRendering();
     }
     
+#if VERBOSE_COMPACT
+    auto rangeEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> rangeDuration = rangeEnd - rangeStart;
+    std::cout << "[CompactScan] Range collection time: " << rangeDuration.count() << " ms" << std::endl;
+#endif
+
     // Barrier: Pass 1 write -> Pass 2 read
     maxBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader, vk::PipelineStageFlagBits::eDrawIndirect,
                        vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eIndirectCommandRead);
@@ -866,6 +1001,10 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eVertexAttributeRead);
     
     // ========== PASS 2: Edge - one fragment per entry ==========
+#if VERBOSE_COMPACT
+    std::cout << "[CompactScan] Query Pass 2: Edge processing..." << std::endl;
+    auto edgeStart = std::chrono::high_resolution_clock::now();
+#endif
     {
         vk::RenderingAttachmentInfo colorInfo;
         vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
@@ -887,6 +1026,12 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
         vd->commandBuffer->endRendering();
     }
     
+#if VERBOSE_COMPACT
+    auto edgeEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> edgeDuration = edgeEnd - edgeStart;
+    std::cout << "[CompactScan] Edge processing time: " << edgeDuration.count() << " ms" << std::endl;
+#endif
+
     vd->commandBuffer->end();
     
     // Reuse fence (reset before use)
@@ -897,6 +1042,12 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
     vd->submit(submitInfo, queryFence.get(), false);
     vd->waitForFences(queryFence.get(), VK_TRUE, UINT64_MAX);
+
+#if VERBOSE_COMPACT
+    auto queryEnd = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> queryDuration = queryEnd - queryStart;
+    std::cout << "[CompactScan] Total runRangeQueries time: " << queryDuration.count() << " ms" << std::endl;
+#endif
 }
 
 void CompactScanIndex::deletePoints(vkcore::PBuffer deleteDataBuffer, uint32_t ndeletes) {

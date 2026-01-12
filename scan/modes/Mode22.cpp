@@ -25,6 +25,15 @@
 #define QUERY_COUNT 11
 #endif
 
+// Verbose timing flags
+#ifndef VERBOSE_RASTER
+#define VERBOSE_RASTER 0
+#endif
+
+#ifndef VERBOSE_COMPACT
+#define VERBOSE_COMPACT 0
+#endif
+
 // Distribution names for dataId 0-4
 static const std::vector<std::string> distributionFiles = {
     "uniform.bin",
@@ -202,9 +211,13 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
         CPUTimer rsBuildTimer;
         rsBuildTimer.start();
+
         PRasterIndex tmpIndex = rsRun.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+        
         double bt = double(rsBuildTimer.stop()) / 1000000.0;
         rsBuildTimes.push_back(bt);
+
+        std::cout << k << ": ============>  Build time: " << bt * 1000.0 << " ms\n";
 
         tmpIndex.reset();
         bufsRun->destroy();
@@ -276,13 +289,19 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     compactBuildTimes.reserve(BUILD_COUNT);
     for(int k=0; k<BUILD_COUNT; k++) {
         if(k > 0) std::cerr << "  Run " << k+1 << "...\n";
-        PCompactScanIndex compactRun = std::make_shared<CompactScanIndex>(vd, ncols, scan);
-        compactRun->initialize();
+
         CPUTimer buildTimer;
         buildTimer.start();
+
+        PCompactScanIndex compactRun = std::make_shared<CompactScanIndex>(vd, ncols, scan);
         compactRun->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+
         double bt = double(buildTimer.stop()) / 1000000.0;
+
+        std::cout << k << ": ============>  Build time: " << bt * 1000.0 << " ms\n";
+
         compactBuildTimes.push_back(bt);
+
         compactRun.reset();
         vd->device->waitIdle();
     }
