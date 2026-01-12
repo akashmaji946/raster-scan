@@ -13,7 +13,7 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 1
+#define RUNRASTER 0
 
 #endif
 
@@ -95,6 +95,7 @@ static void generateAndSaveQueries(
     std::cerr << ">>Query strategy: " << (strategy == QueryStrategy::CENTERED ? "CENTERED" : "FROM_MIN") << "\n";
     std::cerr << "MIN: " << minval[0] << " " << minval[1] << " " << minval[2] << "\n";
     std::cerr << "MAX: " << maxval[0] << " " << maxval[1] << " " << maxval[2] << "\n";
+    std::cerr << "Q10 will use: [" << minval[0] << "-" << maxval[0] << "] x [" << minval[1] << "-" << maxval[1] << "] x [" << minval[2] << "-" << maxval[2] << "]\n";
     
     // Generate 10 queries with selectivities 10%, 20%, ..., 100%
     // For 3D data: per-dimension selectivity = cbrt(overall_selectivity)

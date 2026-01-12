@@ -60,5 +60,10 @@ public:
     vk::UniqueShaderModule bcVertexShader, bVertexShader;
     vk::UniqueShaderModule rqVertexShader, rqGeomShader, rqFragShader;
     vk::UniqueShaderModule eVertexShader, eGeomShader, eFragShader;
+
+    // Cached state for query descriptor optimization
+    bool queryDescriptorsInitialized = false;
+    PRasterIndex lastIndex = nullptr;
+    vk::UniqueFence queryFence;
 };
 

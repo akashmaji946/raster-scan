@@ -147,13 +147,47 @@ PRasterIndex RasterScan2D::buildIndex(PBuffer pointsBuffer, uint32_t npoints, ui
 }
 
 void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t nqueries) {
-    vk::UniqueFence drawFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
     vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
+
+    // Initialize query descriptors once per index (cache for repeated queries)
+    if (!queryDescriptorsInitialized || lastIndex != index) {
+        // Create reusable fence
+        queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
+        
+        // Setup Pass 1 (RQT) descriptors - these don't change between queries
+        vk::DescriptorBufferInfo cstartDescriptor{ index->cstartBuffer->buf, 0, VK_WHOLE_SIZE };
+        vk::DescriptorBufferInfo cendDescriptor{ index->cendBuffer->buf, 0, VK_WHOLE_SIZE };
+        vk::DescriptorBufferInfo rctDescriptor{ maxBuffer->buf, 0, VK_WHOLE_SIZE };
+        vk::DescriptorBufferInfo edgeDescriptor{ bufs->edgeBuffer->buf, 0, VK_WHOLE_SIZE };
+
+        std::vector<vk::WriteDescriptorSet> rqtDescriptorSets = {
+            vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cstartDescriptor},
+            vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cendDescriptor},
+            vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rctDescriptor},
+            vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeDescriptor},
+        };
+        vd->device->updateDescriptorSets(rqtDescriptorSets, nullptr);
+
+        // Setup Pass 2 (RQE) descriptors - result buffer and range buffer
+        vk::DescriptorBufferInfo resDescriptor{ bufs->resBuffer->buf, 0, VK_WHOLE_SIZE };
+        // Note: rangeDescriptor (qranges) will be updated per-query below
+        
+        std::vector<vk::WriteDescriptorSet> rqeDescriptorSets = {
+            vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resDescriptor},
+        };
+        vd->device->updateDescriptorSets(rqeDescriptorSets, nullptr);
+
+        lastIndex = index;
+        queryDescriptorsInitialized = true;
+    }
 
 #if VERBOSE_RASTER
     std::cout << "[RasterScan2D] Starting runRangeQueries for " << nqueries << " queries..." << std::endl;
     auto queryStart = std::chrono::high_resolution_clock::now();
 #endif
+
+    // Reset fence for reuse
+    vd->device->resetFences({queryFence.get()});
 
     vd->commandBuffer->begin(vk::CommandBufferBeginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit));
     // Clear maxBuffer used for indirect draw and statistics
@@ -189,8 +223,8 @@ void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t
 #endif
 
     vd->commandBuffer->end();
-    vd->submit(submitInfo,drawFence.get(),false);
-    vd->device->waitForFences(drawFence.get(), VK_TRUE, UINT64_MAX);
+    vd->submit(submitInfo,queryFence.get(),false);
+    vd->device->waitForFences(queryFence.get(), VK_TRUE, UINT64_MAX);
 
 #if VERBOSE_RASTER
     auto queryEnd = std::chrono::high_resolution_clock::now();
@@ -554,19 +588,7 @@ void RasterScan2D::runRQTPipeline(PRasterIndex index, vkcore::PBuffer qranges, u
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, rqtPipeline.get());
     vd->commandBuffer->beginRendering(&renderingInfo);
 
-    vk::DescriptorBufferInfo cstartDescriptor{ index->cstartBuffer->buf, 0, VK_WHOLE_SIZE };
-    vk::DescriptorBufferInfo cendDescriptor{ index->cendBuffer->buf, 0, VK_WHOLE_SIZE };
-    vk::DescriptorBufferInfo rctDescriptor{ maxBuffer->buf, 0, VK_WHOLE_SIZE };
-    vk::DescriptorBufferInfo edgeDescriptor{ bufs->edgeBuffer->buf, 0, VK_WHOLE_SIZE };
-
-    std::vector<vk::WriteDescriptorSet> descriptorSets = {
-        vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cstartDescriptor},
-        vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &cendDescriptor},
-        vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rctDescriptor},
-        vk::WriteDescriptorSet{ rqtPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeDescriptor},
-    };
-
-    vd->device->updateDescriptorSets(descriptorSets, nullptr);
+    // Descriptors are now cached in runRangeQueries - just bind them
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, rqtPipelineProps.pipelineLayout.get(), 0, rqtPipelineProps.descriptorSet.get(), nullptr);
 
     std::array<uint32_t,5> consts = {index->minVal[0], index->minVal[1], index->binRange[0], index->binRange[1], INDEX_RESOLUTION};
@@ -587,15 +609,11 @@ void RasterScan2D::runRQEPipeline(PRasterIndex index, vkcore::PBuffer qranges, u
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, rqePipeline.get());
     vd->commandBuffer->beginRendering(&renderingInfo);
 
-    vk::DescriptorBufferInfo resDescriptor{ bufs->resBuffer->buf, 0, VK_WHOLE_SIZE };
+    // Only update query buffer binding (changes per query) - result buffer is cached
     vk::DescriptorBufferInfo rangeDescriptor{ qranges->buf, 0, VK_WHOLE_SIZE };
+    vk::WriteDescriptorSet rangeWrite{ rqePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rangeDescriptor };
+    vd->device->updateDescriptorSets({rangeWrite}, nullptr);
 
-    std::vector<vk::WriteDescriptorSet> descriptorSets = {
-        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resDescriptor},
-        vk::WriteDescriptorSet{ rqePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &rangeDescriptor},
-    };
-
-    vd->device->updateDescriptorSets(descriptorSets, nullptr);
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, rqePipelineProps.pipelineLayout.get(), 0, rqePipelineProps.descriptorSet.get(), nullptr);
 
     uint64_t indexAddr = index->indexBuffer->getDeviceAddress();
