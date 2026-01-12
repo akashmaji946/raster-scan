@@ -13,7 +13,7 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 0
+#define RUNRASTER 1
 
 #endif
 
@@ -92,28 +92,41 @@ static void generateAndSaveQueries(
     }
     
     QueryStrategy strategy = getQueryStrategy(dataId);
-    std::cerr << "Query strategy: " << (strategy == QueryStrategy::CENTERED ? "CENTERED" : "FROM_MIN") << "\n";
+    std::cerr << ">>Query strategy: " << (strategy == QueryStrategy::CENTERED ? "CENTERED" : "FROM_MIN") << "\n";
+    std::cerr << "MIN: " << minval[0] << " " << minval[1] << " " << minval[2] << "\n";
+    std::cerr << "MAX: " << maxval[0] << " " << maxval[1] << " " << maxval[2] << "\n";
     
     // Generate 10 queries with selectivities 10%, 20%, ..., 100%
     // For 3D data: per-dimension selectivity = cbrt(overall_selectivity)
+    // For the last query (100% selectivity), always use full range to guarantee all points
     for (int q = 0; q < numQueries; q++) {
         double overallSelectivity = (q + 1) * 0.1;  // 10%, 20%, ..., 100%
         double perDimSelectivity = std::pow(overallSelectivity, 1.0 / ncols);
         
+        // For 100% selectivity (last query), use exact min/max to guarantee all points
+        bool isFullRange = (q == numQueries - 1);
+        
         for (int c = 0; c < ncols; c++) {
-            uint64_t range = (uint64_t)maxval[c] - (uint64_t)minval[c];
-            uint64_t queryRange = (uint64_t)(range * perDimSelectivity);
-            
             uint32_t lo, hi;
-            if (strategy == QueryStrategy::CENTERED) {
-                // Center the query in the data range (for uniform/normal)
-                uint64_t margin = (range - queryRange) / 2;
-                lo = minval[c] + (uint32_t)margin;
-                hi = minval[c] + (uint32_t)(margin + queryRange);
-            } else {
-                // Start from minimum (for zipf - data clusters at low values)
+            
+            if (isFullRange) {
+                // Use exact min/max for 100% selectivity
                 lo = minval[c];
-                hi = minval[c] + (uint32_t)queryRange;
+                hi = maxval[c];
+            } else {
+                uint64_t range = (uint64_t)maxval[c] - (uint64_t)minval[c];
+                uint64_t queryRange = (uint64_t)(range * perDimSelectivity);
+                
+                if (strategy == QueryStrategy::CENTERED) {
+                    // Center the query in the data range (for uniform/normal)
+                    uint64_t margin = (range - queryRange) / 2;
+                    lo = minval[c] + (uint32_t)margin;
+                    hi = minval[c] + (uint32_t)(margin + queryRange);
+                } else {
+                    // Start from minimum (for zipf - data clusters at low values)
+                    lo = minval[c];
+                    hi = minval[c] + (uint32_t)queryRange;
+                }
             }
             
             // Write in "lt <value>" format (less than)

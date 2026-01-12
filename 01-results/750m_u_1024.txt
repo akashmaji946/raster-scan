@@ -1,0 +1,30 @@
+
+>>> RasterScan2D Index build time: 358.6 ms
+--- RasterScan2D Query Performance ---
+Query 1: 19.706 ms, Result Count: 75004938
+Query 2: 34.869 ms, Result Count: 150000856
+Query 3: 49.767 ms, Result Count: 224998863
+Query 4: 64.746 ms, Result Count: 299995706
+Query 5: 79.422 ms, Result Count: 375007331
+Query 6: 93.916 ms, Result Count: 450009902
+Query 7: 108.410 ms, Result Count: 525008468
+Query 8: 122.904 ms, Result Count: 600000999
+Query 9: 137.238 ms, Result Count: 675000896
+Query 10: 151.521 ms, Result Count: 750000000
+>>> Average Query Time: 86.250 ms
+
+
+
+>>>Compact Index build time: 332.7 ms
+--- Compact Index Query Performance ---
+Query 1: 17.935 ms, Result Count: 75004938
+Query 2: 33.147 ms, Result Count: 150000856
+Query 3: 48.237 ms, Result Count: 224998863
+Query 4: 62.968 ms, Result Count: 299995706
+Query 5: 77.725 ms, Result Count: 375007331
+Query 6: 92.168 ms, Result Count: 450009902
+Query 7: 106.711 ms, Result Count: 525008468
+Query 8: 121.295 ms, Result Count: 600000999
+Query 9: 135.631 ms, Result Count: 675000896
+Query 10: 150.023 ms, Result Count: 750000000
+Average Query Time: 84.584 ms

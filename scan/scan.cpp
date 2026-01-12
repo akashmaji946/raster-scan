@@ -43,7 +43,8 @@ int main(int argc, char* argv[]) {
     // Default values
     int m = 50;  // millions of rows
     int c = 3;   // columns
-    int d = 0;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
+    int d = 2;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
+    
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
     bool useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
