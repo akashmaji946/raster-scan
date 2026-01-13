@@ -12,6 +12,11 @@
 
 #define INDEX_RESOLUTION 8192
 
+// Set to 1 to disable query descriptor caching (forces descriptor updates every query)
+#ifndef DISABLE_QUERY_CACHING
+#define DISABLE_QUERY_CACHING 0
+#endif
+
 // requires 1 GB space for storing results
 #define MAX_RESULT_SIZE (1 << 30)
 #define MAX_QUERIES (1 << 24)

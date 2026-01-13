@@ -45,14 +45,11 @@ void main() {
     uint binid = coord.x + coord.y * consts.res;
     uint st = stcount[binid];
     uint en = encount[binid];
-    
-    // Only process bins that have points (en > st means bin has data)
-    if (en > st) {
-        uint ind = atomicAdd(resct[0], 1);
-        res[ind * 2] = st;
-        res[ind * 2 + 1] = en;
-        resct[1] = 1;
-    }
+    int ct = 0;
+    uint ind = atomicAdd(resct[0],1);
+    res[ind * 2] = st;
+    res[ind * 2 + 1] = en;
+    resct[1] = 1;
 
     discard;
 }

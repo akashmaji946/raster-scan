@@ -36,6 +36,9 @@ using namespace vkcore;
 // 22 = CompactIndex + RasterScan2D Comparison
 // 23 = Batch Delete/Insert Cycles with CPU Verification
 // 24 = TPC-C Customer Table Benchmark
+// 25 = TPC-C with Mode 22 Structure
+// 42 = Mode 22 + Query Performance After Each Update Cycle
+// 44 = TPC-C with Query Performance After Each Update Cycle
 
 #define USE_INDEX_UPDATE_PIPELINE 22
 
@@ -44,7 +47,7 @@ int main(int argc, char* argv[]) {
     int m = 50;  // millions of rows
     int c = 3;   // columns
     int d = 2;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
-    
+
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
     bool useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
@@ -118,8 +121,14 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 13
+#if USE_INDEX_UPDATE_PIPELINE == 44
+    testTPCCWithQueryAfterUpdate(d, vd, staging);
+#elif USE_INDEX_UPDATE_PIPELINE == 42
+    testCompactIndexWithQueryAfterUpdate(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 13
     testCPUVerificationVarying(vd, staging);
+#elif USE_INDEX_UPDATE_PIPELINE == 25
+    testTPCCMode25(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 24
     testTPCCBenchmark(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 23

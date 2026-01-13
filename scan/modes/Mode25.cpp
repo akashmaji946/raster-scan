@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <random>
 
+// Mode 25: Mode 22 structure with TPC-C data
+// Combines Mode 22's test harness with Mode 24's TPC-C data generation
+
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
 #define RUNRASTER 0
@@ -22,7 +25,7 @@
 #endif
 
 #ifndef QUERY_COUNT
-#define QUERY_COUNT 1
+#define QUERY_COUNT 11
 #endif
 
 // Verbose timing flags
@@ -34,171 +37,168 @@
 #define VERBOSE_COMPACT 0
 #endif
 
-// Distribution names for dataId 0-4
-static const std::vector<std::string> distributionFiles = {
-    "uniform.bin",
-    "normal.bin",
-    "zipf1.1.bin",
-    "zipf1.3.bin",
-    "zipf1.5.bin"
+// TPC-C Constants
+static constexpr int32_t kDistrictsPerWarehouse = 100;
+static constexpr int32_t kCustomerPerDistrict   = 30000;
+static constexpr int64_t kCustomersPerWarehouse = kDistrictsPerWarehouse * kCustomerPerDistrict;
+
+// Scale factors for TPC-C
+static const std::vector<int64_t> scaleFactors = {
+    100000,      // 100K
+    1000000,     // 1M
+    10000000,    // 10M
+    25000000,    // 25M
+    50000000,    // 50M
+    75000000,    // 75M
+    100000000,   // 100M
+    250000000,   // 250M
+    500000000,   // 500M
+    750000000,   // 750M
+    1000000000   // 1B
 };
 
-static const std::vector<std::string> distributionNames = {
-    "uniform",
-    "normal",
-    "zipf1.1",
-    "zipf1.3",
-    "zipf1.5"
+static const std::vector<std::string> scaleNames = {
+    "100K", "1M", "10M", "25M", "50M", "75M", "100M", "250M", "500M", "750M", "1B"
 };
 
-// Query generation strategy based on distribution type
-enum class QueryStrategy {
-    CENTERED,    // For uniform/normal: center queries in data range
-    FROM_MIN     // For zipf: start queries from minimum (where data clusters)
-};
-
-// Get appropriate query strategy for each distribution
-static QueryStrategy getQueryStrategy(int dataId) {
-    // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
-    switch (dataId) {
-        case 0: return QueryStrategy::CENTERED;  // Uniform: data spread evenly
-        case 1: return QueryStrategy::CENTERED;  // Normal: data centered around mean
-        case 2: return QueryStrategy::FROM_MIN;  // Zipf 1.1: data clusters at low values
-        case 3: return QueryStrategy::FROM_MIN;  // Zipf 1.3: more skewed
-        case 4: return QueryStrategy::FROM_MIN;  // Zipf 1.5: most skewed
-        default: return QueryStrategy::CENTERED;
+// Generate TPC-C Customer table data with 3 columns: W_ID, D_ID, C_ID
+// Returns data in column-major format: [W_ID...][D_ID...][C_ID...]
+static void generateTPCCData25(
+    int64_t targetCustomers,
+    std::vector<uint32_t>& data,
+    uint32_t& minW, uint32_t& maxW,
+    uint32_t& minD, uint32_t& maxD,
+    uint32_t& minC, uint32_t& maxC
+) {
+    const int64_t warehouseCount = (targetCustomers + kCustomersPerWarehouse - 1) / kCustomersPerWarehouse;
+    
+    std::cerr << "[TPC-C] Target customers: " << targetCustomers << "\n";
+    std::cerr << "[TPC-C] Warehouses needed: " << warehouseCount << "\n";
+    std::cerr << "[TPC-C] Customers per warehouse: " << kCustomersPerWarehouse << "\n";
+    
+    // Allocate column-major storage
+    data.resize(targetCustomers * 3);
+    uint32_t* W = data.data();
+    uint32_t* D = data.data() + targetCustomers;
+    uint32_t* C = data.data() + 2 * targetCustomers;
+    
+    int64_t count = 0;
+    
+    // Generate exact projection of TPC-C Customer table
+    for (int32_t c_w_id = 1; c_w_id <= warehouseCount && count < targetCustomers; ++c_w_id) {
+        for (int32_t c_d_id = 1; c_d_id <= kDistrictsPerWarehouse && count < targetCustomers; ++c_d_id) {
+            for (int32_t c_id = 1; c_id <= kCustomerPerDistrict && count < targetCustomers; ++c_id) {
+                W[count] = static_cast<uint32_t>(c_w_id);
+                D[count] = static_cast<uint32_t>(c_d_id);
+                C[count] = static_cast<uint32_t>(c_id);
+                ++count;
+            }
+        }
     }
+    
+    // Compute min/max for each column
+    minW = 1; maxW = static_cast<uint32_t>(warehouseCount);
+    minD = 1; maxD = kDistrictsPerWarehouse;
+    minC = 1; maxC = kCustomerPerDistrict;
+    
+    std::cerr << "[TPC-C] Generated " << count << " customers\n";
+    std::cerr << "[TPC-C] W_ID range: [" << minW << ", " << maxW << "]\n";
+    std::cerr << "[TPC-C] D_ID range: [" << minD << ", " << maxD << "]\n";
+    std::cerr << "[TPC-C] C_ID range: [" << minC << ", " << maxC << "]\n";
 }
 
-// Generate queries with specific selectivities and save to file
-// Selectivity = fraction of data range covered per dimension
-// Strategy depends on distribution type
-static void generateAndSaveQueries(
+// Generate queries with selectivities 10%, 20%, ..., 100%
+static void generateTPCCQueries25(
     const std::vector<uint32_t>& minval, 
     const std::vector<uint32_t>& maxval,
     int ncols,
-    const std::string& outputFile,
-    int dataId,
+    std::vector<uint32_t>& targets,
     int numQueries = 10
 ) {
-    // Create output directory if needed
-    std::string dir = outputFile.substr(0, outputFile.find_last_of('/'));
-    mkdir(dir.c_str(), 0755);
+    targets.resize(numQueries * 6);  // 6 values per query (x1,x2,y1,y2,z1,z2)
     
-    std::ofstream out(outputFile);
-    if (!out.is_open()) {
-        std::cerr << "ERROR: Cannot create query file: " << outputFile << "\n";
-        return;
-    }
-    
-    QueryStrategy strategy = getQueryStrategy(dataId);
-    std::cerr << ">>Query strategy: " << (strategy == QueryStrategy::CENTERED ? "CENTERED" : "FROM_MIN") << "\n";
-    std::cerr << "MIN: " << minval[0] << " " << minval[1] << " " << minval[2] << "\n";
-    std::cerr << "MAX: " << maxval[0] << " " << maxval[1] << " " << maxval[2] << "\n";
-    std::cerr << "Q10 will use: [" << minval[0] << "-" << maxval[0] << "] x [" << minval[1] << "-" << maxval[1] << "] x [" << minval[2] << "-" << maxval[2] << "]\n";
-    
-    // Generate 10 queries with selectivities 10%, 20%, ..., 100%
-    // For 3D data: per-dimension selectivity = cbrt(overall_selectivity)
-    // For the last query (100% selectivity), always use full range to guarantee all points
     for (int q = 0; q < numQueries; q++) {
         double overallSelectivity = (q + 1) * 0.1;  // 10%, 20%, ..., 100%
         double perDimSelectivity = std::pow(overallSelectivity, 1.0 / ncols);
         
-        // For 100% selectivity (last query), use exact min/max to guarantee all points
+        // For 100% selectivity (last query), use exact min/max
         bool isFullRange = (q == numQueries - 1);
         
         for (int c = 0; c < ncols; c++) {
             uint32_t lo, hi;
             
             if (isFullRange) {
-                // Use exact min/max for 100% selectivity
                 lo = minval[c];
                 hi = maxval[c];
             } else {
                 uint64_t range = (uint64_t)maxval[c] - (uint64_t)minval[c];
                 uint64_t queryRange = (uint64_t)(range * perDimSelectivity);
                 
-                if (strategy == QueryStrategy::CENTERED) {
-                    // Center the query in the data range (for uniform/normal)
-                    uint64_t margin = (range - queryRange) / 2;
-                    lo = minval[c] + (uint32_t)margin;
-                    hi = minval[c] + (uint32_t)(margin + queryRange);
-                } else {
-                    // Start from minimum (for zipf - data clusters at low values)
-                    lo = minval[c];
-                    hi = minval[c] + (uint32_t)queryRange;
-                }
+                // Center the query in the data range
+                uint64_t margin = (range - queryRange) / 2;
+                lo = minval[c] + (uint32_t)margin;
+                hi = minval[c] + (uint32_t)(margin + queryRange);
             }
             
-            // Write in "lt <value>" format (less than)
-            out << "lt " << lo << "\n";
-            out << "lt " << hi << "\n";
+            // Store as x1,x2,y1,y2,z1,z2 format
+            targets[q * 6 + c * 2] = lo;
+            targets[q * 6 + c * 2 + 1] = hi;
         }
         // Fill remaining dimensions if ncols < 3
         for (int c = ncols; c < 3; c++) {
-            out << "lt 0\n";
-            out << "lt 4294967295\n";
+            targets[q * 6 + c * 2] = 0;
+            targets[q * 6 + c * 2 + 1] = 0xFFFFFFFF;
         }
     }
     
-    out.close();
-    std::cerr << "Saved " << numQueries << " queries to: " << outputFile << "\n";
+    std::cerr << "[TPC-C] Generated " << numQueries << " queries (selectivity 10%-100%)\n";
 }
 
-void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op) {
+void testTPCCMode25(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op) {
+    using namespace vkcore;
     
-    // Validate dataId (0-4 for the 5 distributions)
-    if (dataId < 0 || dataId >= (int)distributionFiles.size()) {
-        std::cerr << "ERROR: Invalid dataId " << dataId << ". Must be 0-4.\n";
-        std::cerr << "  0: uniform, 1: normal, 2: zipf1.1, 3: zipf1.3, 4: zipf1.5\n";
-        return;
-    }
-    
-    // Construct plain data folder path: data/data_Xm_Yc/
-    uint32_t millions = g_npoints / 1000000;
-    std::string plainDataFolder = PROJECT_DIR + "data/data_" + std::to_string(millions) + "m_" + std::to_string(g_dim) + "c";
-    std::string dataFile = plainDataFolder + "/" + distributionFiles[dataId];
+    // dataId is scale factor indicator (0-10)
+    int scaleIdx = std::min(dataId, (int)scaleFactors.size() - 1);
+    int64_t targetCustomers = scaleFactors[scaleIdx];
     
     std::cerr << "\n========================================\n";
-    std::cerr << "MODE 22: Compact Index Test (Plain Data)\n";
-    std::cerr << "Distribution: " << distributionNames[dataId] << " (dataId=" << dataId << ")\n";
-    std::cerr << "Data file: " << dataFile << "\n";
-    std::cerr << "Columns: " << g_dim << "\n";
+    std::cerr << "MODE 25: TPC-C with Mode 22 Structure\n";
+    std::cerr << "Scale: " << scaleNames[scaleIdx] << " (" << targetCustomers << " customers)\n";
     std::cerr << "========================================\n";
-
-    // 1. Read Plain Dataset
-    int32_t ncols = g_dim;
-    uint32_t npoints;
-    std::vector<uint32_t> minval, maxval;
-    std::vector<uint32_t> points;
-    vkcore::PBuffer pointsBuffer = readPlainData(dataFile, vd, staging, npoints, minval, maxval, points, ncols);
-    std::cerr << "Dataset: " << npoints << " points\n";
-
-    // 2. Generate and save queries with selectivities 10%, 20%, ..., 100%
-    std::string queryFolder = PROJECT_DIR + "tests/test1";
-    std::string queryFile = queryFolder + "/" + distributionNames[dataId] + ".txt";
-    int numQueries = 10;
-    generateAndSaveQueries(minval, maxval, ncols, queryFile, dataId, numQueries);
     
-    // 3. Load queries into targets vector
-    std::vector<uint32_t> targets(numQueries * 6);
-    {
-        std::ifstream qf(queryFile);
-        std::string cmd;
-        uint32_t val;
-        int idx = 0;
-        while (qf >> cmd >> val && idx < numQueries * 6) {
-            targets[idx++] = val;
-        }
-    }
-    std::cerr << "Loaded " << numQueries << " queries (selectivity 10%-100%)\n";
-
-
+    // =========================================================
+    // Generate TPC-C Data
+    // =========================================================
+    int32_t ncols = 3;
+    std::vector<uint32_t> data;
+    uint32_t minW, maxW, minD, maxD, minC, maxC;
+    generateTPCCData25(targetCustomers, data, minW, maxW, minD, maxD, minC, maxC);
+    
+    uint32_t npoints = static_cast<uint32_t>(targetCustomers);
+    std::vector<uint32_t> minval = {minW, minD, minC};
+    std::vector<uint32_t> maxval = {maxW, maxD, maxC};
+    
+    // Upload data to GPU (column-major format)
+    vkcore::PBuffer pointsBuffer(new Buffer(vd));
+    pointsBuffer->create(data.size() * sizeof(uint32_t),
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer |
+        vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst,
+        MemoryType::Internal);
+    loadUsingStagingBuf((char*)data.data(), data.size() * sizeof(uint32_t), pointsBuffer, staging, vd, 0);
+    
+    std::cerr << "Dataset: " << npoints << " points\n";
+    
+    // Generate queries
+    int numQueries = 10;
+    std::vector<uint32_t> targets;
+    generateTPCCQueries25(minval, maxval, ncols, targets, numQueries);
+    
     // Result Buffer
     uint32_t resultSizeUints = (npoints + 31) / 32;
+    
     // Get SinglePassScan for GPU prefix sum
     vkcore::SinglePassScan *scan = (vkcore::SinglePassScan *) op.getFunction(vkcore::FunctionType::SinglePassScan);
-
+    
     // Query Buffer (shared)
     vkcore::PBuffer queryBuffer(new Buffer(vd));
     queryBuffer->create(6 * sizeof(uint32_t), 
@@ -258,7 +258,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
-        // Mode 0 format: x1, y1, x2, y2, z1, z2
+        // RasterScan2D format: x1, y1, x2, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+2], targets[in+1], targets[in+3], targets[in+4], targets[in+5]};
 
         std::vector<double> qt;
@@ -274,7 +274,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         std::sort(qt.begin(), qt.end());
         double t = qt[qt.size() / 2];
         rsTotTime += t;
-        rsQueryTimes.push_back(t * 1000.0);  // Store in ms
+        rsQueryTimes.push_back(t * 1000.0);
         
         // Read back
         rasterResults[i].resize(resultSizeUints);
@@ -347,14 +347,13 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     compactQueryTimes.reserve(numQueries);
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
-        // Mode 21 format: x1, x2, y1, y2, z1, z2
+        // CompactScanIndex format: x1, x2, y1, y2, z1, z2
         std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
 
         std::vector<double> qt;
         qt.reserve(QUERY_COUNT);
         for(int r = 0; r < QUERY_COUNT; r++) {
             loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
-            // Result buffer clear is now done inside runRangeQueries (included in timing)
             CPUTimer qTimer;
             qTimer.start();
             compactIndex->runRangeQueries(queryBuffer, 1, compactResultBuffer);
@@ -364,7 +363,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         std::sort(qt.begin(), qt.end());
         double t = qt[qt.size() / 2];
         compactTotTime += t;
-        compactQueryTimes.push_back(t * 1000.0);  // Store in ms
+        compactQueryTimes.push_back(t * 1000.0);
 
         // Read back
         compactResults[i].resize(resultSizeUints);
@@ -392,7 +391,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         uint32_t invalidCount = 0;
         for(const auto& entry : hostData) {
             if(entry.rowId & 0x80000000) validCount++;
-            else if(entry.x != 0 || entry.y != 0 || entry.z != 0) invalidCount++; // Non-zero but invalid
+            else if(entry.x != 0 || entry.y != 0 || entry.z != 0) invalidCount++;
         }
         std::cerr << "\n[DEBUG] After build: Expected=" << npoints << ", Valid=" << validCount << ", InvalidNonZero=" << invalidCount << "\n";
         
@@ -409,7 +408,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     }
     
     // Split dataset into K batches after shuffling indices, then delete/insert each batch once.
-    const int K = 100;
+    const int K = 100000000;
 
     std::vector<uint32_t> indices(npoints);
     std::iota(indices.begin(), indices.end(), 0);
@@ -420,7 +419,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
     const uint32_t batchSize = std::max<uint32_t>(1u, npoints / (uint32_t)K);
 
-    std::cerr << "\n--- Delete Performance ---\n";
+    std::cerr << "\n--- Delete/Insert Performance ---\n";
     std::cerr << "K: " << K << "\n";
     std::cerr << "Batch size: " << batchSize << " (last batch may be larger due to remainder)\n";
 
@@ -440,7 +439,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         
         uint32_t validCount = 0;
         for(const auto& entry : hostData) {
-            if(entry.rowId & 0x80000000) { // Valid bit
+            if(entry.rowId & 0x80000000) {
                 validCount++;
             }
         }
@@ -452,11 +451,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     uint64_t totalProcessedPoints = 0;
 
     // --- Delete/Insert Performance ---
-    int k = 0;
-    for (k = 0; k < K; k++) {
-
-        if(k == 10) break;
-
+    for (int k = 0; k < K; k++) {
         uint32_t startIdx = (uint32_t)k * batchSize;
         uint32_t endIdx = (k == K - 1) ? npoints : std::min(npoints, (uint32_t)(k + 1) * batchSize);
         uint32_t currentBatchSize = endIdx - startIdx;
@@ -464,9 +459,9 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
         for (uint32_t i = 0; i < currentBatchSize; i++) {
             uint32_t pointIdx = indices[startIdx + i];
-            deleteData[i * 3 + 0] = points[pointIdx];
-            deleteData[i * 3 + 1] = points[npoints + pointIdx];
-            deleteData[i * 3 + 2] = points[2 * npoints + pointIdx];
+            deleteData[i * 3 + 0] = data[pointIdx];
+            deleteData[i * 3 + 1] = data[npoints + pointIdx];
+            deleteData[i * 3 + 2] = data[2 * npoints + pointIdx];
         }
 
         loadUsingStagingBuf((char*)deleteData.data(), currentBatchSize * 3 * sizeof(uint32_t), deleteDataBuffer, staging, vd, 0);
@@ -478,9 +473,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         totalDelTime += delTime;
         totalProcessedPoints += currentBatchSize;
 
-        // Verify after every delete (full data readback)
         std::cerr << k << ">>> Delete Time: " << (delTime * 1000.0) << " ms (" << (delTime * 1000000.0 / currentBatchSize) << " us/point)\n";
-        // verifyCount(npoints - currentBatchSize, "Delete Verification");
 
         CPUTimer insTimer;
         insTimer.start();
@@ -488,19 +481,18 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
         double insTime = double(insTimer.stop()) / 1000000.0;
         totalInsTime += insTime;
 
-        // Verify after every insert (full data readback)
-        std::cerr << k << ">>>Insert Time: " << (insTime * 1000.0) << " ms (" << (insTime * 1000000.0 / currentBatchSize) << " us/point)\n";
-        // verifyCount(npoints, "Insert Verification");
+        std::cerr << k << ">>> Insert Time: " << (insTime * 1000.0) << " ms (" << (insTime * 1000000.0 / currentBatchSize) << " us/point)\n";
 
         std::cout << std::endl;
     }
 
     std::cerr << "\n--- Delete/Insert (K cycles) Summary ---\n";
+    std::cerr << "Scale: " << scaleNames[scaleIdx] << " (" << npoints << " customers)\n";
     std::cerr << "K: " << K << " (nominal batch size " << batchSize << ")\n";
     std::cerr << "Total delete time: " << std::fixed << std::setprecision(3) << (totalDelTime * 1000.0) << " ms\n";
     std::cerr << "Total insert time: " << std::fixed << std::setprecision(3) << (totalInsTime * 1000.0) << " ms\n";
-    std::cerr << "Avg delete time: " << std::fixed << std::setprecision(3) << ((totalDelTime * 1000.0) / k) << " ms (" << (totalProcessedPoints ? (totalDelTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
-    std::cerr << "Avg insert time: " << std::fixed << std::setprecision(3) << ((totalInsTime * 1000.0) / k) << " ms (" << (totalProcessedPoints ? (totalInsTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
+    std::cerr << "Avg delete time: " << std::fixed << std::setprecision(3) << ((totalDelTime * 1000.0) / K) << " ms (" << (totalProcessedPoints ? (totalDelTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
+    std::cerr << "Avg insert time: " << std::fixed << std::setprecision(3) << ((totalInsTime * 1000.0) / K) << " ms (" << (totalProcessedPoints ? (totalInsTime * 1000000.0 / (double)totalProcessedPoints) : 0.0) << " us/point)\n";
     
     // Final cleanup
     deleteDataBuffer->destroy();
@@ -508,6 +500,6 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     queryBuffer->destroy();
     pointsBuffer->destroy();
     
-    std::cerr << "\nCompactScanIndex Mode Complete.\n";
+    std::cerr << "\nMode 25 (TPC-C with Mode 22 Structure) Complete.\n";
 #endif // RUNRASTER
 }

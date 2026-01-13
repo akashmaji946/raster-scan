@@ -680,6 +680,8 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
 #endif
     
     // Scale counts by INITIAL_SCALE_FACTOR to reserve extra space per bin
+    // Skip scale shader entirely when SCALE_FACTOR=1 (no scaling needed)
+#if COMPACT_INITIAL_SCALE_FACTOR > 1
 #if VERBOSE_COMPACT
     std::cout << "[CompactScan] Step 1.6: Scaling counts..." << std::endl;
     auto scaleStart = std::chrono::high_resolution_clock::now();
@@ -708,6 +710,7 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     std::chrono::duration<double, std::milli> scaleDuration = scaleEnd - scaleStart;
     std::cout << "[CompactScan] Scale counts time: " << scaleDuration.count() << " ms" << std::endl;
 #endif
+#endif // COMPACT_INITIAL_SCALE_FACTOR > 1
 
     // capacityBuffer now contains original counts (before scaling)
     // The insert shader will compute actual capacity as capacity[bin] * scaleFactor
@@ -717,9 +720,16 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     auto prePrefixStart = std::chrono::high_resolution_clock::now();
 #endif
 
-    // Barrier: Scale shader write -> Prefix sum read
+    // Barrier: Previous stage -> Prefix sum read
+#if COMPACT_INITIAL_SCALE_FACTOR > 1
+    // Scale shader write -> Prefix sum read
     countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eComputeShader,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+#else
+    // Transfer (copy) -> Prefix sum read (no scale shader ran)
+    countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                         vk::AccessFlagBits::eTransferRead, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+#endif
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
 
@@ -919,7 +929,11 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     // Pass 2 (Edge): One fragment per entry, check validity and range
     
     // Initialize query descriptors once (Pass 1 descriptors never change)
+#if DISABLE_QUERY_CACHING
+    if (true) {  // Caching disabled - always update descriptors
+#else
     if (!queryDescriptorsInitialized) {
+#endif
         // Pass 1 bindings: 0=startAddr, 1=extent, 2=resct(maxBuffer), 3=result(edgeBuffer)
         vk::DescriptorBufferInfo startInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::DescriptorBufferInfo extInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
@@ -944,7 +958,11 @@ void CompactScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_t nqu
     
     // Only update Pass 2 bindings that change (result buffer and query buffer)
     // Binding 0 = result buffer, Binding 1 = query buffer (data buffer uses buffer device address)
+#if DISABLE_QUERY_CACHING
+    if (true) {  // Caching disabled
+#else
     if (lastResultBuffer != resultBuffer) {
+#endif
         vk::DescriptorBufferInfo resInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::WriteDescriptorSet resWrite{edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resInfo};
         vd->device->updateDescriptorSets({resWrite}, nullptr);

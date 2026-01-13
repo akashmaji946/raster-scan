@@ -12,12 +12,12 @@
 
 // Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef USE_RASTER
-#define USE_RASTER 1
+#define USE_RASTER 0
 
 #endif
 
 #ifndef BUILD_COUNT
-#define BUILD_COUNT 5
+#define BUILD_COUNT 11
 #endif
 
 #ifndef QUERY_COUNT
@@ -242,7 +242,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
 
     std::sort(rsBuildTimes.begin(), rsBuildTimes.end());
     double buildTime = rsBuildTimes[rsBuildTimes.size() / 2];
-    std::cerr << "\n\n==> RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "\n\n==================================> RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n\n";
 
     PBufferCache bufs(new CommonBufferPool(vd));
     RasterScan2D rs(vd, bufs, scan, reduce, ncols);
@@ -282,7 +282,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     }
     std::sort(compactBuildTimes.begin(), compactBuildTimes.end());
     double buildTime = compactBuildTimes[compactBuildTimes.size() / 2];
-    std::cerr << "\n\n ==> Compact Index Build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "\n\n==================================> Compact Index Build time: " << (buildTime * 1000.0) << " ms\n\n";
 
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
     compactIndex->useIndexedDelete = g_useSkewedPipeline;
@@ -315,6 +315,8 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     std::cerr << "\n--- RasterScan2D Query Performance (median of " << QUERY_COUNT << ") ---\n";
     
     double rsTotTime = 0;
+    std::vector<double> rsQueryTimes;
+    rsQueryTimes.reserve(numQueries);
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // RasterScan2D format: x1, y1, x2, y2, z1, z2
@@ -333,6 +335,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         std::sort(qt.begin(), qt.end());
         double t = qt[qt.size() / 2];
         rsTotTime += t;
+        rsQueryTimes.push_back(t * 1000.0);  // Store in ms
         
         // Read back and count
         std::vector<uint32_t> result(resultSizeUints);
@@ -343,6 +346,8 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         std::cerr << "Query " << (i+1) << " (" << ((i+1)*10) << "%): " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
     }
     std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << (rsTotTime * 1000.0 / numQueries) << " ms\n";
+    std::sort(rsQueryTimes.begin(), rsQueryTimes.end());
+    std::cerr << "Median Query Time: " << std::fixed << std::setprecision(3) << rsQueryTimes[rsQueryTimes.size() / 2] << " ms\n";
     
     std::cerr << "\n[RasterScan2D] Note: Delete/Insert not supported.\n";
     
@@ -363,6 +368,8 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     
     std::cerr << "\n--- Compact Index Query Performance (median of " << QUERY_COUNT << ") ---\n";
     double compactTotTime = 0;
+    std::vector<double> compactQueryTimes;
+    compactQueryTimes.reserve(numQueries);
     for (int i = 0; i < numQueries; i++) {
         int in = i * 6;
         // CompactScanIndex format: x1, x2, y1, y2, z1, z2
@@ -381,6 +388,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         std::sort(qt.begin(), qt.end());
         double t = qt[qt.size() / 2];
         compactTotTime += t;
+        compactQueryTimes.push_back(t * 1000.0);  // Store in ms
         
         // Read back and count
         std::vector<uint32_t> result(resultSizeUints);
@@ -391,13 +399,15 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
         std::cerr << "Query " << (i+1) << " (" << ((i+1)*10) << "%): " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
     }
     std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << (compactTotTime * 1000.0 / numQueries) << " ms\n";
+    std::sort(compactQueryTimes.begin(), compactQueryTimes.end());
+    std::cerr << "Median Query Time: " << std::fixed << std::setprecision(3) << compactQueryTimes[compactQueryTimes.size() / 2] << " ms\n";
 
     // =========================================================
     // Batch Delete/Insert Cycles (CompactScanIndex only)
     // =========================================================
     
     // Configuration
-    const uint32_t NUM_BATCHES = 10000000;
+    const uint32_t NUM_BATCHES = 100000;
     const int RUNS = 2;
     const bool USE_RANDOM_BATCHES = true;
     const bool CPU_CHECK = false;

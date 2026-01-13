@@ -36,6 +36,9 @@ set(scan_src
     modes/Mode22.cpp
     modes/Mode23.cpp
     modes/Mode24.cpp
+    modes/Mode25.cpp
+    modes/Mode42.cpp
+    modes/Mode44.cpp
     CompactScanIndex.cpp
 )
 

@@ -55,3 +55,12 @@ void testCompactIndexBatchCycles(int dataId, vkcore::PVkDevice vd, vkcore::PBuff
 
 // Mode 24: TPC-C Customer Table Benchmark
 void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 42: Mode 22 + Query Performance After Each Update Cycle
+void testCompactIndexWithQueryAfterUpdate(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 44: TPC-C with Query Performance After Each Update Cycle
+void testTPCCWithQueryAfterUpdate(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging);
+
+// Mode 25: TPC-C with Mode 22 Structure
+void testTPCCMode25(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

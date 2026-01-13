@@ -150,7 +150,11 @@ void RasterScan2D::runRangeQueries(PRasterIndex index, PBuffer qranges, uint32_t
     vk::SubmitInfo submitInfo(0, nullptr, nullptr, 1, &vd->commandBuffer.get());
 
     // Initialize query descriptors once per index (cache for repeated queries)
+#if DISABLE_QUERY_CACHING
+    if (true) {  // Caching disabled - always update descriptors
+#else
     if (!queryDescriptorsInitialized || lastIndex != index) {
+#endif
         // Create reusable fence
         queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
         
