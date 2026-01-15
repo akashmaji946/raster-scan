@@ -18,7 +18,7 @@
 #endif
 
 #ifndef BUILD_COUNT
-#define BUILD_COUNT 11
+#define BUILD_COUNT 1
 #endif
 
 #ifndef QUERY_COUNT
@@ -31,7 +31,7 @@
 #endif
 
 #ifndef VERBOSE_COMPACT
-#define VERBOSE_COMPACT 0
+#define VERBOSE_COMPACT 1
 #endif
 
 // Distribution names for dataId 0-4
@@ -329,7 +329,7 @@ void testCompactIndexAndCompare(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
     std::cerr << "\n\n>>>Compact Index build time: " << (buildTime * 1000.0) << " ms\n\n";
 
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
-    compactIndex->initialize();
+    // Note: initialize() is called internally by buildIndex(), no need to call it separately
     compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 

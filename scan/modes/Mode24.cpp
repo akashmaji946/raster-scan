@@ -286,7 +286,7 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
 
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
     compactIndex->useIndexedDelete = g_useSkewedPipeline;
-    compactIndex->initialize();
+    // Note: initialize() is called internally by buildIndex()
     compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 #endif

@@ -216,7 +216,7 @@ void testCompactIndexWithQueryAfterUpdate(int dataId, vkcore::PVkDevice vd, vkco
     std::cerr << "\nBuilding Compact Index...\n";
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
     compactIndex->useIndexedDelete = g_useSkewedPipeline;
-    compactIndex->initialize();
+    // Note: initialize() is called internally by buildIndex()
     
     CPUTimer buildTimer;
     buildTimer.start();

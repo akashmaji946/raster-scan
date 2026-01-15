@@ -329,7 +329,7 @@ void testTPCCMode25(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, O
     std::cerr << "\n\n>>>Compact Index build time: " << (buildTime * 1000.0) << " ms\n\n";
 
     PCompactScanIndex compactIndex = std::make_shared<CompactScanIndex>(vd, ncols, scan);
-    compactIndex->initialize();
+    // Note: initialize() is called internally by buildIndex(), no need to call it separately
     compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
 

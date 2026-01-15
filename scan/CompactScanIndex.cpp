@@ -6,7 +6,7 @@
 #include <chrono>
 
 #ifndef VERBOSE_COMPACT
-#define VERBOSE_COMPACT 0
+#define VERBOSE_COMPACT 1
 #endif
 
 using namespace vkcore;
@@ -603,8 +603,9 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
     
-    // Clear count buffer
-    countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
+    // Clear extentBuffer (will be used for count pass directly)
+    // This eliminates one copy: count pass writes to extentBuffer, which IS the final extent
+    extentBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
     
     // NOTE: Data buffer clear removed - not needed because:
     // 1. Query shader only reads entries up to extent[bin] (actual count)
@@ -622,10 +623,10 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
         vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, bcPipeline.get());
         vd->commandBuffer->beginRendering(&renderingInfo);
         
-        // Update descriptor set for count buffer
-        vk::DescriptorBufferInfo countDescriptor{countBuffer->buf, 0, VK_WHOLE_SIZE};
+        // Update descriptor set - write directly to extentBuffer (eliminates copy)
+        vk::DescriptorBufferInfo extentDescriptor{extentBuffer->buf, 0, VK_WHOLE_SIZE};
         std::vector<vk::WriteDescriptorSet> descriptorSets = {
-            vk::WriteDescriptorSet{bcPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countDescriptor}
+            vk::WriteDescriptorSet{bcPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extentDescriptor}
         };
         vd->device->updateDescriptorSets(descriptorSets, nullptr);
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, bcPipelineProps.pipelineLayout.get(), 0, bcPipelineProps.descriptorSet.get(), nullptr);
@@ -651,27 +652,37 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     auto postCountStart = std::chrono::high_resolution_clock::now();
 #endif
 
-    // Barrier: Vertex shader write -> Transfer (for copy to capacityBuffer)
-    countBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
+    // Barrier: Vertex shader write -> Transfer/Compute
+    // extentBuffer now contains original counts (no copy needed!)
+    extentBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
     
-    // ========== PASS 1.5: Copy counts to capacityBuffer, extentBuffer and scale counts ==========
-    // Copy original counts to capacityBuffer (will be used for per-bin capacity tracking)
-    capacityBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
+    // ========== PASS 1.5: Copy extentBuffer to capacityBuffer ==========
+    // capacityBuffer stores original counts for capacity tracking during updates
+    capacityBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
     
-    // Copy original counts to extentBuffer (highest index written per bin, used by query shader)
-    // Initially extent[bin] = original_count (all entries are contiguous from 0)
-    extentBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
-    
-    // Barrier: Transfer -> Compute (for scale shader)
-    countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
-                         vk::AccessFlagBits::eTransferRead, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+#if COMPACT_INITIAL_SCALE_FACTOR > 1
+    // When scaling: copy to countBuffer, scale in-place, then prefix sum
+    countBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
     
     // Barrier: Transfer write -> Compute shader
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
-                            vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
-    extentBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
-                          vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+                            vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+    countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                         vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+#else
+    // When SCALE_FACTOR=1: copy directly to startAddrBuffer for prefix sum (skip countBuffer entirely)
+    // First clear startAddrBuffer to ensure padding bytes are zero (needed for prefix sum)
+    startAddrBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eTransfer);
+    // Note: only copy totalBins (extentBuffer size), not countBufSize (which is padded for prefix sum)
+    startAddrBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
+    
+    // Barrier: Transfer write -> Compute shader
+    capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                            vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+    startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+#endif
 
 #if VERBOSE_COMPACT
     auto postCountEnd = std::chrono::high_resolution_clock::now();
@@ -739,25 +750,31 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     std::cout << "[CompactScan] Pre-prefix sum barriers time: " << prePrefixDuration.count() << " ms" << std::endl;
 #endif
     
-    // ========== PASS 2: GPU Prefix Sum (on scaled counts) ==========
+    // ========== PASS 2: GPU Prefix Sum ==========
 #if VERBOSE_COMPACT
     std::cout << "[CompactScan] Step 2: Computing prefix sum..." << std::endl;
     auto prefixStart = std::chrono::high_resolution_clock::now();
 #endif
     if(scan) {
+#if COMPACT_INITIAL_SCALE_FACTOR > 1
+        // Prefix sum on scaled countBuffer, then copy to startAddrBuffer
         scan->prefixSum(countBuffer->buf, countBufSize);
+        
+        // Barrier: Prefix sum write -> Transfer
+        countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eTransfer,
+                             vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
+        
+        // Copy prefix sum to startAddrBuffer
+        startAddrBuffer->copyFrom(countBufSize * sizeof(uint32_t), 0, 0, countBuffer);
+#else
+        // SCALE_FACTOR=1: prefix sum directly on startAddrBuffer (no extra copy!)
+        scan->prefixSum(startAddrBuffer->buf, countBufSize);
+#endif
     } else {
         std::cerr << "[CompactIndex] ERROR: No SinglePassScan provided!\n";
         vd->commandBuffer->end();
         return;
     }
-    
-    // Barrier: Prefix sum write -> Transfer (like RasterScan2D)
-    countBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eTransfer,
-                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
-    
-    // Copy prefix sum to startAddrBuffer (like RasterScan2D's copyFrom)
-    startAddrBuffer->copyFrom(countBufSize * sizeof(uint32_t), 0, 0, countBuffer);
     
 #if VERBOSE_COMPACT
     auto prefixEnd = std::chrono::high_resolution_clock::now();
@@ -768,9 +785,15 @@ void CompactScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t npoints
     auto postPrefixStart = std::chrono::high_resolution_clock::now();
 #endif
 
-    // Barrier: startAddrBuffer ready, countBuffer ready for insert
-    startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eFragmentShader,
+    // Barrier: startAddrBuffer ready for build pass
+#if COMPACT_INITIAL_SCALE_FACTOR > 1
+    startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eVertexShader,
                              vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+#else
+    // SCALE_FACTOR=1: prefix sum ran directly on startAddrBuffer
+    startAddrBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eVertexShader,
+                             vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eShaderRead);
+#endif
     
     // Clear countBuffer to 0 before build pass (so atomicAdd returns local positions starting from 0)
     countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader, 0);
