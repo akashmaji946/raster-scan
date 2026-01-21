@@ -1,0 +1,58 @@
+// Equi-Depth Binning: Step 1 - Build Coarse 1D Histograms for X and Y
+// Each point contributes to histX[coarseBinX] and histY[coarseBinY]
+#version 450
+#extension GL_ARB_gpu_shader_int64 : require
+
+layout(local_size_x = 256) in;
+
+layout(push_constant) uniform ConstantBlock {
+    uint npoints;
+    uint coarseBins;      // e.g., 4096 (>= 4 * INDEX_RESOLUTION)
+    uint minX;
+    uint maxX;
+    uint minY;
+    uint maxY;
+} consts;
+
+// Input: Column-major point data [x0,x1,...,xN, y0,y1,...,yN, z0,z1,...,zN]
+layout(std430, binding = 0) readonly buffer PointsX {
+    uint pointsX[];
+};
+
+layout(std430, binding = 1) readonly buffer PointsY {
+    uint pointsY[];
+};
+
+// Output: Coarse histograms
+layout(std430, binding = 2) buffer HistogramX {
+    uint histX[];
+};
+
+layout(std430, binding = 3) buffer HistogramY {
+    uint histY[];
+};
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= consts.npoints) return;
+    
+    uint x = pointsX[gid];
+    uint y = pointsY[gid];
+    
+    // Compute coarse bin indices
+    // binXc = (x - minX) / (maxX - minX + 1) * coarseBins
+    uint rangeX = consts.maxX - consts.minX;
+    uint rangeY = consts.maxY - consts.minY;
+    if (rangeX == 0) rangeX = 1;
+    if (rangeY == 0) rangeY = 1;
+    
+    uint binXc = uint(uint64_t(x - consts.minX) * uint64_t(consts.coarseBins) / uint64_t(rangeX + 1));
+    uint binYc = uint(uint64_t(y - consts.minY) * uint64_t(consts.coarseBins) / uint64_t(rangeY + 1));
+    
+    // Clamp to valid range
+    binXc = min(binXc, consts.coarseBins - 1);
+    binYc = min(binYc, consts.coarseBins - 1);
+    
+    atomicAdd(histX[binXc], 1);
+    atomicAdd(histY[binYc], 1);
+}

@@ -11,7 +11,7 @@ test/
 *.lo
 *.o
 *.obj
-
+*new.txt
 # Precompiled Headers
 *.gch
 *.pch

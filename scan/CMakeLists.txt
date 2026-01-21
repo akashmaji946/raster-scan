@@ -9,6 +9,7 @@ set(scan_headers
     modes/ModeUtils.hpp
     modes/RunModes.hpp
     CompactScanIndex.hpp
+    EquiDepthIndex.hpp
 )
 
 set(scan_src
@@ -39,7 +40,9 @@ set(scan_src
     modes/Mode25.cpp
     modes/Mode42.cpp
     modes/Mode44.cpp
+    modes/Mode51.cpp
     CompactScanIndex.cpp
+    EquiDepthIndex.cpp
 )
 
 set(encode_src
@@ -96,6 +99,16 @@ set(scan_shader_src
     shaders/compact_edge.vert
     shaders/compact_edge.geom
     shaders/compact_edge.frag
+    shaders/equidepth_histogram.comp
+    shaders/equidepth_quantiles.comp
+    shaders/equidepth_count.vert
+    shaders/equidepth_build.vert
+    shaders/equidepth_query.vert
+    shaders/equidepth_query.geom
+    shaders/equidepth_range.frag
+    shaders/equidepth_edge.vert
+    shaders/equidepth_edge.geom
+    shaders/equidepth_edge.frag
 )
 
 add_executable(EncodeData ${encode_src})

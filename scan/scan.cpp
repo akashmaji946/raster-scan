@@ -40,7 +40,9 @@ using namespace vkcore;
 // 42 = Mode 22 + Query Performance After Each Update Cycle
 // 44 = TPC-C with Query Performance After Each Update Cycle
 
-#define USE_INDEX_UPDATE_PIPELINE 22
+// 51 = Equi-Depth Index (per-axis equi-depth binning for balanced bins)
+
+#define USE_INDEX_UPDATE_PIPELINE 51
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -121,7 +123,9 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 44
+#if USE_INDEX_UPDATE_PIPELINE == 51
+    testEquiDepthIndex(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 44
     testTPCCWithQueryAfterUpdate(d, vd, staging);
 #elif USE_INDEX_UPDATE_PIPELINE == 42
     testCompactIndexWithQueryAfterUpdate(d, vd, staging, op);

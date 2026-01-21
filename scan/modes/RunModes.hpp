@@ -64,3 +64,6 @@ void testTPCCWithQueryAfterUpdate(int dataId, vkcore::PVkDevice vd, vkcore::PBuf
 
 // Mode 25: TPC-C with Mode 22 Structure
 void testTPCCMode25(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 51: Equi-Depth Index Test
+void testEquiDepthIndex(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

@@ -3,7 +3,7 @@
 
 #version 450
 
-#define MAX_ENTRIES_PER_BIN 100000
+#define MAX_ENTRIES_PER_BIN 500000
 
 layout(push_constant) uniform ConstantBlock {
     uvec3 minVal;
