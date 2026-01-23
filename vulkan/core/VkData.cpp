@@ -481,7 +481,14 @@ void Buffer::barrier(vk::PipelineStageFlagBits srcStage, vk::PipelineStageFlagBi
 
 void Buffer::clearBufferWithBarrier(vk::PipelineStageFlagBits dstStage,uint32_t fillVal) {
     this->clearBuffer(fillVal);
-    this->barrier(vk::PipelineStageFlagBits::eTransfer, dstStage, vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+    // Use appropriate access mask based on destination stage
+    vk::AccessFlags dstAccessMask;
+    if (dstStage == vk::PipelineStageFlagBits::eTransfer) {
+        dstAccessMask = vk::AccessFlagBits::eTransferRead | vk::AccessFlagBits::eTransferWrite;
+    } else {
+        dstAccessMask = vk::AccessFlagBits::eShaderRead;
+    }
+    this->barrier(vk::PipelineStageFlagBits::eTransfer, dstStage, vk::AccessFlagBits::eTransferWrite, dstAccessMask);
 }
 
 void Buffer::copyFrom(size_t size, size_t srcOffset, size_t dstOffset, PBuffer buf, int32_t transferQueue) {

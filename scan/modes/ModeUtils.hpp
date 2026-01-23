@@ -36,6 +36,7 @@ extern int32_t g_dim;
 extern uint32_t g_npoints;
 extern int32_t nDataset;
 extern bool g_useSkewedPipeline;  // -s flag: use indexed delete for skewed distributions
+extern int g_runmode;  // -r flag: 0=both, 1=first index only, 2=second index only
 extern std::vector<std::string> datasets;
 extern std::vector<std::string> querysets;
 extern std::vector<int> qct;

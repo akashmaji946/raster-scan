@@ -41,6 +41,8 @@ set(scan_src
     modes/Mode42.cpp
     modes/Mode44.cpp
     modes/Mode51.cpp
+    modes/Mode52.cpp
+    modes/Mode53.cpp
     CompactScanIndex.cpp
     EquiDepthIndex.cpp
 )
@@ -103,6 +105,12 @@ set(scan_shader_src
     shaders/equidepth_quantiles.comp
     shaders/equidepth_count.vert
     shaders/equidepth_build.vert
+    shaders/equidepth_morton.comp
+    shaders/equidepth_morton_quantiles.comp
+    shaders/equidepth_morton_count.vert
+    shaders/equidepth_morton_build.vert
+    shaders/equidepth_morton_query.vert
+    shaders/equidepth_morton_range.frag
     shaders/equidepth_query.vert
     shaders/equidepth_query.geom
     shaders/equidepth_range.frag

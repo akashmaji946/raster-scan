@@ -41,6 +41,10 @@ EquiDepthIndex::~EquiDepthIndex() {
     if (quantileYBuffer) quantileYBuffer->destroy();
     if (histXBuffer) histXBuffer->destroy();
     if (histYBuffer) histYBuffer->destroy();
+#if USE_MORTON_BINNING
+    if (mortonHistBuffer) mortonHistBuffer->destroy();
+    if (mortonQuantileBuffer) mortonQuantileBuffer->destroy();
+#endif
     if (startAddrBuffer) startAddrBuffer->destroy();
     if (countBuffer) countBuffer->destroy();
     if (extentBuffer) extentBuffer->destroy();
@@ -54,6 +58,19 @@ void EquiDepthIndex::allocateBuffers(uint32_t npoints) {
     this->npoints = npoints;
     uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
     
+    // Count buffer size must be aligned for prefix sum
+    uint32_t divisor = scan ? scan->getBufSizeDivisor() : 4096;
+    
+#if USE_MORTON_BINNING
+    // For round-robin binning, we only need a small quantile buffer for descriptor binding
+    // (the shader doesn't actually use it, but Vulkan requires valid bindings)
+    mortonQuantileBuffer = std::make_shared<Buffer>(vd);
+    mortonQuantileBuffer->create((totalBins + 1) * sizeof(uint32_t),
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst,
+        MemoryType::Internal);
+    
+    // Skip allocating histogram buffers - not needed for round-robin
+#else
     // Quantile boundaries (INDEX_RESOLUTION + 1 values each)
     uint32_t quantileSize = (INDEX_RESOLUTION + 1) * sizeof(uint32_t);
     quantileXBuffer = std::make_shared<Buffer>(vd);
@@ -66,9 +83,6 @@ void EquiDepthIndex::allocateBuffers(uint32_t npoints) {
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst,
         MemoryType::Internal);
     
-    // Count buffer size must be aligned for prefix sum
-    uint32_t divisor = scan ? scan->getBufSizeDivisor() : 4096;
-    
     // Coarse histograms - padded for prefix sum
     uint32_t paddedHistSize = ((EQUIDEPTH_COARSE_BINS + divisor - 1) / divisor) * divisor;
     histXBuffer = std::make_shared<Buffer>(vd);
@@ -80,6 +94,8 @@ void EquiDepthIndex::allocateBuffers(uint32_t npoints) {
     histYBuffer->create(paddedHistSize * sizeof(uint32_t),
         vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst,
         MemoryType::Internal);
+#endif
+    
     countBufSize = ((totalBins + divisor - 1) / divisor) * divisor;
     
     startAddrBuffer = std::make_shared<Buffer>(vd);
@@ -128,6 +144,9 @@ void EquiDepthIndex::initialize() {
 }
 
 void EquiDepthIndex::setupPipelines() {
+#if USE_MORTON_BINNING
+    // Round-robin binning: Skip all compute pipelines - not needed
+#else
     // ========== COMPUTE PIPELINE: Histogram ==========
     {
         std::vector<uint32_t> code;
@@ -201,6 +220,7 @@ void EquiDepthIndex::setupPipelines() {
         vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, quantPipelineLayout.get());
         quantilesPipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
     }
+#endif
     
     // ========== Load dummy fragment shader ==========
     {
@@ -213,7 +233,11 @@ void EquiDepthIndex::setupPipelines() {
     // ========== GRAPHICS PIPELINE: Count ==========
     {
         std::vector<uint32_t> vshader;
+#if USE_MORTON_BINNING
+        validate(readShader(SHADER_FOLDER + "/equidepth_morton_count.vert.spv", vshader), "equidepth morton count vertex shader");
+#else
         validate(readShader(SHADER_FOLDER + "/equidepth_count.vert.spv", vshader), "equidepth count vertex shader");
+#endif
         vk::ShaderModuleCreateInfo createInfo({}, vshader.size() * sizeof(uint32_t), vshader.data());
         countVertexShader = vd->device->createShaderModuleUnique(createInfo);
         
@@ -238,6 +262,20 @@ void EquiDepthIndex::setupPipelines() {
         countPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         countPipelineProps.setInputAssemblyFlag();
         
+#if USE_MORTON_BINNING
+        // Morton count: binding 0 = mortonQuantiles, binding 1 = countBuffer
+        countPipelineProps.setLayoutBindings = {
+            vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex}
+        };
+        countPipelineProps.poolSizes = {
+            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 2}
+        };
+        // Push constants: resolution, npoints, minX, maxX, minY, maxY
+        countPipelineProps.pushConstantRange = {
+            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 6 * sizeof(uint32_t))
+        };
+#else
         countPipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
             vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
@@ -249,6 +287,7 @@ void EquiDepthIndex::setupPipelines() {
         countPipelineProps.pushConstantRange = {
             vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 2 * sizeof(uint32_t))
         };
+#endif
         countPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
         
         vk::PipelineRenderingCreateInfo rpCreateInfo;
@@ -263,7 +302,11 @@ void EquiDepthIndex::setupPipelines() {
     // ========== GRAPHICS PIPELINE: Build ==========
     {
         std::vector<uint32_t> vshader;
+#if USE_MORTON_BINNING
+        validate(readShader(SHADER_FOLDER + "/equidepth_morton_build.vert.spv", vshader), "equidepth morton build vertex shader");
+#else
         validate(readShader(SHADER_FOLDER + "/equidepth_build.vert.spv", vshader), "equidepth build vertex shader");
+#endif
         vk::ShaderModuleCreateInfo createInfo({}, vshader.size() * sizeof(uint32_t), vshader.data());
         buildVertexShader = vd->device->createShaderModuleUnique(createInfo);
         
@@ -290,6 +333,21 @@ void EquiDepthIndex::setupPipelines() {
         buildPipelineProps.pipelineInputAssemblyStateCreateInfo = vk::PipelineInputAssemblyStateCreateInfo({}, vk::PrimitiveTopology::ePointList);
         buildPipelineProps.setInputAssemblyFlag();
         
+#if USE_MORTON_BINNING
+        // Morton build: binding 0 = mortonQuantiles, binding 1 = startAddr, binding 2 = countBuffer
+        buildPipelineProps.setLayoutBindings = {
+            vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+            vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
+            vk::DescriptorSetLayoutBinding{2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex}
+        };
+        buildPipelineProps.poolSizes = {
+            vk::DescriptorPoolSize{vk::DescriptorType::eStorageBuffer, 3}
+        };
+        // Push constants: resolution, npoints, minX, maxX, minY, maxY, dataBufferAddr[2]
+        buildPipelineProps.pushConstantRange = {
+            vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 8 * sizeof(uint32_t))
+        };
+#else
         buildPipelineProps.setLayoutBindings = {
             vk::DescriptorSetLayoutBinding{0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
             vk::DescriptorSetLayoutBinding{1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eVertex},
@@ -302,6 +360,7 @@ void EquiDepthIndex::setupPipelines() {
         buildPipelineProps.pushConstantRange = {
             vk::PushConstantRange(vk::ShaderStageFlagBits::eVertex, 0, 6 * sizeof(uint32_t))
         };
+#endif
         buildPipelineProps.setBlendFunction(BlendFunc::BLEND_NONE);
         
         vk::PipelineRenderingCreateInfo rpCreateInfo;
@@ -316,9 +375,15 @@ void EquiDepthIndex::setupPipelines() {
     // ========== GRAPHICS PIPELINE: Query Pass 1 (Range) ==========
     {
         std::vector<uint32_t> vertCode, geomCode, fragCode;
+#if USE_MORTON_BINNING
+        validate(readShader(SHADER_FOLDER + "/equidepth_morton_query.vert.spv", vertCode), "equidepth morton query vertex shader");
+        validate(readShader(SHADER_FOLDER + "/equidepth_query.geom.spv", geomCode), "equidepth query geom shader");
+        validate(readShader(SHADER_FOLDER + "/equidepth_morton_range.frag.spv", fragCode), "equidepth morton range frag shader");
+#else
         validate(readShader(SHADER_FOLDER + "/equidepth_query.vert.spv", vertCode), "equidepth query vertex shader");
         validate(readShader(SHADER_FOLDER + "/equidepth_query.geom.spv", geomCode), "equidepth query geom shader");
         validate(readShader(SHADER_FOLDER + "/equidepth_range.frag.spv", fragCode), "equidepth range frag shader");
+#endif
         
         vk::ShaderModuleCreateInfo vertInfo({}, vertCode.size() * sizeof(uint32_t), vertCode.data());
         vk::ShaderModuleCreateInfo geomInfo({}, geomCode.size() * sizeof(uint32_t), geomCode.data());
@@ -434,6 +499,47 @@ void EquiDepthIndex::setupPipelines() {
         vk::UniqueRenderPass dummyRenderPass;
         edgePipeline = edgePipelineProps.createPipeline(vd, dummyRenderPass, &rpCreateInfo);
     }
+    
+    // ========== COMPUTE PIPELINE: Range Collection (Pass 1 alternative) ==========
+    // This compute shader is faster than the graphics pipeline when bins are sparse
+    {
+        std::vector<uint32_t> code;
+        validate(readShader(SHADER_FOLDER + "/equidepth_range_compute.comp.spv", code), "equidepth range compute shader");
+        
+        vk::ShaderModuleCreateInfo createInfo({}, code.size() * sizeof(uint32_t), code.data());
+        rangeComputeShader = vd->device->createShaderModuleUnique(createInfo);
+        
+        // Descriptor set layout: 0=startAddr, 1=extent, 2=maxBuffer, 3=edgeBuffer
+        std::vector<vk::DescriptorSetLayoutBinding> bindings = {
+            {0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute},
+            {1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute},
+            {2, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute},
+            {3, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute}
+        };
+        vk::DescriptorSetLayoutCreateInfo layoutInfo({}, bindings);
+        rangeComputeDescSetLayout = vd->device->createDescriptorSetLayoutUnique(layoutInfo);
+        
+        // Push constants: resolution, totalBins
+        vk::PushConstantRange pcRange(vk::ShaderStageFlagBits::eCompute, 0, 2 * sizeof(uint32_t));
+        vk::PipelineLayoutCreateInfo pipelineLayoutInfo({}, 1, &rangeComputeDescSetLayout.get(), 1, &pcRange);
+        rangeComputePipelineLayout = vd->device->createPipelineLayoutUnique(pipelineLayoutInfo);
+        
+        // Descriptor pool
+        std::vector<vk::DescriptorPoolSize> poolSizes = {
+            {vk::DescriptorType::eStorageBuffer, 4}
+        };
+        vk::DescriptorPoolCreateInfo poolInfo(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 1, poolSizes);
+        rangeComputeDescPool = vd->device->createDescriptorPoolUnique(poolInfo);
+        
+        // Allocate descriptor set
+        vk::DescriptorSetAllocateInfo allocInfo(rangeComputeDescPool.get(), 1, &rangeComputeDescSetLayout.get());
+        rangeComputeDescSet = std::move(vd->device->allocateDescriptorSetsUnique(allocInfo)[0]);
+        
+        // Create compute pipeline
+        vk::PipelineShaderStageCreateInfo stageInfo({}, vk::ShaderStageFlagBits::eCompute, rangeComputeShader.get(), "main");
+        vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, rangeComputePipelineLayout.get());
+        rangeComputePipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
+    }
 }
 
 void EquiDepthIndex::buildHistograms(PBuffer pointsBuffer, uint32_t npoints, bool bindDescriptors) {
@@ -495,6 +601,8 @@ void EquiDepthIndex::updateQuantileDescriptors() {
 void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t *minVal, uint32_t *maxVal) {
     std::cerr << "[EquiDepthIndex] Starting buildIndex with " << npoints << " points...\n";
     
+    auto t0 = std::chrono::high_resolution_clock::now();
+    
     // Store min/max values
     for (int i = 0; i < 3; i++) {
         this->minVal[i] = minVal[i];
@@ -503,15 +611,31 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
     
     // Allocate buffers
     allocateBuffers(npoints);
+    auto t1 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[EquiDepthIndex] Buffer allocation time: " 
+              << std::chrono::duration<double, std::milli>(t1 - t0).count() << " ms\n";
+    
     initialize();
+    auto t2 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[EquiDepthIndex] Pipeline initialization time: " 
+              << std::chrono::duration<double, std::milli>(t2 - t1).count() << " ms\n";
     
     uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
     
+    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
+    
+#if USE_MORTON_BINNING
+    // Round-robin binning: Skip phases 1-3 entirely
+    // - Phase 1 (histogram) not needed: each bin gets npoints/totalBins
+    // - Phase 2 (prefix sum) not needed: trivial arithmetic
+    // - Phase 3 (quantiles) not needed: bin = vertexIndex % totalBins
+    std::cerr << "[EquiDepthIndex] Using round-robin binning - skipping phases 1-3...\n";
+    auto t3 = t2;
+#else
     // ========== PHASE 1: Build histograms ==========
     std::cerr << "[EquiDepthIndex] Step 1: Building coarse histograms...\n";
     updateHistogramDescriptors(pointsBuffer, npoints);
     
-    vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
     
     histXBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader);
@@ -550,9 +674,22 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
     vd->submit(submitInfo2, fence2, false);
     vd->waitForFences(fence2, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence2);
+#endif
     
     // ========== PHASE 4: Count points per equi-depth bin ==========
     std::cerr << "[EquiDepthIndex] Step 4: Counting points per equi-depth bin...\n";
+#if USE_MORTON_BINNING
+    {
+        // For round-robin, quantiles buffer is not used but we still need to bind something
+        vk::DescriptorBufferInfo quantDesc{mortonQuantileBuffer->buf, 0, VK_WHOLE_SIZE};
+        vk::DescriptorBufferInfo countDesc{extentBuffer->buf, 0, VK_WHOLE_SIZE};
+        std::vector<vk::WriteDescriptorSet> writes = {
+            {countPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &quantDesc},
+            {countPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countDesc},
+        };
+        vd->device->updateDescriptorSets(writes, nullptr);
+    }
+#else
     {
         vk::DescriptorBufferInfo quantXDesc{quantileXBuffer->buf, 0, VK_WHOLE_SIZE};
         vk::DescriptorBufferInfo quantYDesc{quantileYBuffer->buf, 0, VK_WHOLE_SIZE};
@@ -564,6 +701,7 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
         };
         vd->device->updateDescriptorSets(writes, nullptr);
     }
+#endif
     
     vd->commandBuffer->begin(beginInfo);
     extentBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
@@ -575,8 +713,14 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
         vd->commandBuffer->beginRendering(&renderingInfo);
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, countPipelineProps.pipelineLayout.get(), 0, countPipelineProps.descriptorSet.get(), nullptr);
         
+#if USE_MORTON_BINNING
+        // Push constants: resolution, npoints, minX, maxX, minY, maxY
+        uint32_t pc[6] = {INDEX_RESOLUTION, npoints, minVal[0], maxVal[0], minVal[1], maxVal[1]};
+        vd->commandBuffer->pushConstants<uint32_t>(countPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, pc);
+#else
         uint32_t pc[2] = {INDEX_RESOLUTION, npoints};
         vd->commandBuffer->pushConstants<uint32_t>(countPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, pc);
+#endif
         
         vk::DeviceSize offset = 0;
         vd->commandBuffer->bindVertexBuffers(0, pointsBuffer->buf, offset);
@@ -602,14 +746,35 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
     vd->waitForFences(fence3, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence3);
     
+    auto t4 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[EquiDepthIndex] Step 4 (count) time: " 
+              << std::chrono::duration<double, std::milli>(t4 - t3).count() << " ms\n";
+    
     // ========== PHASE 5: Prefix sum on startAddrBuffer ==========
     std::cerr << "[EquiDepthIndex] Step 5: Computing prefix sum for offsets...\n";
     if (scan) {
         scan->cmdPrefixSum(startAddrBuffer->buf, countBufSize);
     }
     
+    auto t5 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[EquiDepthIndex] Step 5 (prefix sum) time: " 
+              << std::chrono::duration<double, std::milli>(t5 - t4).count() << " ms\n";
+    
     // ========== PHASE 6: Insert points into data buffer ==========
     std::cerr << "[EquiDepthIndex] Step 6: Inserting points into data buffer...\n";
+#if USE_MORTON_BINNING
+    {
+        vk::DescriptorBufferInfo quantDesc{mortonQuantileBuffer->buf, 0, VK_WHOLE_SIZE};
+        vk::DescriptorBufferInfo startDesc{startAddrBuffer->buf, 0, VK_WHOLE_SIZE};
+        vk::DescriptorBufferInfo countDesc{countBuffer->buf, 0, VK_WHOLE_SIZE};
+        std::vector<vk::WriteDescriptorSet> writes = {
+            {buildPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &quantDesc},
+            {buildPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startDesc},
+            {buildPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countDesc},
+        };
+        vd->device->updateDescriptorSets(writes, nullptr);
+    }
+#else
     {
         vk::DescriptorBufferInfo quantXDesc{quantileXBuffer->buf, 0, VK_WHOLE_SIZE};
         vk::DescriptorBufferInfo quantYDesc{quantileYBuffer->buf, 0, VK_WHOLE_SIZE};
@@ -623,6 +788,7 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
         };
         vd->device->updateDescriptorSets(writes, nullptr);
     }
+#endif
     
     vd->commandBuffer->begin(beginInfo);
     countBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader, 0);
@@ -635,10 +801,18 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
         vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, buildPipelineProps.pipelineLayout.get(), 0, buildPipelineProps.descriptorSet.get(), nullptr);
         
         uint64_t dataAddr = dataBuffer->getDeviceAddress();
+#if USE_MORTON_BINNING
+        // Push constants: resolution, npoints, minX, maxX, minY, maxY, dataBufferAddr[2]
+        uint32_t pc[8] = {INDEX_RESOLUTION, npoints, minVal[0], maxVal[0], minVal[1], maxVal[1],
+                         static_cast<uint32_t>(dataAddr & 0xFFFFFFFF),
+                         static_cast<uint32_t>(dataAddr >> 32)};
+        vd->commandBuffer->pushConstants<uint32_t>(buildPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, pc);
+#else
         uint32_t pc[6] = {INDEX_RESOLUTION, npoints, 0, 0,
                          static_cast<uint32_t>(dataAddr & 0xFFFFFFFF),
                          static_cast<uint32_t>(dataAddr >> 32)};
         vd->commandBuffer->pushConstants<uint32_t>(buildPipelineProps.pipelineLayout.get(), vk::ShaderStageFlagBits::eVertex, 0, pc);
+#endif
         
         vk::DeviceSize offset = 0;
         vd->commandBuffer->bindVertexBuffers(0, pointsBuffer->buf, offset);
@@ -660,6 +834,12 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
     vd->waitForFences(fence4, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence4);
     
+    auto t6 = std::chrono::high_resolution_clock::now();
+    std::cerr << "[EquiDepthIndex] Step 6 (insert) time: " 
+              << std::chrono::duration<double, std::milli>(t6 - t5).count() << " ms\n";
+    std::cerr << "[EquiDepthIndex] Total GPU work time: " 
+              << std::chrono::duration<double, std::milli>(t6 - t3).count() << " ms\n";
+    
     std::cerr << "[EquiDepthIndex] Build complete.\n";
 }
 
@@ -668,7 +848,7 @@ void EquiDepthIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PBu
     // Pass 1 (Range): Collect [st, en) pairs for all bins with entries
     // Pass 2 (Edge): One fragment per entry, check validity and range
     
-    // ========== UPDATE PASS 1 DESCRIPTORS ==========
+    // ========== UPDATE PASS 1 DESCRIPTORS (Compute Pipeline) ==========
     // Bindings: 0=startAddr, 1=extent, 2=maxBuffer, 3=edgeBuffer
     {
         vk::DescriptorBufferInfo startAddrDesc(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
@@ -676,10 +856,10 @@ void EquiDepthIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PBu
         vk::DescriptorBufferInfo maxDesc(maxBuffer->buf, 0, VK_WHOLE_SIZE);
         vk::DescriptorBufferInfo edgeDesc(edgeBuffer->buf, 0, VK_WHOLE_SIZE);
         std::vector<vk::WriteDescriptorSet> writes = {
-            {queryPipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startAddrDesc},
-            {queryPipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extentDesc},
-            {queryPipelineProps.descriptorSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &maxDesc},
-            {queryPipelineProps.descriptorSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeDesc},
+            {rangeComputeDescSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startAddrDesc},
+            {rangeComputeDescSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extentDesc},
+            {rangeComputeDescSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &maxDesc},
+            {rangeComputeDescSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeDesc},
         };
         vd->device->updateDescriptorSets(writes, nullptr);
     }
@@ -700,35 +880,31 @@ void EquiDepthIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PBu
     vd->commandBuffer->begin(beginInfo);
     
     // Clear result buffer and maxBuffer
-    resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
-    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eFragmentShader, 0);
+    resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
+    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
     
-    // ========== PASS 1: Range - collect [st, en) pairs ==========
+    // ========== PASS 1: Range - collect [st, en) pairs (COMPUTE SHADER) ==========
+    // Using compute shader instead of graphics for early exit on empty bins
     {
-        vk::RenderingAttachmentInfo colorInfo;
-        vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
-        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, queryPipeline.get());
-        vd->commandBuffer->beginRendering(&renderingInfo);
-        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, queryPipelineProps.pipelineLayout.get(), 0, queryPipelineProps.descriptorSet.get(), nullptr);
+        uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
         
-        // Push constants: resolution, nqueries
-        uint32_t pc[2] = {INDEX_RESOLUTION, nqueries};
-        vd->commandBuffer->pushConstants<uint32_t>(queryPipelineProps.pipelineLayout.get(), 
-            vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc);
+        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, rangeComputePipeline.get());
+        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, rangeComputePipelineLayout.get(), 0, rangeComputeDescSet.get(), nullptr);
         
-        vk::DeviceSize offset = 0;
-        vd->commandBuffer->bindVertexBuffers(0, queryBuffer->buf, offset);
-        offset = 3 * sizeof(uint32_t);
-        vd->commandBuffer->bindVertexBuffers(1, queryBuffer->buf, offset);
+        // Push constants: resolution, totalBins
+        uint32_t pc[2] = {INDEX_RESOLUTION, totalBins};
+        vd->commandBuffer->pushConstants<uint32_t>(rangeComputePipelineLayout.get(), 
+            vk::ShaderStageFlagBits::eCompute, 0, pc);
         
-        vd->commandBuffer->draw(nqueries, 1, 0, 0);
-        vd->commandBuffer->endRendering();
+        // Dispatch: one thread per bin, 256 threads per workgroup
+        uint32_t groups = (totalBins + 255) / 256;
+        vd->commandBuffer->dispatch(groups, 1, 1);
     }
     
-    // Barrier: Pass 1 write -> Pass 2 read
-    maxBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader, vk::PipelineStageFlagBits::eDrawIndirect,
+    // Barrier: Pass 1 (compute) write -> Pass 2 read
+    maxBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eDrawIndirect,
                        vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eIndirectCommandRead);
-    edgeBuffer->barrier(vk::PipelineStageFlagBits::eFragmentShader, vk::PipelineStageFlagBits::eVertexInput,
+    edgeBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eVertexInput,
                         vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eVertexAttributeRead);
     
     // ========== PASS 2: Edge - one fragment per entry ==========

@@ -10,7 +10,7 @@
 
 #include <common/constants.h>
 
-#define INDEX_RESOLUTION 8192
+#define INDEX_RESOLUTION 1024
 
 // Set to 1 to disable query descriptor caching (forces descriptor updates every query)
 #ifndef DISABLE_QUERY_CACHING

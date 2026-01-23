@@ -6,7 +6,7 @@
 #include <chrono>
 
 #ifndef VERBOSE_COMPACT
-#define VERBOSE_COMPACT 1
+#define VERBOSE_COMPACT 0
 #endif
 
 using namespace vkcore;

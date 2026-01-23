@@ -1,0 +1,36 @@
+// Equi-Depth Index - Round-Robin Quantile Boundaries
+// For round-robin assignment, quantiles are trivial: quantiles[i] = i
+// This shader is kept for interface compatibility but does minimal work
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(push_constant) uniform ConstantBlock {
+    uint resolution;    // INDEX_RESOLUTION (number of fine bins per dimension)
+    uint coarseBins;    // Number of coarse histogram bins (= totalBins)
+    uint npoints;       // Total number of points
+} consts;
+
+// Input: CDF (not used for round-robin, kept for interface compatibility)
+layout(std430, binding = 0) readonly buffer CDF {
+    uint cdf[];
+};
+
+// Output: Quantile boundaries
+// For round-robin: quantiles[i] = i (bin boundaries are just bin indices)
+layout(std430, binding = 1) writeonly buffer Quantiles {
+    uint quantiles[];
+};
+
+void main() {
+    uint binIdx = gl_GlobalInvocationID.x;
+    uint totalBins = consts.resolution * consts.resolution;
+    
+    if (binIdx > totalBins) return;
+    
+    // For round-robin bin assignment (idx % totalBins):
+    // - Bin i contains points where (pointIdx % totalBins) == i
+    // - No need for complex quantile boundaries
+    // - Just store the bin index itself as the "boundary"
+    quantiles[binIdx] = binIdx;
+}

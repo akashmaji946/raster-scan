@@ -13,16 +13,16 @@
 
 // Set RUNRASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
 #ifndef RUNRASTER
-#define RUNRASTER 0
+#define RUNRASTER 1
 
 #endif
 
 #ifndef BUILD_COUNT
-#define BUILD_COUNT 1
+#define BUILD_COUNT 11
 #endif
 
 #ifndef QUERY_COUNT
-#define QUERY_COUNT 1
+#define QUERY_COUNT 11
 #endif
 
 // Verbose timing flags
@@ -31,7 +31,7 @@
 #endif
 
 #ifndef VERBOSE_COMPACT
-#define VERBOSE_COMPACT 1
+#define VERBOSE_COMPACT 0
 #endif
 
 // Distribution names for dataId 0-4

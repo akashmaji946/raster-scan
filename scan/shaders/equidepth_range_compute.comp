@@ -1,0 +1,59 @@
+// Equi-Depth Index Query - Pass 1: Range Compute Shader
+// Replaces fragment shader approach with compute shader for early exit on empty bins
+// Each thread processes one bin, exits early if bin is empty
+#version 450
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(push_constant) uniform ConstantBlock {
+    uint resolution;
+    uint totalBins;
+} consts;
+
+// Binding 0: Start addresses (offsets) per bin
+layout(std430, binding = 0) readonly buffer StartAddrBuffer {
+    uint startAddr[];
+};
+
+// Binding 1: Extent per bin (count of valid entries)
+layout(std430, binding = 1) readonly buffer ExtentBuffer {
+    uint extent[];
+};
+
+// Binding 2: maxBuffer - [0]=vertexCount for drawIndirect
+layout(std430, binding = 2) buffer MaxBuffer {
+    uint maxBuf[];
+};
+
+// Binding 3: edgeBuffer - output [st, en) pairs
+layout(std430, binding = 3) buffer EdgeBuffer {
+    uvec2 edgeBuf[];
+};
+
+void main() {
+    uint binIdx = gl_GlobalInvocationID.x;
+    
+    // Early exit if out of bounds
+    if (binIdx >= consts.totalBins) {
+        return;
+    }
+    
+    uint cnt = extent[binIdx];
+    
+    // Early exit if bin is empty - this is the key optimization!
+    if (cnt == 0) {
+        return;
+    }
+    
+    uint start = startAddr[binIdx];
+    
+    // Atomically get slot in edgeBuffer
+    // maxBuf[0] = vertexCount for VkDrawIndirectCommand
+    uint slot = atomicAdd(maxBuf[0], 1);
+    
+    // Store [start, start + count) pair
+    edgeBuf[slot] = uvec2(start, start + cnt);
+    
+    // Set instanceCount = 1 for VkDrawIndirectCommand
+    atomicMax(maxBuf[1], 1u);
+}

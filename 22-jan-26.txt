@@ -1,0 +1,110 @@
+--- CompactScanIndex Query Performance (warmup + mean of 11 runs) ---
+Query 1 (10%): 10.306 ms, Count: 50005397
+Query 2 (20%): 17.975 ms, Count: 99995964
+Query 3 (30%): 25.420 ms, Count: 150004202
+Query 4 (40%): 32.562 ms, Count: 199994059
+Query 5 (50%): 40.025 ms, Count: 249993299
+Query 6 (60%): 46.694 ms, Count: 299988716
+Query 7 (70%): 53.863 ms, Count: 349985601
+Query 8 (80%): 60.575 ms, Count: 399987646
+Query 9 (90%): 67.238 ms, Count: 449993437
+Query 10 (100%): 73.871 ms, Count: 500000000
+Average Query Time: 42.853 ms
+Median Query Time: 46.694 ms
+
+--- EquiDepthIndex Query Performance (warmup + mean of 11 runs) ---
+Query 1 (10%): 12.383 ms, Count: 50005397
+Query 2 (20%): 12.742 ms, Count: 99995964
+Query 3 (30%): 13.382 ms, Count: 150004202
+Query 4 (40%): 13.835 ms, Count: 199994059
+Query 5 (50%): 14.254 ms, Count: 249993299
+Query 6 (60%): 14.729 ms, Count: 299988716
+Query 7 (70%): 15.287 ms, Count: 349985601
+Query 8 (80%): 15.719 ms, Count: 399987646
+Query 9 (90%): 16.057 ms, Count: 449993437
+Query 10 (100%): 16.497 ms, Count: 500000000
+Average Query Time: 14.488 ms
+Median Query Time: 14.729 ms
+
+
+========================================
+BUILD TIME COMPARISON
+========================================
+Equi-Depth Index build time: 173.49 ms
+CompactScan Index build time: 224.01 ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--- CompactScanIndex Query Performance (warmup + mean of 11 runs) ---
+Query 1 (10%): 10.752 ms, Count: 50005397
+Query 2 (20%): 18.543 ms, Count: 99995964
+Query 3 (30%): 26.101 ms, Count: 150004202
+Query 4 (40%): 33.802 ms, Count: 199994059
+Query 5 (50%): 40.892 ms, Count: 249993299
+Query 6 (60%): 48.008 ms, Count: 299988716
+Query 7 (70%): 55.127 ms, Count: 349985601
+Query 8 (80%): 62.215 ms, Count: 399987646
+Query 9 (90%): 68.924 ms, Count: 449993437
+Query 10 (100%): 75.612 ms, Count: 500000000
+Average Query Time: 43.998 ms
+Median Query Time: 48.008 ms
+
+--- EquiDepthIndex Query Performance (warmup + mean of 11 runs) ---
+Query 1 (10%): 13.343 ms, Count: 50005397
+Query 2 (20%): 13.380 ms, Count: 99995964
+Query 3 (30%): 13.449 ms, Count: 150004202
+Query 4 (40%): 13.881 ms, Count: 199994059
+Query 5 (50%): 14.049 ms, Count: 249993299
+Query 6 (60%): 14.414 ms, Count: 299988716
+Query 7 (70%): 14.963 ms, Count: 349985601
+Query 8 (80%): 15.372 ms, Count: 399987646
+Query 9 (90%): 15.654 ms, Count: 449993437
+Query 10 (100%): 16.101 ms, Count: 500000000
+Average Query Time: 14.461 ms
+Median Query Time: 14.414 ms
+
+--- Query Count Verification (CompactScan vs EquiDepth) ---
+Query | Selectivity | Compact    | EquiDepth  | Match | Compact (ms) | EquiDepth (ms) | Speedup
+------+-------------+------------+------------+-------+--------------+----------------+--------
+    1 |         10% |   50005397 |   50005397 |   YES |       10.752 |         13.343 |   0.81x
+    2 |         20% |   99995964 |   99995964 |   YES |       18.543 |         13.380 |   1.39x
+    3 |         30% |  150004202 |  150004202 |   YES |       26.101 |         13.449 |   1.94x
+    4 |         40% |  199994059 |  199994059 |   YES |       33.802 |         13.881 |   2.44x
+    5 |         50% |  249993299 |  249993299 |   YES |       40.892 |         14.049 |   2.91x
+    6 |         60% |  299988716 |  299988716 |   YES |       48.008 |         14.414 |   3.33x
+    7 |         70% |  349985601 |  349985601 |   YES |       55.127 |         14.963 |   3.68x
+    8 |         80% |  399987646 |  399987646 |   YES |       62.215 |         15.372 |   4.05x
+    9 |         90% |  449993437 |  449993437 |   YES |       68.924 |         15.654 |   4.40x
+   10 |        100% |  500000000 |  500000000 |   YES |       75.612 |         16.101 |   4.70x
+
+All counts match: YES
+
+========================================
+BUILD TIME COMPARISON
+========================================
+Equi-Depth Index build time: 179.31 ms
+CompactScan Index build time: 266.59 ms

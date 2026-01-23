@@ -7,8 +7,14 @@
 #include "BufferPool.hpp"
 #include <memory>
 
-// Coarse histogram resolution (>= 4 * INDEX_RESOLUTION for good quantile approximation)
-#define EQUIDEPTH_COARSE_BINS 4096
+// Coarse histogram resolution for Morton codes
+// Reduced to 16K for CPU scan debugging
+#define EQUIDEPTH_COARSE_BINS (INDEX_RESOLUTION)
+
+// Use Morton code based binning (1D equi-depth on Z-order curve)
+// Disabled: Morton binning requires complete query pipeline redesign
+// The 2D independent quantile approach works for uniform data
+#define USE_MORTON_BINNING 1
 
 // EquiDepthEntry structure (GPU layout) - same as CompactEntry
 struct EquiDepthEntry {
@@ -51,6 +57,10 @@ public:
     // Coarse histogram buffers (EQUIDEPTH_COARSE_BINS values each)
     vkcore::PBuffer histXBuffer;
     vkcore::PBuffer histYBuffer;
+    
+    // Morton code buffers
+    vkcore::PBuffer mortonHistBuffer;    // Histogram of Morton codes
+    vkcore::PBuffer mortonQuantileBuffer; // Morton code quantile boundaries (totalBins + 1)
 
     // Bin management buffers
     vkcore::PBuffer startAddrBuffer;  // Prefix sum of counts
@@ -70,6 +80,24 @@ public:
     vk::UniquePipeline quantilesPipeline;
     vk::UniqueShaderModule histogramShader;
     vk::UniqueShaderModule quantilesShader;
+    
+    // Morton code pipelines
+    vk::UniquePipeline mortonPipeline;
+    vk::UniquePipeline mortonQuantilesPipeline;
+    vk::UniqueShaderModule mortonShader;
+    vk::UniqueShaderModule mortonQuantilesShader;
+    vk::UniqueDescriptorSetLayout mortonDescSetLayout;
+    vk::UniquePipelineLayout mortonPipelineLayout;
+    vk::UniqueDescriptorPool mortonDescPool;
+    vk::UniqueDescriptorSet mortonDescSet;
+    // Morton quantiles specific
+    vk::UniqueDescriptorSetLayout mortonQuantDescSetLayout;
+    vk::UniquePipelineLayout mortonQuantPipelineLayout;
+    vk::UniqueDescriptorPool mortonQuantDescPool;
+    vk::UniqueDescriptorSet mortonQuantDescSet;
+
+    // Buffer for storing per-point Morton codes
+    vkcore::PBuffer mortonCodesBuffer;
 
     // Graphics Pipelines
     vkcore::GraphicsPipelineProperties countPipelineProps;
@@ -81,6 +109,14 @@ public:
     vk::UniquePipeline buildPipeline;
     vk::UniquePipeline queryPipeline;
     vk::UniquePipeline edgePipeline;
+    
+    // Compute pipeline for Pass 1 (range collection) - faster than graphics for sparse bins
+    vk::UniquePipeline rangeComputePipeline;
+    vk::UniqueShaderModule rangeComputeShader;
+    vk::UniqueDescriptorSetLayout rangeComputeDescSetLayout;
+    vk::UniquePipelineLayout rangeComputePipelineLayout;
+    vk::UniqueDescriptorPool rangeComputeDescPool;
+    vk::UniqueDescriptorSet rangeComputeDescSet;
     
     vk::UniqueShaderModule countVertexShader;
     vk::UniqueShaderModule buildVertexShader;

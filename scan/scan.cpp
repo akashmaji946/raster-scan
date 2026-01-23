@@ -41,8 +41,10 @@ using namespace vkcore;
 // 44 = TPC-C with Query Performance After Each Update Cycle
 
 // 51 = Equi-Depth Index (per-axis equi-depth binning for balanced bins)
+// 52 = RasterScan2D + EquiDepth Index Comparison
+// 53 = 
 
-#define USE_INDEX_UPDATE_PIPELINE 51
+#define USE_INDEX_UPDATE_PIPELINE 53
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -53,6 +55,7 @@ int main(int argc, char* argv[]) {
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
     bool useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
+    int runMode = 0;  // -r flag: 0=both, 1=first index only, 2=second index only
 
     // Parse command-line arguments
     for (int i = 1; i < argc; i++) {
@@ -68,6 +71,8 @@ int main(int argc, char* argv[]) {
             d = atoi(argv[++i]);
         } else if (strcmp(argv[i], "-s") == 0) {
             useSkewedPipeline = true;  // Use indexed delete for skewed distributions
+        } else if (strcmp(argv[i], "-r") == 0 && i + 1 < argc) {
+            runMode = atoi(argv[++i]);  // 0=both, 1=first index only, 2=second index only
         } else {
             printUsage(argv[0]);
             return 1;
@@ -80,6 +85,7 @@ int main(int argc, char* argv[]) {
     g_opfolder = PROJECT_DIR + "encodedData/data_" + std::to_string(m) + "m_" + std::to_string(c) + "c/";
     g_qfolder = PROJECT_DIR + "tests/" + testFolder + "/";
     g_useSkewedPipeline = useSkewedPipeline;
+    g_runmode = runMode;
 
     std::cerr << "[Configuration] m=" << m << ", c=" << c << ", d=" << d << ", testFolder=" << testFolder << ", gpuVendor=" << gpuVendor << ", skewedPipeline=" << (useSkewedPipeline ? "ON" : "OFF") << "\n";
     std::cerr << "[Configuration] Data folder: " << g_opfolder << "\n";
@@ -123,7 +129,11 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 51
+#if USE_INDEX_UPDATE_PIPELINE == 53
+    testTPCCEquiDepthVsRasterScan(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 52
+    testEquiDepthVsRasterScan(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 51
     testEquiDepthIndex(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 44
     testTPCCWithQueryAfterUpdate(d, vd, staging);

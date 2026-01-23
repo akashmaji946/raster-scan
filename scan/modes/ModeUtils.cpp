@@ -8,6 +8,7 @@ int32_t g_dim = 3;
 uint32_t g_npoints = uint32_t(50e6);
 int32_t nDataset = 5;
 bool g_useSkewedPipeline = false;  // -s flag: use indexed delete for skewed distributions
+int g_runmode = 0;  // -r flag: 0=both, 1=first index only, 2=second index only
 
 std::vector<std::string> datasets = {
     "normal",

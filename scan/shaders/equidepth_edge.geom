@@ -5,6 +5,15 @@
 layout(points) in;
 layout(triangle_strip, max_vertices = 4) out;
 
+in gl_PerVertex {
+    vec4 gl_Position;
+    float gl_PointSize;
+} gl_in[];
+
+out gl_PerVertex {
+    vec4 gl_Position;
+};
+
 layout(location = 0) flat in uint qind[];
 layout(location = 1) flat in uint stpos[];
 layout(location = 2) flat in uvec2 binrange[];

@@ -67,3 +67,9 @@ void testTPCCMode25(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, O
 
 // Mode 51: Equi-Depth Index Test
 void testEquiDepthIndex(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 52: EquiDepth vs RasterScan Comparison
+void testEquiDepthVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 53: TPC-C EquiDepth vs RasterScan Comparison
+void testTPCCEquiDepthVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
