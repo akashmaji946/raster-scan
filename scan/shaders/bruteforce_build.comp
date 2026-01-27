@@ -1,0 +1,52 @@
+#version 450
+#extension GL_ARB_gpu_shader_int64 : require
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+
+// Brute Force Build Shader
+// Converts column-major input (X[], Y[], Z[]) to row-major BruteForceEntry (x, y, z, rowId)
+// Uses buffer device addresses to handle >4GB buffers
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(push_constant) uniform PushConstants {
+    uint npoints;
+    uint ncols;
+    uvec2 pointsBufferAddr;  // 64-bit buffer device address for input
+    uvec2 dataBufferAddr;    // 64-bit buffer device address for output
+} pc;
+
+// Buffer references for input points (column-major: X[], Y[], Z[])
+layout(buffer_reference, std430, buffer_reference_align = 4) readonly buffer PointRef {
+    uint value;
+};
+
+// Buffer reference for output data entries
+layout(buffer_reference, std430, buffer_reference_align = 16) writeonly buffer DataEntryRef {
+    uvec4 entry;
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.npoints) return;
+    
+    // Compute base addresses
+    uint64_t pointsBase = uint64_t(pc.pointsBufferAddr.x) | (uint64_t(pc.pointsBufferAddr.y) << 32);
+    uint64_t dataBase = uint64_t(pc.dataBufferAddr.x) | (uint64_t(pc.dataBufferAddr.y) << 32);
+    
+    // Read from column-major layout using buffer device address
+    PointRef xRef = PointRef(pointsBase + uint64_t(idx) * 4u);
+    PointRef yRef = PointRef(pointsBase + uint64_t(pc.npoints + idx) * 4u);
+    uint x = xRef.value;
+    uint y = yRef.value;
+    uint z = 0u;
+    if (pc.ncols >= 3u) {
+        PointRef zRef = PointRef(pointsBase + uint64_t(2u * pc.npoints + idx) * 4u);
+        z = zRef.value;
+    }
+    
+    // Write to row-major layout with valid bit set in rowId
+    uint rowId = idx | 0x80000000u;  // Set MSB as valid bit
+    DataEntryRef dataRef = DataEntryRef(dataBase + uint64_t(idx) * 16u);
+    dataRef.entry = uvec4(x, y, z, rowId);
+}

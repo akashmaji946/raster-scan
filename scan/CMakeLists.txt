@@ -43,8 +43,11 @@ set(scan_src
     modes/Mode51.cpp
     modes/Mode52.cpp
     modes/Mode53.cpp
+    modes/Mode60.cpp
+    modes/Mode61.cpp
     CompactScanIndex.cpp
     EquiDepthIndex.cpp
+    BruteForceIndex.cpp
 )
 
 set(encode_src

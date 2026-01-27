@@ -44,7 +44,10 @@ using namespace vkcore;
 // 52 = RasterScan2D + EquiDepth Index Comparison
 // 53 = 
 
-#define USE_INDEX_UPDATE_PIPELINE 53
+// 60 = BruteForceIndex + RasterScan2D Comparison (TPC-C)
+// 61 = BruteForceIndex + RasterScan2D Comparison
+
+#define USE_INDEX_UPDATE_PIPELINE 61
 
 int main(int argc, char* argv[]) {
     // Default values
@@ -129,7 +132,11 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 53
+#if USE_INDEX_UPDATE_PIPELINE == 61
+    testBruteForceVsRasterScanPlain(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 60
+    testBruteForceVsRasterScan(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 53
     testTPCCEquiDepthVsRasterScan(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 52
     testEquiDepthVsRasterScan(d, vd, staging, op);

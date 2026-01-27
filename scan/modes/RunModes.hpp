@@ -73,3 +73,9 @@ void testEquiDepthVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer
 
 // Mode 53: TPC-C EquiDepth vs RasterScan Comparison
 void testTPCCEquiDepthVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 60: BruteForce vs RasterScan Comparison (TPC-C)
+void testBruteForceVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 61: BruteForce vs RasterScan Comparison (Plain data - uniform/normal/zipf)
+void testBruteForceVsRasterScanPlain(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

@@ -45,6 +45,11 @@ void main() {
     uint binid = coord.x + coord.y * consts.res;
     uint st = stcount[binid];
     uint en = encount[binid];
+
+    if(en <= st){
+        discard;
+    }
+
     int ct = 0;
     uint ind = atomicAdd(resct[0],1);
     res[ind * 2] = st;
