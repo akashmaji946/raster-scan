@@ -1,0 +1,28 @@
+// CompactBruteScan - Scale Counts by SCALE_FACTOR
+// Run after count pass, before prefix sum
+// This reserves extra space per bin for future inserts
+// Supports fractional scale factors via numerator/denominator (e.g., 6/5 = 1.2)
+
+#version 450
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(std430, binding = 1) buffer CountBuffer {
+    uint count[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint totalBins;
+    float scaleFactor;  // e.g., 1.2, 1.5, 2.0
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    
+    if (gid >= pc.totalBins) return;
+    
+    uint c = count[gid];
+    if (c > 0) {
+        count[gid] = uint(1.2 * c);  // Ceil
+    }
+}

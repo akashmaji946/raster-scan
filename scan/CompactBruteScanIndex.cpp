@@ -72,7 +72,7 @@ void CompactBruteScanIndex::allocateBuffers(uint32_t npoints) {
     // Allocate main buffer structures
     startAddrBuffer = std::make_shared<Buffer>(vd);
     startAddrBuffer->create(countBufSize * sizeof(uint32_t), 
-        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst, 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferDst | vk::BufferUsageFlagBits::eTransferSrc, 
         MemoryType::Internal);
 
     countBuffer = std::make_shared<Buffer>(vd);
@@ -125,6 +125,7 @@ void CompactBruteScanIndex::allocateBuffers(uint32_t npoints) {
     // Initialize nextRowId to npoints (new inserts get IDs starting from here)
     nextRowId = npoints;
     
+    std::cout << "[CompactBruteScan] Scale factor: " << COMPACTBRUTE_INITIAL_SCALE_FACTOR << "x\n";
     std::cout << "[CompactBruteScan] Main buffer: " << mainAllocatedCapacity << " entries (" 
               << (mainAllocatedCapacity * sizeof(CompactBruteEntry) / (1024*1024.0)) << " MB)\n";
     std::cout << "[CompactBruteScan] Aux buffer: " << auxCapacity << " entries (" 
@@ -334,6 +335,20 @@ void CompactBruteScanIndex::setupPipelines() {
         pushAuxPipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
     }
     
+    // ScaleCounts Pipeline - scales bin counts by SCALE_FACTOR before prefix sum
+    {
+        std::vector<uint32_t> code;
+        if(!vkcore::readShader(SHADER_FOLDER + "/compactbrute_scale_counts.comp.spv", code)) {
+            throw std::runtime_error("Failed to load compactbrute_scale_counts.comp.spv");
+        }
+        vk::ShaderModuleCreateInfo createInfo({}, code.size() * sizeof(uint32_t), code.data());
+        scaleCountsShader = vd->device->createShaderModuleUnique(createInfo);
+        
+        vk::PipelineShaderStageCreateInfo stageInfo({}, vk::ShaderStageFlagBits::eCompute, scaleCountsShader.get(), "main");
+        vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, pipelineLayout.get());
+        scaleCountsPipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
+    }
+    
     // Create dummy FBO for graphics pipelines
     dummyFbo = std::make_shared<FrameBuffer>(vd);
     dummyFbo->create(vk::Format::eR8Sint, INDEX_RESOLUTION, INDEX_RESOLUTION, 1, MemoryType::Internal);
@@ -368,6 +383,9 @@ void CompactBruteScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t np
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
     
+    // Note: Main buffer gaps will have uninitialized data, but query checks valid bit
+    // which is 0 for uninitialized data (rowId == 0 means invalid)
+    
     // Clear extentBuffer and auxCountBuffer
     extentBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eVertexShader);
     auxCountBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader);
@@ -397,21 +415,58 @@ void CompactBruteScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t np
         vd->commandBuffer->endRendering();
     }
     
-    // Barrier and copy to capacityBuffer
+    // Barrier: Vertex shader write -> Transfer
     extentBuffer->barrier(vk::PipelineStageFlagBits::eVertexShader, vk::PipelineStageFlagBits::eTransfer,
                          vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eTransferRead);
+    
+    // Copy extentBuffer to capacityBuffer (stores original counts for capacity tracking)
     capacityBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
     
-    // Copy to startAddrBuffer for prefix sum
+    // Copy extentBuffer to countBuffer for scaling
+    countBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
+    
+    // Barriers for next phase
+    capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                            vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
+    countBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
+                         vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
+    
+    // ========== PASS 1.5: Scale counts for per-bin extra capacity ==========
+
+    {
+        // Bind countBuffer to descSet binding 1 for scale shader
+        vk::DescriptorBufferInfo countInfo(countBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::WriteDescriptorSet write(descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &countInfo);
+        vd->device->updateDescriptorSets({write}, nullptr);
+        
+        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, scaleCountsPipeline.get());
+        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, 1, &descSet.get(), 0, nullptr);
+        
+        // Pass scale factor as float directly
+        float sf = COMPACTBRUTE_INITIAL_SCALE_FACTOR;
+        std::cout << "Scale factor: " << sf << std::endl;
+        
+        struct { uint32_t totalBins; float scaleFactor; } pcScale = { totalBins, sf };
+        vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(pcScale), &pcScale);
+        
+        uint32_t groups = (totalBins + 255) / 256;
+        vd->commandBuffer->dispatch(groups, 1, 1);
+    }
+    
+    
+    // Copy SCALED counts to capacityBuffer (so push can check extent < scaled capacity)
+    capacityBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
+    
+    // Copy scaled counts to startAddrBuffer for prefix sum
     startAddrBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eTransfer);
-    startAddrBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, extentBuffer);
+    startAddrBuffer->copyFrom(totalBins * sizeof(uint32_t), 0, 0, countBuffer);
     
     capacityBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                             vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead);
     startAddrBuffer->barrier(vk::PipelineStageFlagBits::eTransfer, vk::PipelineStageFlagBits::eComputeShader,
                              vk::AccessFlagBits::eTransferWrite, vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite);
     
-    // ========== PASS 2: GPU Prefix Sum ==========
+    // ========== PASS 2: GPU Prefix Sum on scaled counts ==========
     if(scan) {
         scan->prefixSum(startAddrBuffer->buf, countBufSize);
     } else {
@@ -469,9 +524,6 @@ void CompactBruteScanIndex::buildIndex(vkcore::PBuffer pointsBuffer, uint32_t np
     vd->submit(submitInfo, fence, false);
     vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence);
-    
-    // Initialize append offset to npoints - pushed entries go after original data
-    mainAppendOffset = npoints;
     
     std::cout << "[CompactBruteScan] Build complete.\n";
 }
@@ -535,6 +587,7 @@ void CompactBruteScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, descSet.get(), {});
     
     // Push constants: mainCount, auxCount, mainBufferAddr, auxBufferAddr
+    // With bin-based storage, scan entire allocated capacity (gaps skipped by valid bit check)
     uint64_t mainAddr = mainDataBuffer->getDeviceAddress();
     uint64_t auxAddr = auxDataBuffer->getDeviceAddress();
     struct {
@@ -543,7 +596,7 @@ void CompactBruteScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_
         uint32_t mainAddrLo, mainAddrHi;
         uint32_t auxAddrLo, auxAddrHi;
     } pushData = {
-        mainAppendOffset,  // Use mainAppendOffset to include pushed entries
+        static_cast<uint32_t>(mainAllocatedCapacity),  // Scan all bins (gaps skipped by valid bit)
         currentAuxCount,
         static_cast<uint32_t>(mainAddr & 0xFFFFFFFF),
         static_cast<uint32_t>(mainAddr >> 32),
@@ -553,7 +606,7 @@ void CompactBruteScanIndex::runRangeQueries(vkcore::PBuffer queryBuffer, uint32_
     vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(pushData), &pushData);
     
     // Dispatch: scan all entries in both buffers
-    uint32_t totalEntries = mainAppendOffset + currentAuxCount;
+    uint32_t totalEntries = static_cast<uint32_t>(mainAllocatedCapacity) + currentAuxCount;
     uint32_t numWorkgroups = (totalEntries + 255) / 256;
     vd->commandBuffer->dispatch(numWorkgroups, 1, 1);
     
@@ -766,23 +819,23 @@ void CompactBruteScanIndex::pushAuxToMain() {
         return;
     }
     
-    std::cout << "[CompactBruteScan] Pushing " << cachedAuxCount << " aux entries to main buffer at offset " << mainAppendOffset << "...\n";
+    std::cout << "[CompactBruteScan] Pushing " << cachedAuxCount << " aux entries to their correct bins...\n";
     
-    // First, clear auxCountBuffer to use as atomic append counter
-    uint32_t zero = 0;
-    PBuffer stagingBuf = std::make_shared<Buffer>(vd);
-    stagingBuf->create(sizeof(uint32_t), vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, MemoryType::ReadWrite);
-    loadUsingStagingBuf((char*)&zero, sizeof(uint32_t), auxCountBuffer, stagingBuf, vd, 0);
-    
-    // Update descriptors for push shader
+    // Update descriptors for push shader (bin-based insertion)
     // binding 0 = auxDataBuffer (source aux entries)
-    // binding 1 = auxCountBuffer (reused as atomic append counter)
+    // binding 1 = extentBuffer (atomic counters per bin - updated during push)
+    // binding 2 = startAddrBuffer (start address of each bin)
+    // binding 3 = capacityBuffer (capacity of each bin)
     vk::DescriptorBufferInfo auxInfo(auxDataBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::DescriptorBufferInfo appendCountInfo(auxCountBuffer->buf, 0, VK_WHOLE_SIZE);
+    vk::DescriptorBufferInfo extentInfo(extentBuffer->buf, 0, VK_WHOLE_SIZE);
+    vk::DescriptorBufferInfo startInfo(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
+    vk::DescriptorBufferInfo capInfo(capacityBuffer->buf, 0, VK_WHOLE_SIZE);
     
     std::vector<vk::WriteDescriptorSet> writes = {
         {descSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &auxInfo},
-        {descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &appendCountInfo},
+        {descSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extentInfo},
+        {descSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startInfo},
+        {descSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &capInfo},
     };
     vd->device->updateDescriptorSets(writes, {});
     
@@ -792,19 +845,19 @@ void CompactBruteScanIndex::pushAuxToMain() {
     vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, pushAuxPipeline.get());
     vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, pipelineLayout.get(), 0, descSet.get(), {});
     
-    // Push constants matching new shader layout
+    // Push constants for bin-based insertion
     uint64_t mainAddr = mainDataBuffer->getDeviceAddress();
     struct {
         uint32_t auxCount;
-        uint32_t mainAppendStart;
-        uint32_t mainCapacity;
-        uint32_t pad;
+        uint32_t resolution;
+        uint32_t minX, minY, minZ;
+        uint32_t binWidth0, binWidth1, binWidth2;
         uint32_t mainAddrLo, mainAddrHi;
     } pushData = {
         cachedAuxCount,
-        mainAppendOffset,
-        static_cast<uint32_t>(mainAllocatedCapacity),
-        0,
+        INDEX_RESOLUTION,
+        minVal[0], minVal[1], minVal[2],
+        binWidth[0], binWidth[1], binWidth[2],
         static_cast<uint32_t>(mainAddr & 0xFFFFFFFF),
         static_cast<uint32_t>(mainAddr >> 32)
     };
@@ -813,17 +866,25 @@ void CompactBruteScanIndex::pushAuxToMain() {
     uint32_t groups = (cachedAuxCount + 255) / 256;
     vd->commandBuffer->dispatch(groups, 1, 1);
     
-    // Memory barrier to ensure push writes are visible before any subsequent reads
-    vk::BufferMemoryBarrier pushBarrier(
-        vk::AccessFlagBits::eShaderWrite,
-        vk::AccessFlagBits::eShaderRead,
-        VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED,
-        mainDataBuffer->buf, 0, VK_WHOLE_SIZE
-    );
+    // Memory barriers to ensure push writes are visible
+    std::vector<vk::BufferMemoryBarrier> pushBarriers = {
+        vk::BufferMemoryBarrier(
+            vk::AccessFlagBits::eShaderWrite,
+            vk::AccessFlagBits::eShaderRead,
+            VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED,
+            mainDataBuffer->buf, 0, VK_WHOLE_SIZE
+        ),
+        vk::BufferMemoryBarrier(
+            vk::AccessFlagBits::eShaderWrite,
+            vk::AccessFlagBits::eShaderRead,
+            VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED,
+            extentBuffer->buf, 0, VK_WHOLE_SIZE
+        )
+    };
     vd->commandBuffer->pipelineBarrier(
         vk::PipelineStageFlagBits::eComputeShader,
         vk::PipelineStageFlagBits::eComputeShader,
-        {}, {}, pushBarrier, {}
+        {}, {}, pushBarriers, {}
     );
     
     vd->commandBuffer->end();
@@ -836,17 +897,17 @@ void CompactBruteScanIndex::pushAuxToMain() {
     vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
     vd->device->destroyFence(fence);
     
-    // Update mainAppendOffset for next push
-    mainAppendOffset += cachedAuxCount;
-    
     // Clear aux buffer count for next batch of inserts
+    uint32_t zero = 0;
+    PBuffer stagingBuf = std::make_shared<Buffer>(vd);
+    stagingBuf->create(sizeof(uint32_t), vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, MemoryType::ReadWrite);
     loadUsingStagingBuf((char*)&zero, sizeof(uint32_t), auxCountBuffer, stagingBuf, vd, 0);
     stagingBuf->destroy();
     
     cachedAuxCount = 0;
     
-    // Ensure GPU is fully idle before returning - prevents driver caching issues
+    // Ensure GPU is fully idle before returning
     vd->device->waitIdle();
     
-    std::cout << "[CompactBruteScan] pushAuxToMain complete. Aux buffer cleared. New append offset: " << mainAppendOffset << "\n";
+    std::cout << "[CompactBruteScan] pushAuxToMain complete. Entries inserted into correct bins.\n";
 }

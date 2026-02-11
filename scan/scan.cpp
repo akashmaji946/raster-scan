@@ -62,7 +62,7 @@ using namespace vkcore;
 
 // 80 = CompactBruteScan - builds like CompactScan (binned), queries like BruteForce (all bins), with aux buffer for updates
 // 81 = CompactBruteScan - builds like CompactScan (binned), queries like BruteForce (all bins), with aux buffer pushAuxToMain for updates
-#define USE_INDEX_UPDATE_PIPELINE 80
+#define USE_INDEX_UPDATE_PIPELINE 81
 
 int main(int argc, char* argv[]) {
     // Default values

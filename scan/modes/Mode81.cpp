@@ -31,11 +31,11 @@
 // =========================================================
 // CONTROLLABLE PARAMETERS FOR MODE 81
 // =========================================================
-#define MODE81_AUX_BUF_SIZE 10000       // Aux buffer capacity in slots
-#define MODE81_TOTAL_UPDATES 50000    // Total number of point updates
-#define MODE81_BATCH_SIZE 1000        // Points per batch (for logging)
+#define MODE81_AUX_BUF_SIZE 1000       // Aux buffer capacity in slots
+#define MODE81_TOTAL_UPDATES 5000    // Total number of point updates
+#define MODE81_BATCH_SIZE 100        // Points per batch (for logging)
 #define MODE81_QUERY_COUNT 11         // Iterations per query (take median)
-#define N 400000000
+#define N 200000000
 // =========================================================
 
 // Override aux buffer size for Mode 81

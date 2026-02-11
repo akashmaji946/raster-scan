@@ -146,6 +146,7 @@ set(scan_shader_src
     shaders/compactbrute_insert.comp
     shaders/compactbrute_update.comp
     shaders/compactbrute_push_aux.comp
+    shaders/compactbrute_scale_counts.comp
 )
 
 add_executable(EncodeData ${encode_src})

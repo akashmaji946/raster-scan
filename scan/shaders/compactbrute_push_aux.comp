@@ -4,7 +4,7 @@
 #extension GL_ARB_gpu_shader_int64 : require
 
 // CompactBruteScan Push Aux to Main Shader
-// Appends all valid entries from aux buffer to the end of main buffer
+// Inserts aux entries into their correct bins in main buffer
 // Each thread processes one aux entry
 
 layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
@@ -18,15 +18,23 @@ layout(std430, binding = 0) readonly buffer AuxBuffer {
     uvec4 auxEntries[]; // Aux buffer entries
 };
 
-layout(std430, binding = 1) buffer AppendCountBuffer {
-    uint appendCount; // Atomic counter for append position
+layout(std430, binding = 1) buffer ExtentBuffer {
+    uint extent[]; // Current extent (count) per bin - atomically updated
+};
+
+layout(std430, binding = 2) readonly buffer StartAddrBuffer {
+    uint startAddr[]; // Start address of each bin in main buffer
+};
+
+layout(std430, binding = 3) readonly buffer CapacityBuffer {
+    uint capacity[]; // Capacity of each bin (scaled count)
 };
 
 layout(push_constant) uniform PushConstants {
-    uint auxCount;          // Number of valid entries in aux buffer
-    uint mainAppendStart;   // Starting position in main buffer for appending
-    uint mainCapacity;      // Max capacity of main buffer
-    uint pad;
+    uint auxCount;          // Number of entries in aux buffer
+    uint resolution;        // INDEX_RESOLUTION for bin calculation
+    uint minX, minY, minZ;  // Min values for bin calculation
+    uint binWidth0, binWidth1, binWidth2; // Bin widths
     uvec2 mainBufferAddr;
 } pc;
 
@@ -44,12 +52,28 @@ void main() {
     // Check valid bit
     if ((rowId & 0x80000000u) == 0u) return;
     
-    // Atomically allocate slot at end of main buffer
-    uint slot = atomicAdd(appendCount, 1);
-    uint globalIdx = pc.mainAppendStart + slot;
+    // Calculate bin index from x,y coordinates (same as build shader)
+    uint binX = (x - pc.minX) / pc.binWidth0;
+    uint binY = (y - pc.minY) / pc.binWidth1;
     
-    // Check capacity
-    if (globalIdx >= pc.mainCapacity) return;
+    // Clamp to valid bin range
+    binX = min(binX, pc.resolution - 1);
+    binY = min(binY, pc.resolution - 1);
+    
+    uint binIdx = binY * pc.resolution + binX;
+    
+    // Atomically allocate slot in this bin
+    uint localOffset = atomicAdd(extent[binIdx], 1);
+    
+    // Check bin capacity
+    if (localOffset >= capacity[binIdx]) {
+        // Bin overflow - revert atomic and skip
+        atomicAdd(extent[binIdx], -1);
+        return;
+    }
+    
+    // Calculate global index in main buffer
+    uint globalIdx = startAddr[binIdx] + localOffset;
     
     // Write to main buffer
     uint64_t baseAddr = uint64_t(pc.mainBufferAddr.x) | (uint64_t(pc.mainBufferAddr.y) << 32);
@@ -57,6 +81,5 @@ void main() {
     uint64_t elementAddr = baseAddr + byteOffset;
     DataBufferRef dataRef = DataBufferRef(elementAddr);
     
-    // Write entry to main buffer
     dataRef.data = uvec4(x, y, z, rowId);
 }
