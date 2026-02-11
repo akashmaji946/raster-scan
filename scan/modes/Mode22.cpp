@@ -40,7 +40,8 @@ static const std::vector<std::string> distributionFiles = {
     "normal.bin",
     "zipf1.1.bin",
     "zipf1.3.bin",
-    "zipf1.5.bin"
+    "zipf1.5.bin",
+    "tpcc.bin"
 };
 
 static const std::vector<std::string> distributionNames = {
@@ -48,7 +49,8 @@ static const std::vector<std::string> distributionNames = {
     "normal",
     "zipf1.1",
     "zipf1.3",
-    "zipf1.5"
+    "zipf1.5",
+    "tpcc"
 };
 
 // Query generation strategy based on distribution type
@@ -66,6 +68,7 @@ static QueryStrategy getQueryStrategy(int dataId) {
         case 2: return QueryStrategy::FROM_MIN;  // Zipf 1.1: data clusters at low values
         case 3: return QueryStrategy::FROM_MIN;  // Zipf 1.3: more skewed
         case 4: return QueryStrategy::FROM_MIN;  // Zipf 1.5: most skewed
+        case 5: return QueryStrategy::CENTERED;  // TPC-C
         default: return QueryStrategy::CENTERED;
     }
 }

@@ -41,5 +41,51 @@ for param in zipf_params:
     zipf_data = zipf_data % np.iinfo(np.uint32).max
     zipf_data.astype("uint32").tofile(f"{folder}/zipf{param}.bin")
 
+# Generate TPC-C Customer table data (shuffled)
+# TPC-C Constants
+DISTRICTS_PER_WAREHOUSE = 10
+CUSTOMERS_PER_DISTRICT = 3000
+CUSTOMERS_PER_WAREHOUSE = DISTRICTS_PER_WAREHOUSE * CUSTOMERS_PER_DISTRICT
+
+print(f"[INFO] Generating TPC-C data (shuffled): {folder}/tpcc.bin")
+target_customers = n
+warehouse_count = (target_customers + CUSTOMERS_PER_WAREHOUSE - 1) // CUSTOMERS_PER_WAREHOUSE
+print(f"[TPC-C] Target customers: {target_customers}, Warehouses needed: {warehouse_count}")
+
+# Generate W, D, C columns
+W = np.zeros(target_customers, dtype=np.uint32)
+D = np.zeros(target_customers, dtype=np.uint32)
+C = np.zeros(target_customers, dtype=np.uint32)
+
+count = 0
+for c_w_id in range(1, warehouse_count + 1):
+    if count >= target_customers:
+        break
+    for c_d_id in range(1, DISTRICTS_PER_WAREHOUSE + 1):
+        if count >= target_customers:
+            break
+        for c_id in range(1, CUSTOMERS_PER_DISTRICT + 1):
+            if count >= target_customers:
+                break
+            W[count] = c_w_id
+            D[count] = c_d_id
+            C[count] = c_id
+            count += 1
+
+print(f"[TPC-C] Generated {count} customers")
+
+# Shuffle rows randomly (Fisher-Yates shuffle with fixed seed for reproducibility)
+print("[TPC-C] Shuffling data rows...")
+np.random.seed(42)
+indices = np.random.permutation(target_customers)
+W = W[indices]
+D = D[indices]
+C = C[indices]
+
+# Stack into column-major format (same as other distributions)
+tpcc_data = np.vstack([W, D, C]).astype(np.uint32)
+tpcc_data.tofile(f"{folder}/tpcc.bin")
+print(f"[TPC-C] W range: [{W.min()}, {W.max()}], D range: [{D.min()}, {D.max()}], C range: [{C.min()}, {C.max()}]")
+
 print(f"[INFO] Generated datasets in {folder}/ :")
 os.system(f"ls -lash {folder}/")

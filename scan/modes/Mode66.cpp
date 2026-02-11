@@ -25,7 +25,8 @@ static const std::vector<std::string> distributionFilesMode66 = {
     "normal.bin",
     "zipf1.1.bin",
     "zipf1.3.bin",
-    "zipf1.5.bin"
+    "zipf1.5.bin",
+    "tpcc.bin"
 };
 
 static const std::vector<std::string> distributionNamesMode66 = {
@@ -33,7 +34,8 @@ static const std::vector<std::string> distributionNamesMode66 = {
     "normal",
     "zipf1.1",
     "zipf1.3",
-    "zipf1.5"
+    "zipf1.5",
+    "tpcc"
 };
 
 // Generate 100 random point queries using actual data points from the dataset

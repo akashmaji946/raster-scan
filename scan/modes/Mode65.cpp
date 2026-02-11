@@ -24,7 +24,8 @@ static const std::vector<std::string> distributionFilesMode65 = {
     "normal.bin",
     "zipf1.1.bin",
     "zipf1.3.bin",
-    "zipf1.5.bin"
+    "zipf1.5.bin",
+    "tpcc.bin"
 };
 
 static const std::vector<std::string> distributionNamesMode65 = {
@@ -32,7 +33,8 @@ static const std::vector<std::string> distributionNamesMode65 = {
     "normal",
     "zipf1.1",
     "zipf1.3",
-    "zipf1.5"
+    "zipf1.5",
+    "tpcc"
 };
 
 // Query strategy based on distribution type
@@ -45,6 +47,7 @@ static QueryStrategyMode65 getQueryStrategyMode65(int dataId) {
         case 2: return QueryStrategyMode65::FROM_MIN;  // Zipf 1.1
         case 3: return QueryStrategyMode65::FROM_MIN;  // Zipf 1.3
         case 4: return QueryStrategyMode65::FROM_MIN;  // Zipf 1.5
+        case 5: return QueryStrategyMode65::CENTERED;  // TPC-C
         default: return QueryStrategyMode65::CENTERED;
     }
 }

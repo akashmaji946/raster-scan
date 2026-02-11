@@ -14,7 +14,8 @@ static const std::vector<std::string> distributionFiles23 = {
     "normal.bin",
     "zipf1.1.bin",
     "zipf1.3.bin",
-    "zipf1.5.bin"
+    "zipf1.5.bin",
+    "tpcc.bin"
 };
 
 static const std::vector<std::string> distributionNames23 = {
@@ -22,7 +23,8 @@ static const std::vector<std::string> distributionNames23 = {
     "normal",
     "zipf1.1",
     "zipf1.3",
-    "zipf1.5"
+    "zipf1.5",
+    "tpcc"
 };
 
 // Helper: Extract valid points from GPU data buffer

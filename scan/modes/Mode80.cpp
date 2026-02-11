@@ -15,18 +15,25 @@
 #endif
 
 #ifndef QUERY_COUNT
-#define QUERY_COUNT 11
+#define QUERY_COUNT 101
 #endif
 
-#define RUN_BATCHWISE 1
+// Q controls number of queries: Q=10 means 10%, 20%, ..., 100%
+#ifndef Q
+#define Q 10
+#endif
+
 #define RUN_POINTWISE 1
+#define RUN_BATCHWISE 0
+
 
 static const std::vector<std::string> distributionFiles = {
     "uniform.bin",
     "normal.bin",
     "zipf1.1.bin",
     "zipf1.3.bin",
-    "zipf1.5.bin"
+    "zipf1.5.bin",
+    "tpcc.bin"
 };
 
 static const std::vector<std::string> distributionNames = {
@@ -34,7 +41,8 @@ static const std::vector<std::string> distributionNames = {
     "normal",
     "zipf1.1",
     "zipf1.3",
-    "zipf1.5"
+    "zipf1.5",
+    "tpcc"
 };
 
 enum class QueryStrategy {
@@ -44,11 +52,12 @@ enum class QueryStrategy {
 
 static QueryStrategy getQueryStrategy80(int dataId) {
     switch (dataId) {
-        case 0: return QueryStrategy::CENTERED;
-        case 1: return QueryStrategy::CENTERED;
-        case 2: return QueryStrategy::FROM_MIN;
-        case 3: return QueryStrategy::FROM_MIN;
-        case 4: return QueryStrategy::FROM_MIN;
+        case 0: return QueryStrategy::CENTERED;  // uniform
+        case 1: return QueryStrategy::CENTERED;  // normal
+        case 2: return QueryStrategy::FROM_MIN;  // zipf1.1
+        case 3: return QueryStrategy::FROM_MIN;  // zipf1.3
+        case 4: return QueryStrategy::FROM_MIN;  // zipf1.5
+        case 5: return QueryStrategy::CENTERED;  // tpcc
         default: return QueryStrategy::CENTERED;
     }
 }
@@ -73,7 +82,7 @@ static void generateAndSaveQueries80(
     QueryStrategy strategy = getQueryStrategy80(dataId);
     
     for (int q = 0; q < numQueries; q++) {
-        double overallSelectivity = (q + 1) * 0.1;
+        double overallSelectivity = (double)(q + 1) / numQueries;
         double perDimSelectivity = std::pow(overallSelectivity, 1.0 / ncols);
         
         bool isFullRange = (q == numQueries - 1);
@@ -138,7 +147,7 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
 
     std::string queryFolder = PROJECT_DIR + "tests/test1";
     std::string queryFile = queryFolder + "/" + distributionNames[dataId] + "_mode80.txt";
-    int numQueries = 10;
+    int numQueries = Q;
     generateAndSaveQueries80(minval, maxval, ncols, queryFile, dataId, numQueries);
     
     std::vector<uint32_t> targets(numQueries * 6);
@@ -251,16 +260,16 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
     // Uses different data: original batch (x,y,z) and updated batch (2*x, 2*y, 2*z)
     // =========================================================
     
-    {
-        uint32_t validCount = index->getMainValidCount();
-        uint32_t auxCount = index->getAuxValidCount();
-        std::cerr << "\n[DEBUG] After build: Main valid=" << validCount << ", Aux count=" << auxCount << "\n";
-    }
+    // {
+    //     uint32_t validCount = index->getMainValidCount();
+    //     uint32_t auxCount = index->getAuxValidCount();
+    //     std::cerr << "\n[DEBUG] After build: Main valid=" << validCount << ", Aux count=" << auxCount << "\n";
+    // }
     
     const int S = 1;
     const float percent = 0.00001;
-    const int NUM_BATCHES = 5;  // Number of batches to test
-    const uint32_t batchSize = std::min<uint32_t>(npoints, npoints / 100 * percent);  // p% of data per batch
+    const int NUM_BATCHES = 1000;  // Number of batches to test
+    const uint32_t batchSize = 1; //std::min<uint32_t>(npoints, npoints / 100 * percent);  // p% of data per batch
 
     std::vector<uint32_t> indices(npoints);
     std::iota(indices.begin(), indices.end(), 0);
@@ -300,144 +309,8 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
     std::vector<uint32_t> deleteData(batchSize * 3);
     std::vector<uint32_t> insertData(batchSize * 3);
 
-#if RUN_BATCHWISE
-    // =========================================================
-    // APPROACH 1: Batch-wise (full batch delete + full batch insert)
-    // =========================================================
-    std::cerr << "\n--- APPROACH 1: Batch-wise (delete all, then insert all) ---\n";
-    
-    double totalBatchDeleteTime = 0.0;
-    double totalBatchInsertTime = 0.0;
-    uint64_t totalBatchPoints = 0;
-    uint64_t totalDeletesSucceeded = 0;
-    uint64_t totalInsertsSucceeded = 0;
 
-    for (int k = 0; k < NUM_BATCHES; k++) {
-        uint32_t startIdx = (uint32_t)k * batchSize;
-        uint32_t currentBatchSize = std::min(batchSize, npoints - startIdx);
-        if (currentBatchSize == 0) break;
 
-        // Get counts BEFORE this batch (COMMENTED OUT - expensive GPU readback)
-        // uint32_t mainValidBefore = index->getMainValidCount();
-        // uint32_t auxCountBefore = index->getAuxValidCount();
-
-        // Prepare delete batch (original x, y, z)
-        for (uint32_t i = 0; i < currentBatchSize; i++) {
-            uint32_t pointIdx = indices[startIdx + i];
-            deleteData[i * 3 + 0] = points[pointIdx];
-            deleteData[i * 3 + 1] = points[npoints + pointIdx];
-            deleteData[i * 3 + 2] = points[2 * npoints + pointIdx];
-        }
-
-        // Prepare insert batch (S*x, S*y, S*z)
-        for (uint32_t i = 0; i < currentBatchSize; i++) {
-            uint32_t pointIdx = indices[startIdx + i];
-            insertData[i * 3 + 0] = points[pointIdx] * S;
-            insertData[i * 3 + 1] = points[npoints + pointIdx] * S;
-            insertData[i * 3 + 2] = points[2 * npoints + pointIdx] * S;
-        }
-
-        loadUsingStagingBuf((char*)deleteData.data(), currentBatchSize * 3 * sizeof(uint32_t), deleteDataBuffer, staging, vd, 0);
-        loadUsingStagingBuf((char*)insertData.data(), currentBatchSize * 3 * sizeof(uint32_t), insertDataBuffer, staging, vd, 0);
-
-        // Step 1: Delete entire batch
-        CPUTimer deleteTimer;
-        deleteTimer.start();
-        index->deletePoints(deleteDataBuffer, currentBatchSize);
-        double deleteTime = double(deleteTimer.stop()) / 1000000.0;
-        totalBatchDeleteTime += deleteTime;
-
-        // Get counts AFTER delete (COMMENTED OUT - expensive GPU readback)
-        // uint32_t mainValidAfterDelete = index->getMainValidCount();
-        // uint32_t deletesActual = mainValidBefore - mainValidAfterDelete;
-        // totalDeletesSucceeded += deletesActual;
-        totalDeletesSucceeded += currentBatchSize;  // Assume all succeed
-
-        // Step 2: Insert entire batch (new data goes to aux buffer)
-        CPUTimer insertTimer;
-        insertTimer.start();
-        index->insertPoints(insertDataBuffer, currentBatchSize);
-        double insertTime = double(insertTimer.stop()) / 1000000.0;
-        totalBatchInsertTime += insertTime;
-
-        // Get counts AFTER insert (COMMENTED OUT - expensive GPU readback)
-        // uint32_t auxCountAfterInsert = index->getAuxValidCount();
-        // uint32_t insertsActual = auxCountAfterInsert - auxCountBefore;
-        // totalInsertsSucceeded += insertsActual;
-        totalInsertsSucceeded += currentBatchSize;  // Assume all succeed
-
-        totalBatchPoints += currentBatchSize;
-
-        std::cerr << "Batch " << (k+1) << ": Delete " << std::fixed << std::setprecision(3) 
-                  << (deleteTime * 1000.0) << " ms, Insert " << (insertTime * 1000.0) 
-                  << " ms, Total " << ((deleteTime + insertTime) * 1000.0) << " ms\n";
-    }
-
-    std::cerr << "\n--- Batch-wise Summary ---\n";
-    std::cerr << "Total delete time: " << std::fixed << std::setprecision(3) << (totalBatchDeleteTime * 1000.0) << " ms\n";
-    std::cerr << "Total insert time: " << std::fixed << std::setprecision(3) << (totalBatchInsertTime * 1000.0) << " ms\n";
-    std::cerr << "Total update time: " << std::fixed << std::setprecision(3) << ((totalBatchDeleteTime + totalBatchInsertTime) * 1000.0) << " ms\n";
-    std::cerr << "Avg time per point: " << std::fixed << std::setprecision(3) 
-              << (totalBatchPoints ? ((totalBatchDeleteTime + totalBatchInsertTime) * 1000000.0 / (double)totalBatchPoints) : 0.0) << " us\n";
-    std::cerr << "Deletes succeeded: " << totalDeletesSucceeded << "/" << totalBatchPoints 
-              << " (" << std::fixed << std::setprecision(1) << (100.0 * totalDeletesSucceeded / totalBatchPoints) << "%)\n";
-    std::cerr << "Inserts succeeded: " << totalInsertsSucceeded << "/" << totalBatchPoints 
-              << " (" << std::fixed << std::setprecision(1) << (100.0 * totalInsertsSucceeded / totalBatchPoints) << "%)\n";
-
-    // Verify counts after batch-wise updates
-    {
-        uint32_t mainValid = index->getMainValidCount();
-        uint32_t auxCount = index->getAuxValidCount();
-        uint32_t total = mainValid + auxCount;
-        std::cerr << "[DEBUG] After batch-wise: Main valid=" << mainValid << ", Aux count=" << auxCount 
-                  << ", Total=" << total << " (expected: " << npoints << ")\n";
-        if (total != npoints) {
-            std::cerr << "[WARNING] Total count mismatch! Diff=" << (int64_t)(npoints - total) << "\n";
-        }
-    }
-
-    // Query performance after batch-wise updates
-    std::cerr << "\n--- Query Performance After Batch-wise Updates ---\n";
-    double batchTotTime = 0;
-    std::vector<double> batchQueryTimes;
-    batchQueryTimes.reserve(numQueries);
-    for (int i = 0; i < numQueries; i++) {
-        int in = i * 6;
-        std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
-
-        std::vector<double> qt;
-        qt.reserve(QUERY_COUNT);
-        for(int r = 0; r < QUERY_COUNT; r++) {
-            loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
-            CPUTimer qTimer;
-            qTimer.start();
-            index->runRangeQueries(queryBuffer, 1, resultBuffer);
-            double t = double(qTimer.stop()) / 1000000.0;
-            qt.push_back(t);
-        }
-        std::sort(qt.begin(), qt.end());
-        double t = qt[qt.size() / 2];
-        batchTotTime += t;
-        batchQueryTimes.push_back(t * 1000.0);
-
-        std::vector<uint32_t> result(resultSizeUints);
-        readUsingStagingBuf((char *)result.data(), resultSizeUints * sizeof(uint32_t), resultBuffer, staging, vd);
-        
-        uint32_t count = 0;
-        for(uint32_t val : result) count += __builtin_popcount(val);
-        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
-    }
-    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << ((batchTotTime * 1000.0) / numQueries) << " ms\n";
-    std::sort(batchQueryTimes.begin(), batchQueryTimes.end());
-    std::cerr << "Median Query Time: " << std::fixed << std::setprecision(3) << batchQueryTimes[batchQueryTimes.size() / 2] << " ms\n";
-#endif // RUN_BATCHWISE
-
-    // =========================================================
-    // Rebuild index for point-wise test
-    // =========================================================
-    index.reset();
-    index = std::make_shared<CompactBruteScanIndex>(vd, ncols, scan);
-    index->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
 
 #if RUN_POINTWISE
     // =========================================================
@@ -446,15 +319,16 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
     std::cerr << "\n--- APPROACH 2: Point-wise (per point: delete, insert, next point...) ---\n";
     
     // Get initial counts for point-wise test
-    uint32_t pwMainValidInitial = index->getMainValidCount();
-    uint32_t pwAuxCountInitial = index->getAuxValidCount();
-    std::cerr << "[DEBUG] Point-wise initial: Main valid=" << pwMainValidInitial << ", Aux count=" << pwAuxCountInitial << "\n";
+    // uint32_t pwMainValidInitial = index->getMainValidCount();
+    // uint32_t pwAuxCountInitial = index->getAuxValidCount();
+    // std::cerr << "[DEBUG] Point-wise initial: Main valid=" << pwMainValidInitial << ", Aux count=" << pwAuxCountInitial << "\n";
     
     double totalPointDeleteTime = 0.0;
     double totalPointInsertTime = 0.0;
     uint64_t totalPointwisePoints = 0;
     uint64_t pwDeletesSucceeded = 0;
     uint64_t pwInsertsSucceeded = 0;
+    std::vector<double> pointwiseUpdateTimes;  // Track per-batch update times
 
     // Use smaller batch for point-wise (more overhead per point)
     uint32_t pointwiseBatchSize = std::min(npoints, batchSize); 
@@ -519,6 +393,7 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
         totalPointDeleteTime += batchDeleteTime;
         totalPointInsertTime += batchInsertTime;
         totalPointwisePoints += currentBatchSize;
+        pointwiseUpdateTimes.push_back((batchDeleteTime + batchInsertTime) * 1000.0);  // Store in ms
 
         std::cerr << "Batch " << (k+1) << " (" << currentBatchSize << " points): Delete " 
                   << std::fixed << std::setprecision(3) << (batchDeleteTime * 1000.0) 
@@ -537,27 +412,45 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
               << " (" << std::fixed << std::setprecision(1) << (100.0 * pwInsertsSucceeded / totalPointwisePoints) << "%)\n";
     std::cerr << "Avg time per point: " << std::fixed << std::setprecision(3) 
               << (totalPointwisePoints ? ((totalPointDeleteTime + totalPointInsertTime) * 1000000.0 / (double)totalPointwisePoints) : 0.0) << " us\n";
-
-    // Verify counts after point-wise updates
-    {
-        uint32_t mainValid = index->getMainValidCount();
-        uint32_t auxCount = index->getAuxValidCount();
-        uint32_t total = mainValid + auxCount;
-        std::cerr << "[DEBUG] After point-wise: Main valid=" << mainValid << ", Aux count=" << auxCount 
-                  << ", Total=" << total << " (expected: " << npoints << ")\n";
-        if (total != npoints) {
-            std::cerr << "[WARNING] Total count mismatch! Diff=" << (int64_t)(npoints - total) << "\n";
-        }
-        if (pwDeletesSucceeded != totalPointwisePoints) {
-            std::cerr << "[WARNING] Not all deletes succeeded! Missing=" << (totalPointwisePoints - pwDeletesSucceeded) << "\n";
-        }
-        if (pwInsertsSucceeded != totalPointwisePoints) {
-            std::cerr << "[WARNING] Not all inserts succeeded! Missing=" << (totalPointwisePoints - pwInsertsSucceeded) << "\n";
-        }
+    // Calculate average and median update time per batch
+    if (!pointwiseUpdateTimes.empty()) {
+        double avgUpdateTime = 0.0;
+        for (double t : pointwiseUpdateTimes) avgUpdateTime += t;
+        avgUpdateTime /= pointwiseUpdateTimes.size();
+        std::sort(pointwiseUpdateTimes.begin(), pointwiseUpdateTimes.end());
+        double medianUpdateTime = pointwiseUpdateTimes[pointwiseUpdateTimes.size() / 2];
+        std::cerr << "Avg update time per batch: " << std::fixed << std::setprecision(3) << avgUpdateTime << " ms\n";
+        std::cerr << "Median update time per batch: " << std::fixed << std::setprecision(3) << medianUpdateTime << " ms\n";
     }
+
+    // // Verify counts after point-wise updates
+    // {
+    //     uint32_t mainValid = index->getMainValidCount();
+    //     uint32_t auxCount = index->getAuxValidCount();
+    //     uint32_t total = mainValid + auxCount;
+    //     std::cerr << "[DEBUG] After point-wise: Main valid=" << mainValid << ", Aux count=" << auxCount 
+    //               << ", Total=" << total << " (expected: " << npoints << ")\n";
+    //     if (total != npoints) {
+    //         std::cerr << "[WARNING] Total count mismatch! Diff=" << (int64_t)(npoints - total) << "\n";
+    //     }
+    //     if (pwDeletesSucceeded != totalPointwisePoints) {
+    //         std::cerr << "[WARNING] Not all deletes succeeded! Missing=" << (totalPointwisePoints - pwDeletesSucceeded) << "\n";
+    //     }
+    //     if (pwInsertsSucceeded != totalPointwisePoints) {
+    //         std::cerr << "[WARNING] Not all inserts succeeded! Missing=" << (totalPointwisePoints - pwInsertsSucceeded) << "\n";
+    //     }
+    // }
 
     // Query performance after point-wise updates
     std::cerr << "\n--- Query Performance After Point-wise Updates ---\n";
+    
+    // Warmup query to avoid cold cache effect on first timed query
+    {
+        std::vector<uint32_t> warmupQuery = {targets[0], targets[1], targets[2], targets[3], targets[4], targets[5]};
+        loadUsingStagingBuf((char *)warmupQuery.data(), warmupQuery.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+        index->runRangeQueries(queryBuffer, 1, resultBuffer);
+    }
+    
     double pointTotTime = 0;
     std::vector<double> pointQueryTimes;
     pointQueryTimes.reserve(numQueries);
@@ -591,6 +484,167 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
     std::sort(pointQueryTimes.begin(), pointQueryTimes.end());
     std::cerr << "Median Query Time: " << std::fixed << std::setprecision(3) << pointQueryTimes[pointQueryTimes.size() / 2] << " ms\n";
 #endif // RUN_POINTWISE
+
+
+#if RUN_BATCHWISE
+    // =========================================================
+    // APPROACH 1: Batch-wise (full batch delete + full batch insert)
+    // =========================================================
+    std::cerr << "\n--- APPROACH 1: Batch-wise (delete all, then insert all) ---\n";
+    
+    double totalBatchDeleteTime = 0.0;
+    double totalBatchInsertTime = 0.0;
+    uint64_t totalBatchPoints = 0;
+    uint64_t totalDeletesSucceeded = 0;
+    uint64_t totalInsertsSucceeded = 0;
+    std::vector<double> batchUpdateTimes;  // Track per-batch update times
+
+    for (int k = 0; k < NUM_BATCHES; k++) {
+        uint32_t startIdx = (uint32_t)k * batchSize;
+        uint32_t currentBatchSize = std::min(batchSize, npoints - startIdx);
+        if (currentBatchSize == 0) break;
+
+        // Get counts BEFORE this batch (COMMENTED OUT - expensive GPU readback)
+        // uint32_t mainValidBefore = index->getMainValidCount();
+        // uint32_t auxCountBefore = index->getAuxValidCount();
+
+        // Prepare delete batch (original x, y, z)
+        for (uint32_t i = 0; i < currentBatchSize; i++) {
+            uint32_t pointIdx = indices[startIdx + i];
+            deleteData[i * 3 + 0] = points[pointIdx];
+            deleteData[i * 3 + 1] = points[npoints + pointIdx];
+            deleteData[i * 3 + 2] = points[2 * npoints + pointIdx];
+        }
+
+        // Prepare insert batch (S*x, S*y, S*z)
+        for (uint32_t i = 0; i < currentBatchSize; i++) {
+            uint32_t pointIdx = indices[startIdx + i];
+            insertData[i * 3 + 0] = points[pointIdx] * S;
+            insertData[i * 3 + 1] = points[npoints + pointIdx] * S;
+            insertData[i * 3 + 2] = points[2 * npoints + pointIdx] * S;
+        }
+
+        loadUsingStagingBuf((char*)deleteData.data(), currentBatchSize * 3 * sizeof(uint32_t), deleteDataBuffer, staging, vd, 0);
+        loadUsingStagingBuf((char*)insertData.data(), currentBatchSize * 3 * sizeof(uint32_t), insertDataBuffer, staging, vd, 0);
+
+        // Step 1: Delete entire batch
+        CPUTimer deleteTimer;
+        deleteTimer.start();
+        index->deletePoints(deleteDataBuffer, currentBatchSize);
+        double deleteTime = double(deleteTimer.stop()) / 1000000.0;
+        totalBatchDeleteTime += deleteTime;
+
+        // Get counts AFTER delete (COMMENTED OUT - expensive GPU readback)
+        // uint32_t mainValidAfterDelete = index->getMainValidCount();
+        // uint32_t deletesActual = mainValidBefore - mainValidAfterDelete;
+        // totalDeletesSucceeded += deletesActual;
+        totalDeletesSucceeded += currentBatchSize;  // Assume all succeed
+
+        // Step 2: Insert entire batch (new data goes to aux buffer)
+        CPUTimer insertTimer;
+        insertTimer.start();
+        index->insertPoints(insertDataBuffer, currentBatchSize);
+        double insertTime = double(insertTimer.stop()) / 1000000.0;
+        totalBatchInsertTime += insertTime;
+
+        // Get counts AFTER insert (COMMENTED OUT - expensive GPU readback)
+        // uint32_t auxCountAfterInsert = index->getAuxValidCount();
+        // uint32_t insertsActual = auxCountAfterInsert - auxCountBefore;
+        // totalInsertsSucceeded += insertsActual;
+        totalInsertsSucceeded += currentBatchSize;  // Assume all succeed
+
+        totalBatchPoints += currentBatchSize;
+        batchUpdateTimes.push_back((deleteTime + insertTime) * 1000.0);  // Store in ms
+
+        std::cerr << "Batch " << (k+1) << ": Delete " << std::fixed << std::setprecision(3) 
+                  << (deleteTime * 1000.0) << " ms, Insert " << (insertTime * 1000.0) 
+                  << " ms, Total " << ((deleteTime + insertTime) * 1000.0) << " ms\n";
+    }
+
+    std::cerr << "\n--- Batch-wise Summary ---\n";
+    std::cerr << "Total delete time: " << std::fixed << std::setprecision(3) << (totalBatchDeleteTime * 1000.0) << " ms\n";
+    std::cerr << "Total insert time: " << std::fixed << std::setprecision(3) << (totalBatchInsertTime * 1000.0) << " ms\n";
+    std::cerr << "Total update time: " << std::fixed << std::setprecision(3) << ((totalBatchDeleteTime + totalBatchInsertTime) * 1000.0) << " ms\n";
+    std::cerr << "Avg time per point: " << std::fixed << std::setprecision(3) 
+              << (totalBatchPoints ? ((totalBatchDeleteTime + totalBatchInsertTime) * 1000000.0 / (double)totalBatchPoints) : 0.0) << " us\n";
+    std::cerr << "Deletes succeeded: " << totalDeletesSucceeded << "/" << totalBatchPoints 
+              << " (" << std::fixed << std::setprecision(1) << (100.0 * totalDeletesSucceeded / totalBatchPoints) << "%)\n";
+    std::cerr << "Inserts succeeded: " << totalInsertsSucceeded << "/" << totalBatchPoints 
+              << " (" << std::fixed << std::setprecision(1) << (100.0 * totalInsertsSucceeded / totalBatchPoints) << "%)\n";
+    // Calculate average and median update time per batch
+    if (!batchUpdateTimes.empty()) {
+        double avgUpdateTime = 0.0;
+        for (double t : batchUpdateTimes) avgUpdateTime += t;
+        avgUpdateTime /= batchUpdateTimes.size();
+        std::sort(batchUpdateTimes.begin(), batchUpdateTimes.end());
+        double medianUpdateTime = batchUpdateTimes[batchUpdateTimes.size() / 2];
+        std::cerr << "Avg update time per batch: " << std::fixed << std::setprecision(3) << avgUpdateTime << " ms\n";
+        std::cerr << "Median update time per batch: " << std::fixed << std::setprecision(3) << medianUpdateTime << " ms\n";
+    }
+
+    // Verify counts after batch-wise updates
+    // {
+    //     uint32_t mainValid = index->getMainValidCount();
+    //     uint32_t auxCount = index->getAuxValidCount();
+    //     uint32_t total = mainValid + auxCount;
+    //     std::cerr << "[DEBUG] After batch-wise: Main valid=" << mainValid << ", Aux count=" << auxCount 
+    //               << ", Total=" << total << " (expected: " << npoints << ")\n";
+    //     if (total != npoints) {
+    //         std::cerr << "[WARNING] Total count mismatch! Diff=" << (int64_t)(npoints - total) << "\n";
+    //     }
+    // }
+
+    // Query performance after batch-wise updates
+    std::cerr << "\n--- Query Performance After Batch-wise Updates ---\n";
+    
+    // Warmup query to avoid cold cache effect on first timed query
+    {
+        std::vector<uint32_t> warmupQuery = {targets[0], targets[1], targets[2], targets[3], targets[4], targets[5]};
+        loadUsingStagingBuf((char *)warmupQuery.data(), warmupQuery.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+        index->runRangeQueries(queryBuffer, 1, resultBuffer);
+    }
+    
+    double batchTotTime = 0;
+    std::vector<double> batchQueryTimes;
+    batchQueryTimes.reserve(numQueries);
+    for (int i = 0; i < numQueries; i++) {
+        int in = i * 6;
+        std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
+
+        std::vector<double> qt;
+        qt.reserve(QUERY_COUNT);
+        for(int r = 0; r < QUERY_COUNT; r++) {
+            loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+            CPUTimer qTimer;
+            qTimer.start();
+            index->runRangeQueries(queryBuffer, 1, resultBuffer);
+            double t = double(qTimer.stop()) / 1000000.0;
+            qt.push_back(t);
+        }
+        std::sort(qt.begin(), qt.end());
+        double t = qt[qt.size() / 2];
+        batchTotTime += t;
+        batchQueryTimes.push_back(t * 1000.0);
+
+        std::vector<uint32_t> result(resultSizeUints);
+        readUsingStagingBuf((char *)result.data(), resultSizeUints * sizeof(uint32_t), resultBuffer, staging, vd);
+        
+        uint32_t count = 0;
+        for(uint32_t val : result) count += __builtin_popcount(val);
+        std::cerr << "Query " << (i+1) << ": " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
+    }
+    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << ((batchTotTime * 1000.0) / numQueries) << " ms\n";
+    std::sort(batchQueryTimes.begin(), batchQueryTimes.end());
+    std::cerr << "Median Query Time: " << std::fixed << std::setprecision(3) << batchQueryTimes[batchQueryTimes.size() / 2] << " ms\n";
+#endif // RUN_BATCHWISE
+
+    // =========================================================
+    // Rebuild index for point-wise test
+    // =========================================================
+    index.reset();
+    index = std::make_shared<CompactBruteScanIndex>(vd, ncols, scan);
+    index->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+
 
     // Note: Buffers are managed by shared_ptr, no need to explicitly destroy
     // The destructors will handle cleanup when they go out of scope
