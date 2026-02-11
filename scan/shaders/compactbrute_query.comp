@@ -1,0 +1,82 @@
+#version 450
+#extension GL_ARB_gpu_shader_int64 : require
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+
+// CompactBruteScan Query Shader
+// Scans ALL entries in BOTH main and auxiliary buffers (brute-force)
+// Uses buffer device addresses to handle >4GB buffers
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+layout(push_constant) uniform PushConstants {
+    uint mainCount;      // Total entries in main buffer
+    uint auxCount;       // Current count in aux buffer
+    uvec2 mainBufferAddr;  // 64-bit address of main buffer
+    uvec2 auxBufferAddr;   // 64-bit address of aux buffer
+} pc;
+
+// Buffer reference for data entries
+layout(buffer_reference, std430, buffer_reference_align = 16) readonly buffer DataEntryRef {
+    uvec4 entry;
+};
+
+// Query buffer: [x1, x2, y1, y2, z1, z2]
+layout(std430, binding = 0) readonly buffer QueryBuffer {
+    uint query[];
+};
+
+// Result buffer: bitmask indexed by rowId
+layout(std430, binding = 1) buffer ResultBuffer {
+    uint result[];
+};
+
+void main() {
+    uint totalEntries = pc.mainCount + pc.auxCount;
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= totalEntries) return;
+    
+    // Determine which buffer and compute address
+    uint64_t entryAddr;
+    if (idx < pc.mainCount) {
+        // Main buffer
+        uint64_t baseAddr = uint64_t(pc.mainBufferAddr.x) | (uint64_t(pc.mainBufferAddr.y) << 32);
+        entryAddr = baseAddr + uint64_t(idx) * 16u;
+    } else {
+        // Auxiliary buffer
+        uint64_t baseAddr = uint64_t(pc.auxBufferAddr.x) | (uint64_t(pc.auxBufferAddr.y) << 32);
+        uint auxIdx = idx - pc.mainCount;
+        entryAddr = baseAddr + uint64_t(auxIdx) * 16u;
+    }
+    
+    // Read entry via buffer reference
+    DataEntryRef dataRef = DataEntryRef(entryAddr);
+    uvec4 entry = dataRef.entry;
+    
+    uint x = entry.x;
+    uint y = entry.y;
+    uint z = entry.z;
+    uint rowId = entry.w;
+    
+    // Check valid bit
+    if ((rowId & 0x80000000u) == 0u) return;
+    
+    // Extract actual rowId (lower 31 bits)
+    uint actualRowId = rowId & 0x7FFFFFFFu;
+    
+    // Read query range
+    uint x1 = query[0];
+    uint x2 = query[1];
+    uint y1 = query[2];
+    uint y2 = query[3];
+    uint z1 = query[4];
+    uint z2 = query[5];
+    
+    // Check if point is within range
+    if (x >= x1 && x <= x2 &&
+        y >= y1 && y <= y2 &&
+        z >= z1 && z <= z2) {
+        // Set bit in result bitmask
+        atomicOr(result[actualRowId / 32u], 1u << (actualRowId % 32u));
+    }
+}

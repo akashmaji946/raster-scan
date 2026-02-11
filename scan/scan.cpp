@@ -47,13 +47,28 @@ using namespace vkcore;
 // 60 = BruteForceIndex + RasterScan2D Comparison (TPC-C)
 // 61 = BruteForceIndex + RasterScan2D Comparison
 
-#define USE_INDEX_UPDATE_PIPELINE 61
+// 62 = BruteForceIndex + EquiDepth Index Comparison
+// 63 = EquiDepthIndex + EquiDepth Index Comparison (TPC-C)
+
+// 65 = BruteForceIndex + RasterScan2D Comparison (100 queries, 1%-100% selectivity)
+// 66 = BruteForceIndex + RasterScan2D Comparison (100 point queries)
+// 67 = BruteForceIndex + RasterScan2D Comparison (100 queries, 1% selectivity)
+
+// 64 = BruteForceIndex + RasterScan2D Comparison (TPC-C, 100 queries, 1%-100% selectivity)
+// 68 = BruteForceIndex + RasterScan2D Comparison (TPC-C, 100 point queries)
+// 69 = BruteForceIndex + RasterScan2D Comparison (TPC-C, 100 queries, 1% selectivity)
+
+// 70 = BruteForce Scan with Update Support (TPC-C) - BRUTE_SCALE_FACTOR controls buffer size
+
+// 80 = CompactBruteScan - builds like CompactScan (binned), queries like BruteForce (all bins), with aux buffer for updates
+
+#define USE_INDEX_UPDATE_PIPELINE 80
 
 int main(int argc, char* argv[]) {
     // Default values
-    int m = 50;  // millions of rows
+    int m = 100;  // millions of rows
     int c = 3;   // columns
-    int d = 2;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
+    int d = 0;   // dataId: 0=uniform, 1=normal, 2=zipf1.1, 3=zipf1.3, 4=zipf1.5
 
     std::string testFolder = "test";
     char gpuVendor = 'D';  // Default
@@ -132,7 +147,27 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 61
+#if USE_INDEX_UPDATE_PIPELINE == 80
+    testCompactBruteScan(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 70
+    testBruteForceUpdateTPCC(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 69
+    testBruteForceVsRasterScanTPCCRandom1Pct(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 68
+    testBruteForceVsRasterScanTPCCPointQueries(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 67
+    testBruteForceVsRasterScanRandom1Pct(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 66
+    testBruteForceVsRasterScanPointQueries(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 65
+    testBruteForceVsRasterScan100(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 64
+    testBruteForceVsRasterScanTPCC100(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 63
+    testBruteForceVsEquiDepthTPCC(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 62
+    testBruteForceVsEquiDepthPlain(d, vd, staging, op);
+#elif USE_INDEX_UPDATE_PIPELINE == 61
     testBruteForceVsRasterScanPlain(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 60
     testBruteForceVsRasterScan(d, vd, staging, op);

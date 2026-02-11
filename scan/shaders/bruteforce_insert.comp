@@ -1,0 +1,54 @@
+// BruteForce Insert Compute Shader
+// Inserts new entries at specified slot positions
+#version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+// Buffer reference for data entries (16 bytes each: x, y, z, rowId)
+layout(buffer_reference, std430, buffer_reference_align = 16) writeonly buffer DataEntryRef {
+    uvec4 entry;
+};
+
+layout(push_constant) uniform PushConstants {
+    uint count;           // Number of entries to insert
+    uint padding;
+    uvec2 dataBufferAddr; // 64-bit buffer device address
+} pc;
+
+// Slot indices where to insert
+layout(std430, binding = 0) readonly buffer SlotBuffer {
+    uint slots[];
+};
+
+// Points to insert (x, y, z per point, row-major)
+layout(std430, binding = 1) readonly buffer PointsBuffer {
+    uint points[];
+};
+
+// Original row IDs to preserve
+layout(std430, binding = 2) readonly buffer RowIdBuffer {
+    uint rowIds[];
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.count) return;
+    
+    // Get the slot index, point data, and original rowId
+    uint slot = slots[idx];
+    uint x = points[idx * 3 + 0];
+    uint y = points[idx * 3 + 1];
+    uint z = points[idx * 3 + 2];
+    uint originalRowId = rowIds[idx];
+    
+    // Compute address of this entry using buffer device address
+    uint64_t baseAddr = uint64_t(pc.dataBufferAddr.x) | (uint64_t(pc.dataBufferAddr.y) << 32);
+    uint64_t entryAddr = baseAddr + uint64_t(slot) * 16u;  // 16 bytes per entry
+    
+    // Write entry with valid bit set, preserving original rowId
+    DataEntryRef dataRef = DataEntryRef(entryAddr);
+    dataRef.entry = uvec4(x, y, z, originalRowId | 0x80000000u);
+}

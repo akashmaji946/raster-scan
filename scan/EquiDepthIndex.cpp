@@ -540,6 +540,46 @@ void EquiDepthIndex::setupPipelines() {
         vk::ComputePipelineCreateInfo pipelineInfo({}, stageInfo, rangeComputePipelineLayout.get());
         rangeComputePipeline = vd->device->createComputePipelineUnique(nullptr, pipelineInfo).value;
     }
+    
+    // ========== COMPUTE PIPELINE: Pure Compute Query (Optimized) ==========
+    // This replaces the slow graphics pipeline (vertex + geometry + fragment)
+    // with a single compute dispatch - same approach as BruteForceIndex
+    {
+        std::vector<uint32_t> code;
+        validate(readShader(SHADER_FOLDER + "/equidepth_query_compute.comp.spv", code), "equidepth query compute shader");
+        
+        vk::ShaderModuleCreateInfo createInfo({}, code.size() * sizeof(uint32_t), code.data());
+        queryComputeShader = vd->device->createShaderModuleUnique(createInfo);
+        
+        // Descriptor set layout: 0=queryBuffer, 1=resultBuffer
+        std::vector<vk::DescriptorSetLayoutBinding> bindings = {
+            {0, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute},
+            {1, vk::DescriptorType::eStorageBuffer, 1, vk::ShaderStageFlagBits::eCompute}
+        };
+        vk::DescriptorSetLayoutCreateInfo layoutInfo({}, bindings);
+        queryComputeDescSetLayout = vd->device->createDescriptorSetLayoutUnique(layoutInfo);
+        
+        // Push constants: npoints (4 bytes) + padding (4 bytes) + dataBufferAddr (8 bytes) = 16 bytes
+        vk::PushConstantRange pcRange(vk::ShaderStageFlagBits::eCompute, 0, 16);
+        vk::PipelineLayoutCreateInfo pipelineLayoutInfo({}, 1, &queryComputeDescSetLayout.get(), 1, &pcRange);
+        queryComputePipelineLayout = vd->device->createPipelineLayoutUnique(pipelineLayoutInfo);
+        
+        // Descriptor pool
+        std::vector<vk::DescriptorPoolSize> poolSizes = {
+            {vk::DescriptorType::eStorageBuffer, 2}
+        };
+        vk::DescriptorPoolCreateInfo poolInfo(vk::DescriptorPoolCreateFlagBits::eFreeDescriptorSet, 1, poolSizes);
+        queryComputeDescPool = vd->device->createDescriptorPoolUnique(poolInfo);
+        
+        // Allocate descriptor set
+        vk::DescriptorSetAllocateInfo allocInfo(queryComputeDescPool.get(), 1, &queryComputeDescSetLayout.get());
+        queryComputeDescSet = std::move(vd->device->allocateDescriptorSetsUnique(allocInfo)[0]);
+        
+        // Create compute pipeline
+        vk::PipelineShaderStageCreateInfo qcStageInfo({}, vk::ShaderStageFlagBits::eCompute, queryComputeShader.get(), "main");
+        vk::ComputePipelineCreateInfo qcPipelineInfo({}, qcStageInfo, queryComputePipelineLayout.get());
+        queryComputePipeline = vd->device->createComputePipelineUnique(nullptr, qcPipelineInfo).value;
+    }
 }
 
 void EquiDepthIndex::buildHistograms(PBuffer pointsBuffer, uint32_t npoints, bool bindDescriptors) {
@@ -844,103 +884,79 @@ void EquiDepthIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_t
 }
 
 void EquiDepthIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PBuffer resultBuffer) {
-    // Two-pass query approach like CompactScanIndex:
-    // Pass 1 (Range): Collect [st, en) pairs for all bins with entries
-    // Pass 2 (Edge): One fragment per entry, check validity and range
+    // OPTIMIZED: Pure compute query - same approach as BruteForceIndex
+    // Single dispatch over all entries in dataBuffer, check validity and range
     
-    // ========== UPDATE PASS 1 DESCRIPTORS (Compute Pipeline) ==========
-    // Bindings: 0=startAddr, 1=extent, 2=maxBuffer, 3=edgeBuffer
-    {
-        vk::DescriptorBufferInfo startAddrDesc(startAddrBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::DescriptorBufferInfo extentDesc(extentBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::DescriptorBufferInfo maxDesc(maxBuffer->buf, 0, VK_WHOLE_SIZE);
-        vk::DescriptorBufferInfo edgeDesc(edgeBuffer->buf, 0, VK_WHOLE_SIZE);
-        std::vector<vk::WriteDescriptorSet> writes = {
-            {rangeComputeDescSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &startAddrDesc},
-            {rangeComputeDescSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &extentDesc},
-            {rangeComputeDescSet.get(), 2, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &maxDesc},
-            {rangeComputeDescSet.get(), 3, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &edgeDesc},
-        };
-        vd->device->updateDescriptorSets(writes, nullptr);
+    // Create cached fence on first use
+    if (!queryFence) {
+        queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
     }
     
-    // ========== UPDATE PASS 2 DESCRIPTORS ==========
-    // Bindings: 0=result buffer, 1=query buffer
-    {
-        vk::DescriptorBufferInfo resultDesc(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+    // Only update descriptors if buffers changed (avoid redundant updates)
+    if (queryBuffer->buf != lastQueryBuffer || resultBuffer->buf != lastResultBuffer) {
         vk::DescriptorBufferInfo queryDesc(queryBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo resultDesc(resultBuffer->buf, 0, VK_WHOLE_SIZE);
         std::vector<vk::WriteDescriptorSet> writes = {
-            {edgePipelineProps.descriptorSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resultDesc},
-            {edgePipelineProps.descriptorSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &queryDesc},
+            {queryComputeDescSet.get(), 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &queryDesc},
+            {queryComputeDescSet.get(), 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resultDesc},
         };
         vd->device->updateDescriptorSets(writes, nullptr);
+        lastQueryBuffer = queryBuffer->buf;
+        lastResultBuffer = resultBuffer->buf;
     }
     
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
     vd->commandBuffer->begin(beginInfo);
     
-    // Clear result buffer and maxBuffer
-    resultBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
-    maxBuffer->clearBufferWithBarrier(vk::PipelineStageFlagBits::eComputeShader, 0);
+    // Clear result buffer
+    uint32_t resultSizeUints = (npoints + 31) / 32;
+    vd->commandBuffer->fillBuffer(resultBuffer->buf, 0, resultSizeUints * sizeof(uint32_t), 0);
     
-    // ========== PASS 1: Range - collect [st, en) pairs (COMPUTE SHADER) ==========
-    // Using compute shader instead of graphics for early exit on empty bins
-    {
-        uint32_t totalBins = INDEX_RESOLUTION * INDEX_RESOLUTION;
-        
-        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, rangeComputePipeline.get());
-        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, rangeComputePipelineLayout.get(), 0, rangeComputeDescSet.get(), nullptr);
-        
-        // Push constants: resolution, totalBins
-        uint32_t pc[2] = {INDEX_RESOLUTION, totalBins};
-        vd->commandBuffer->pushConstants<uint32_t>(rangeComputePipelineLayout.get(), 
-            vk::ShaderStageFlagBits::eCompute, 0, pc);
-        
-        // Dispatch: one thread per bin, 256 threads per workgroup
-        uint32_t groups = (totalBins + 255) / 256;
-        vd->commandBuffer->dispatch(groups, 1, 1);
-    }
+    // Barrier after fill
+    vk::BufferMemoryBarrier barrier(
+        vk::AccessFlagBits::eTransferWrite,
+        vk::AccessFlagBits::eShaderRead | vk::AccessFlagBits::eShaderWrite,
+        VK_QUEUE_FAMILY_IGNORED, VK_QUEUE_FAMILY_IGNORED,
+        resultBuffer->buf, 0, VK_WHOLE_SIZE
+    );
+    vd->commandBuffer->pipelineBarrier(
+        vk::PipelineStageFlagBits::eTransfer,
+        vk::PipelineStageFlagBits::eComputeShader,
+        {}, {}, barrier, {}
+    );
     
-    // Barrier: Pass 1 (compute) write -> Pass 2 read
-    maxBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eDrawIndirect,
-                       vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eIndirectCommandRead);
-    edgeBuffer->barrier(vk::PipelineStageFlagBits::eComputeShader, vk::PipelineStageFlagBits::eVertexInput,
-                        vk::AccessFlagBits::eShaderWrite, vk::AccessFlagBits::eVertexAttributeRead);
+    // Run compute query shader
+    vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eCompute, queryComputePipeline.get());
+    vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eCompute, queryComputePipelineLayout.get(), 0, queryComputeDescSet.get(), nullptr);
     
-    // ========== PASS 2: Edge - one fragment per entry ==========
-    {
-        vk::RenderingAttachmentInfo colorInfo;
-        vk::RenderingInfo renderingInfo = setupRendering(vd, dummyFbo, colorInfo);
-        vd->commandBuffer->bindPipeline(vk::PipelineBindPoint::eGraphics, edgePipeline.get());
-        vd->commandBuffer->beginRendering(&renderingInfo);
-        vd->commandBuffer->bindDescriptorSets(vk::PipelineBindPoint::eGraphics, edgePipelineProps.pipelineLayout.get(), 0, edgePipelineProps.descriptorSet.get(), nullptr);
-        
-        // Push constants: res, ncols, dataBufferAddr[2]
-        uint64_t dataAddr = dataBuffer->getDeviceAddress();
-        uint32_t pc2[4] = {INDEX_RESOLUTION, 3, 
-                          static_cast<uint32_t>(dataAddr & 0xFFFFFFFF), 
-                          static_cast<uint32_t>(dataAddr >> 32)};
-        vd->commandBuffer->pushConstants<uint32_t>(edgePipelineProps.pipelineLayout.get(), 
-            vk::ShaderStageFlagBits::eVertex | vk::ShaderStageFlagBits::eFragment, 0, pc2);
-        
-        vk::DeviceSize offset = 0;
-        vd->commandBuffer->bindVertexBuffers(0, edgeBuffer->buf, offset);
-        
-        // Indirect draw: numRanges vertices from edgeBuffer
-        vd->commandBuffer->drawIndirect(maxBuffer->buf, 0, 1, 4 * sizeof(uint32_t));
-        vd->commandBuffer->endRendering();
-    }
+    // Push constants: npoints (4 bytes) + padding (4 bytes) + dataBufferAddr (8 bytes)
+    uint64_t dataAddr = dataBuffer->getDeviceAddress();
+    struct {
+        uint32_t npoints;
+        uint32_t padding;
+        uint32_t dataAddrLo;
+        uint32_t dataAddrHi;
+    } pushData = {
+        npoints,
+        0,
+        static_cast<uint32_t>(dataAddr & 0xFFFFFFFF),
+        static_cast<uint32_t>(dataAddr >> 32)
+    };
+    vd->commandBuffer->pushConstants(queryComputePipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(pushData), &pushData);
+    
+    // Dispatch: 256 threads per workgroup
+    uint32_t numWorkgroups = (npoints + 255) / 256;
+    vd->commandBuffer->dispatch(numWorkgroups, 1, 1);
     
     vd->commandBuffer->end();
     
-    // Submit and wait
+    // Submit and wait using cached fence
+    vd->device->resetFences(queryFence.get());
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
-    vk::Fence fence = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo, fence, false);
-    vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence);
+    vd->submit(submitInfo, queryFence.get(), false);
+    vd->waitForFences(queryFence.get(), VK_TRUE, UINT64_MAX);
 }
 
 uint32_t EquiDepthIndex::getMaxBinCount() {

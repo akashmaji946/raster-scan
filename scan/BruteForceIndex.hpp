@@ -56,6 +56,12 @@ public:
     vk::UniquePipelineLayout buildPipelineLayout;
     vk::UniqueDescriptorPool buildDescPool;
     vk::UniqueDescriptorSet buildDescSet;
+    
+    // Cached fence for query execution (avoid create/destroy overhead)
+    vk::UniqueFence queryFence;
+    // Track last bound buffers to avoid redundant descriptor updates
+    vk::Buffer lastQueryBuffer = nullptr;
+    vk::Buffer lastResultBuffer = nullptr;
 
 private:
     void setupPipelines();

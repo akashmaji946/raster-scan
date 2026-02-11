@@ -118,6 +118,20 @@ public:
     vk::UniqueDescriptorPool rangeComputeDescPool;
     vk::UniqueDescriptorSet rangeComputeDescSet;
     
+    // Pure compute query pipeline (optimized - replaces graphics pipeline)
+    vk::UniquePipeline queryComputePipeline;
+    vk::UniqueShaderModule queryComputeShader;
+    vk::UniqueDescriptorSetLayout queryComputeDescSetLayout;
+    vk::UniquePipelineLayout queryComputePipelineLayout;
+    vk::UniqueDescriptorPool queryComputeDescPool;
+    vk::UniqueDescriptorSet queryComputeDescSet;
+    
+    // Cached fence for query execution (avoid create/destroy overhead)
+    vk::UniqueFence queryFence;
+    // Track last bound buffers to avoid redundant descriptor updates
+    vk::Buffer lastQueryBuffer = nullptr;
+    vk::Buffer lastResultBuffer = nullptr;
+    
     vk::UniqueShaderModule countVertexShader;
     vk::UniqueShaderModule buildVertexShader;
     vk::UniqueShaderModule queryVertexShader;
@@ -141,11 +155,6 @@ public:
 
     // Dummy FBO for graphics pipeline
     vkcore::PFrameBuffer dummyFbo;
-
-    // Cached state
-    bool queryDescriptorsInitialized = false;
-    vkcore::PBuffer lastResultBuffer = nullptr;
-    vk::UniqueFence queryFence;
 
 private:
     void setupPipelines();

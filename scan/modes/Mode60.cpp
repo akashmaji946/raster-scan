@@ -54,15 +54,15 @@ static void generateTPCCDataMode60(
     }
     
     // Shuffle the rows randomly
-    // std::cerr << "[TPC-C] Shuffling data rows...\n";
-    // std::mt19937 rng(42);
-    // for (int64_t i = count - 1; i > 0; --i) {
-    //     std::uniform_int_distribution<int64_t> dist(0, i);
-    //     int64_t j = dist(rng);
-    //     std::swap(W[i], W[j]);
-    //     std::swap(D[i], D[j]);
-    //     std::swap(C[i], C[j]);
-    // }
+    std::cerr << "[TPC-C] Shuffling data rows...\n";
+    std::mt19937 rng(42);
+    for (int64_t i = count - 1; i > 0; --i) {
+        std::uniform_int_distribution<int64_t> dist(0, i);
+        int64_t j = dist(rng);
+        std::swap(W[i], W[j]);
+        std::swap(D[i], D[j]);
+        std::swap(C[i], C[j]);
+    }
     
     minW = 1; maxW = static_cast<uint32_t>(warehouseCount);
     minD = 1; maxD = kDistrictsPerWarehouse;

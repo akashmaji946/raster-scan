@@ -1,4 +1,6 @@
 # Hashes of file build rules.
+a97d99117da1ade8af71fc80ee6c3a12 shaders/bruteforce_delete.comp.spv
+5aa010ba26448e9e31da018cfb081cb0 shaders/bruteforce_insert.comp.spv
 36315b6f369bf363c50de3b247c484cb shaders/build-count-2D.vert.spv
 596de1294e8fcd0e6d2c66da2d6d3f55 shaders/build2D.vert.spv
 fb3113bd94b901caeac579bedd0df3ce shaders/compact-pages.vert.spv
@@ -6,10 +8,12 @@ fb3113bd94b901caeac579bedd0df3ce shaders/compact-pages.vert.spv
 bbfed2c347e9915b95399ef1674c5618 shaders/compact_count.comp.spv
 28599984006cf87368707f0dd572ab20 shaders/compact_count_gfx.vert.spv
 5baabbbff1dcd4b87564787d1f780124 shaders/compact_delete.comp.spv
+2d5fe8af7c893c9d46d5f2eabb7c666d shaders/compact_delete_indexed.comp.spv
 0f98e4e2f174702a9d5b88e862589881 shaders/compact_edge.frag.spv
 b97d08db9fe879db7eee1c3dd872060d shaders/compact_edge.geom.spv
 bda98c704b49a5a91e161469f1dc5f34 shaders/compact_edge.vert.spv
 3328f6adc0f43e3e63909e01c5b737aa shaders/compact_insert.comp.spv
+f5d5b8a8d3682baf9e4faede866c0a2f shaders/compact_insert_gfx.vert.spv
 65fac2d1c46cff746a51f504a4aa1ea7 shaders/compact_query.comp.spv
 83c47b323149187a6c7fd4a5fe29ef67 shaders/compact_query_gfx.frag.spv
 06a1fe7fed68ff085bf694e69cffb963 shaders/compact_query_gfx.geom.spv
@@ -17,6 +21,12 @@ bda98c704b49a5a91e161469f1dc5f34 shaders/compact_edge.vert.spv
 98962a95a29f6e51407419e972c5c8ec shaders/compact_range.frag.spv
 033060816104ac8c9aa1846c432e8186 shaders/compact_scale_counts.comp.spv
 f59c18a4e7f2faaa534332638e8f75af shaders/compact_stats.comp.spv
+3d821f09ce0f015d5422ce66534c1049 shaders/compactbrute_build_gfx.vert.spv
+d48c5d352780e25420e16f7c01737c47 shaders/compactbrute_count_gfx.vert.spv
+dfa302464a2fc75b3fb1b28652b32878 shaders/compactbrute_delete.comp.spv
+cd5ca4f69dc29f9bf882141354772949 shaders/compactbrute_insert.comp.spv
+6c61cf1965b491b9a953ec64f9834308 shaders/compactbrute_query.comp.spv
+4da440b53fdf98883611a9728ba92e85 shaders/compactbrute_update.comp.spv
 e0a44d94a874575ccaafaa52b382c033 shaders/delete-by-data.vert.spv
 2d90e80b2001efc6eb51132275fa9f28 shaders/delete-page.vert.spv
 3354104d21f01906d2ca64c33a28153c shaders/delete-range.vert.spv
@@ -24,6 +34,23 @@ e0a44d94a874575ccaafaa52b382c033 shaders/delete-by-data.vert.spv
 63cfef56b815902ef536a2a5cda2fc9d shaders/edge2D.frag.spv
 6f3a3c1f0211d532b6f69dae74fdb82f shaders/edge2D.geom.spv
 6a817f1d3cc6e6819233424968a22f21 shaders/edge2D.vert.spv
+17fe28a2369305b96913517f72acb0c2 shaders/equidepth_build.vert.spv
+4655a56c6ade5a5c72234daa567a6476 shaders/equidepth_count.vert.spv
+7fcf75f652a36dccc8134be62829da92 shaders/equidepth_edge.frag.spv
+a65b6b467e88b2ef2752c760fbc927fe shaders/equidepth_edge.geom.spv
+3789fee9f7b9752107c515cd3db895cf shaders/equidepth_edge.vert.spv
+23f0db99a4add45393fe76fd9a8ddf97 shaders/equidepth_histogram.comp.spv
+625810e235c2647640378892bbf7f6db shaders/equidepth_morton.comp.spv
+1d6d6e201f095de65afa5bfaa9bfab1b shaders/equidepth_morton_build.vert.spv
+4c9756296dab6ba08da96ea41cd3d1cb shaders/equidepth_morton_count.vert.spv
+0aa68c536602b3925938768261b9cab4 shaders/equidepth_morton_quantiles.comp.spv
+ac1bed96fd753236d3690f7a354ce828 shaders/equidepth_morton_query.vert.spv
+531e0f74fae927eb36e2885b528d5fe9 shaders/equidepth_morton_range.frag.spv
+919bbc40293899d5b4f604e34e749a51 shaders/equidepth_quantiles.comp.spv
+a529aba3145c589aa7999f42f2b7c87d shaders/equidepth_query.geom.spv
+4cbe3099b43520117c6348a4828372ff shaders/equidepth_query.vert.spv
+ec1ffa526720ae64b8365e006a9d495a shaders/equidepth_query_compute.comp.spv
+71959208cc7d1759935f1807fd005e79 shaders/equidepth_range.frag.spv
 383552d8831e9f35f737dfad3e3c0471 shaders/insert-page-bitmap-v2.vert.spv
 33a0203c1fa47e9fa992a5309d9a89c0 shaders/insert-page-bitmap.vert.spv
 640a07b2631bfb9d0cfaf1bb93d41d71 shaders/insert-page.vert.spv

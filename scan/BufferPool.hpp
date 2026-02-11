@@ -14,7 +14,7 @@
 
 // Set to 1 to disable query descriptor caching (forces descriptor updates every query)
 #ifndef DISABLE_QUERY_CACHING
-#define DISABLE_QUERY_CACHING 0
+#define DISABLE_QUERY_CACHING 1
 #endif
 
 // requires 1 GB space for storing results

@@ -1,0 +1,60 @@
+#version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
+// CompactBruteScan Insert Shader
+// Inserts new points to auxiliary buffer
+// Uses new rowIDs starting from nextRowId
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+// Buffer reference for aux buffer
+layout(buffer_reference, std430, buffer_reference_align = 16) writeonly buffer DataBufferRef {
+    uvec4 data;
+};
+
+layout(std430, binding = 0) buffer AuxCountBuffer {
+    uint auxCount; // Current count in aux buffer (atomic)
+};
+
+layout(std430, binding = 1) readonly buffer InsertDataBuffer {
+    uint insertPoints[]; // [x, y, z] triples
+};
+
+layout(push_constant) uniform PushConstants {
+    uint ninserts;
+    uint nextRowId;    // Starting rowID for new inserts
+    uint auxCapacity;  // Max entries in aux buffer
+    uint pad;
+    uvec2 auxBufferAddr;
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.ninserts) return;
+    
+    // Atomically allocate slot in aux buffer
+    uint slot = atomicAdd(auxCount, 1);
+    if (slot >= pc.auxCapacity) {
+        // Overflow - can't insert
+        return;
+    }
+    
+    // Read point to insert
+    uint x = insertPoints[gid * 3 + 0];
+    uint y = insertPoints[gid * 3 + 1];
+    uint z = insertPoints[gid * 3 + 2];
+    
+    // Compute rowID for this insert
+    uint rowId = pc.nextRowId + gid;
+    
+    // Write to aux buffer
+    uint64_t baseAddr = uint64_t(pc.auxBufferAddr.x) | (uint64_t(pc.auxBufferAddr.y) << 32);
+    uint64_t byteOffset = uint64_t(slot) * 16u;
+    uint64_t elementAddr = baseAddr + byteOffset;
+    DataBufferRef dataRef = DataBufferRef(elementAddr);
+    
+    // Store with valid bit
+    dataRef.data = uvec4(x, y, z, rowId | 0x80000000u);
+}

@@ -10,6 +10,7 @@ set(scan_headers
     modes/RunModes.hpp
     CompactScanIndex.hpp
     EquiDepthIndex.hpp
+    CompactBruteScanIndex.hpp
 )
 
 set(scan_src
@@ -45,9 +46,21 @@ set(scan_src
     modes/Mode53.cpp
     modes/Mode60.cpp
     modes/Mode61.cpp
+    modes/Mode62.cpp
+    modes/Mode63.cpp
+    modes/Mode64.cpp
+    modes/Mode65.cpp
+    modes/Mode66.cpp
+    modes/Mode67.cpp
+    modes/Mode68.cpp
+    modes/Mode69.cpp
+    modes/Mode70.cpp
+    modes/Mode80.cpp
     CompactScanIndex.cpp
+    CompactBruteScanIndex.cpp
     EquiDepthIndex.cpp
     BruteForceIndex.cpp
+    BruteForceIndexUpdatable.cpp
 )
 
 set(encode_src
@@ -120,6 +133,17 @@ set(scan_shader_src
     shaders/equidepth_edge.vert
     shaders/equidepth_edge.geom
     shaders/equidepth_edge.frag
+    shaders/equidepth_query_compute.comp
+    shaders/bruteforce_delete.comp
+    shaders/bruteforce_insert.comp
+
+    
+    shaders/compactbrute_count_gfx.vert
+    shaders/compactbrute_build_gfx.vert
+    shaders/compactbrute_query.comp
+    shaders/compactbrute_delete.comp
+    shaders/compactbrute_insert.comp
+    shaders/compactbrute_update.comp
 )
 
 add_executable(EncodeData ${encode_src})

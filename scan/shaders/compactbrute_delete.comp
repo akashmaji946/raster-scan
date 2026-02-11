@@ -1,0 +1,126 @@
+#version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
+// CompactBruteScan Delete Shader
+// Deletes by data values (x,y,z) - searches BOTH main buffer (by bin) AND aux buffer (linear)
+// One thread per delete request
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+struct CompactBruteEntry {
+    uint x;
+    uint y;
+    uint z;
+    uint rowId;
+};
+
+// Buffer reference for >4GB buffer access
+layout(buffer_reference, std430, buffer_reference_align = 16) buffer DataBufferRef {
+    CompactBruteEntry data;
+};
+
+layout(std430, binding = 0) buffer StartAddrBuffer {
+    uint startAddr[];
+};
+
+layout(std430, binding = 1) buffer ExtentBuffer {
+    uint extent[];
+};
+
+layout(std430, binding = 2) buffer DeleteDataBuffer {
+    uint deletePoints[]; // [x, y, z] triples
+};
+
+layout(push_constant) uniform PushConstants {
+    uint minX; uint minY; uint minZ;
+    uint resolution;
+    uint binWidthX; uint binWidthY; uint binWidthZ;
+    uint ndeletes;
+    uvec2 mainBufferAddr;
+    uvec2 auxBufferAddr;
+    uint auxCount;  // Current count in aux buffer
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.ndeletes) return;
+    
+    uint64_t mainBaseAddr = uint64_t(pc.mainBufferAddr.x) | (uint64_t(pc.mainBufferAddr.y) << 32);
+    uint64_t auxBaseAddr = uint64_t(pc.auxBufferAddr.x) | (uint64_t(pc.auxBufferAddr.y) << 32);
+    
+    // Read point to delete
+    uint dx = deletePoints[gid * 3 + 0];
+    uint dy = deletePoints[gid * 3 + 1];
+    uint dz = deletePoints[gid * 3 + 2];
+    
+    // ========== PHASE 1: Search in MAIN buffer (bin-based) ==========
+    // Determine bin
+    uint bx = 0;
+    if (dx >= pc.minX) {
+        bx = (dx - pc.minX) / pc.binWidthX;
+    }
+    if (bx >= pc.resolution) bx = pc.resolution - 1;
+    
+    uint by = 0;
+    if (dy >= pc.minY) {
+        by = (dy - pc.minY) / pc.binWidthY;
+    }
+    if (by >= pc.resolution) by = pc.resolution - 1;
+    
+    uint binIdx = by * pc.resolution + bx;
+    uint cnt = extent[binIdx];
+    uint start = startAddr[binIdx];
+    
+    // Linear scan of bin in main buffer
+    for (uint i = 0; i < cnt; i++) {
+        uint idx = start + i;
+        
+        uint64_t byteOffset = uint64_t(idx) * 16u;
+        uint64_t elementAddr = mainBaseAddr + byteOffset;
+        DataBufferRef dataRef = DataBufferRef(elementAddr);
+        
+        uint ex = dataRef.data.x;
+        uint ey = dataRef.data.y;
+        uint ez = dataRef.data.z;
+        
+        if (ex == dx && ey == dy && ez == dz) {
+            uint currentRowId = dataRef.data.rowId;
+            
+            if ((currentRowId & 0x80000000u) != 0u) {
+                uint newRowId = currentRowId & 0x7FFFFFFFu;
+                uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
+                
+                if (oldRowId == currentRowId) {
+                    return; // Successfully deleted from main buffer
+                }
+            }
+        }
+    }
+    
+    // ========== PHASE 2: Search in AUX buffer (linear scan) ==========
+    // Aux buffer has no binning, so we scan all entries
+    for (uint i = 0; i < pc.auxCount; i++) {
+        uint64_t byteOffset = uint64_t(i) * 16u;
+        uint64_t elementAddr = auxBaseAddr + byteOffset;
+        DataBufferRef dataRef = DataBufferRef(elementAddr);
+        
+        uint ex = dataRef.data.x;
+        uint ey = dataRef.data.y;
+        uint ez = dataRef.data.z;
+        
+        if (ex == dx && ey == dy && ez == dz) {
+            uint currentRowId = dataRef.data.rowId;
+            
+            if ((currentRowId & 0x80000000u) != 0u) {
+                uint newRowId = currentRowId & 0x7FFFFFFFu;
+                uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
+                
+                if (oldRowId == currentRowId) {
+                    return; // Successfully deleted from aux buffer
+                }
+            }
+        }
+    }
+}

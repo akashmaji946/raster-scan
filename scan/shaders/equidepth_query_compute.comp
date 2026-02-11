@@ -1,0 +1,72 @@
+// Equi-Depth Index Query - Pure Compute Shader (Optimized)
+// Replaces the slow graphics pipeline (vertex + geometry + fragment)
+// Each thread processes one entry from the data buffer
+#version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+#define VALID_BIT_MASK 0x80000000u
+#define ROWID_MASK 0x7FFFFFFFu
+
+layout(push_constant) uniform PushConstants {
+    uint npoints;
+    uvec2 dataBufferAddr;  // 64-bit buffer device address
+} pc;
+
+// Buffer reference for data entries (16 bytes each)
+layout(buffer_reference, std430, buffer_reference_align = 16) readonly buffer DataEntryRef {
+    uvec4 entry;
+};
+
+// Query buffer: [x1, x2, y1, y2, z1, z2]
+layout(std430, binding = 0) readonly buffer QueryBuffer {
+    uint query[];
+};
+
+// Result buffer: bitmask indexed by rowId
+layout(std430, binding = 1) buffer ResultBuffer {
+    uint result[];
+};
+
+void main() {
+    uint idx = gl_GlobalInvocationID.x;
+    if (idx >= pc.npoints) return;
+    
+    // Compute address of this entry using buffer device address
+    uint64_t baseAddr = uint64_t(pc.dataBufferAddr.x) | (uint64_t(pc.dataBufferAddr.y) << 32);
+    uint64_t entryAddr = baseAddr + uint64_t(idx) * 16u;  // 16 bytes per entry
+    
+    // Read entry via buffer reference
+    DataEntryRef dataRef = DataEntryRef(entryAddr);
+    uvec4 entry = dataRef.entry;
+    
+    uint x = entry.x;
+    uint y = entry.y;
+    uint z = entry.z;
+    uint rowIdWithValid = entry.w;
+    
+    // Check valid bit (MSB)
+    if ((rowIdWithValid & VALID_BIT_MASK) == 0u) return;
+    
+    // Extract actual rowId (lower 31 bits)
+    uint rowId = rowIdWithValid & ROWID_MASK;
+    
+    // Read query range
+    uint x1 = query[0];
+    uint x2 = query[1];
+    uint y1 = query[2];
+    uint y2 = query[3];
+    uint z1 = query[4];
+    uint z2 = query[5];
+    
+    // Check if point is within range
+    if (x >= x1 && x <= x2 &&
+        y >= y1 && y <= y2 &&
+        z >= z1 && z <= z2) {
+        // Set bit in result bitmask
+        atomicOr(result[rowId / 32u], 1u << (rowId % 32u));
+    }
+}

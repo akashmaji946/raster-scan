@@ -79,3 +79,33 @@ void testBruteForceVsRasterScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffe
 
 // Mode 61: BruteForce vs RasterScan Comparison (Plain data - uniform/normal/zipf)
 void testBruteForceVsRasterScanPlain(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 62: BruteForce vs EquiDepth Comparison (Plain data - uniform/normal/zipf)
+void testBruteForceVsEquiDepthPlain(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 63: BruteForce vs EquiDepth Comparison (TPC-C)
+void testBruteForceVsEquiDepthTPCC(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 64: BruteForce vs RasterScan Comparison (TPC-C, 100 queries, 1%-100% selectivity)
+void testBruteForceVsRasterScanTPCC100(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 65: BruteForce vs RasterScan Comparison (100 queries, 1%-100% selectivity)
+void testBruteForceVsRasterScan100(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 66: BruteForce vs RasterScan Comparison (100 point queries at random places)
+void testBruteForceVsRasterScanPointQueries(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 67: BruteForce vs RasterScan Comparison (100 random 1% selectivity queries)
+void testBruteForceVsRasterScanRandom1Pct(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 68: BruteForce vs RasterScan Comparison (TPC-C, 100 point queries)
+void testBruteForceVsRasterScanTPCCPointQueries(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 69: BruteForce vs RasterScan Comparison (TPC-C, 100 random 1% selectivity queries)
+void testBruteForceVsRasterScanTPCCRandom1Pct(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 70: BruteForce Scan with Update Support (TPC-C)
+void testBruteForceUpdateTPCC(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 80: CompactBruteScan - builds like CompactScan, queries like BruteForce, with aux buffer for updates
+void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);

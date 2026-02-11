@@ -147,15 +147,24 @@ void BruteForceIndex::buildIndex(PBuffer pointsBuffer, uint32_t npoints, uint32_
 }
 
 void BruteForceIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PBuffer resultBuffer) {
-    // Update query descriptor set (query and result buffers only, data uses buffer device address)
-    vk::DescriptorBufferInfo queryInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
-    vk::DescriptorBufferInfo resultInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+    // Create cached fence on first use
+    if (!queryFence) {
+        queryFence = vd->device->createFenceUnique(vk::FenceCreateInfo());
+    }
     
-    std::vector<vk::WriteDescriptorSet> writes = {
-        {*queryDescSet, 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &queryInfo},
-        {*queryDescSet, 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resultInfo},
-    };
-    vd->device->updateDescriptorSets(writes, {});
+    // Only update descriptors if buffers changed (avoid redundant updates)
+    if (queryBuffer->buf != lastQueryBuffer || resultBuffer->buf != lastResultBuffer) {
+        vk::DescriptorBufferInfo queryInfo(queryBuffer->buf, 0, VK_WHOLE_SIZE);
+        vk::DescriptorBufferInfo resultInfo(resultBuffer->buf, 0, VK_WHOLE_SIZE);
+        
+        std::vector<vk::WriteDescriptorSet> writes = {
+            {*queryDescSet, 0, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &queryInfo},
+            {*queryDescSet, 1, 0, 1, vk::DescriptorType::eStorageBuffer, nullptr, &resultInfo},
+        };
+        vd->device->updateDescriptorSets(writes, {});
+        lastQueryBuffer = queryBuffer->buf;
+        lastResultBuffer = resultBuffer->buf;
+    }
     
     // Clear result buffer and run query
     vk::CommandBufferBeginInfo beginInfo(vk::CommandBufferUsageFlagBits::eOneTimeSubmit);
@@ -203,11 +212,11 @@ void BruteForceIndex::runRangeQueries(PBuffer queryBuffer, uint32_t nqueries, PB
     
     vd->commandBuffer->end();
     
+    // Submit and wait using cached fence
+    vd->device->resetFences(*queryFence);
     vk::SubmitInfo submitInfo;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &vd->commandBuffer.get();
-    vk::Fence fence = vd->device->createFence(vk::FenceCreateInfo());
-    vd->submit(submitInfo, fence, false);
-    vd->waitForFences(fence, VK_TRUE, UINT64_MAX);
-    vd->device->destroyFence(fence);
+    vd->submit(submitInfo, *queryFence, false);
+    vd->waitForFences(*queryFence, VK_TRUE, UINT64_MAX);
 }
