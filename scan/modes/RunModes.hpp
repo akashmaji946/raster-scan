@@ -109,3 +109,6 @@ void testBruteForceUpdateTPCC(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer 
 
 // Mode 80: CompactBruteScan - builds like CompactScan, queries like BruteForce, with aux buffer for updates
 void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op);
+
+// Mode 81: CompactBruteScan Aux Overflow - tests aux buffer overflow handling with pushAuxToMain
+void testCompactBruteScanAuxOverflow(vkcore::PVkDevice vd, int dataId, vkcore::PBuffer staging, const std::string& testFolder);

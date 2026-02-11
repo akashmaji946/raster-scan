@@ -12,10 +12,11 @@
 // For updates: delete from original, insert to auxiliary with same rowID
 
 // Scale factor for main buffer (extra space per bin)
-#define COMPACTBRUTE_INITIAL_SCALE_FACTOR 1
+#define COMPACTBRUTE_INITIAL_SCALE_FACTOR 1.2
 
 // Auxiliary buffer size as fraction of main buffer (10% = 0.1, 20% = 0.2)
-#define COMPACTBRUTE_AUX_FRACTION 0.2
+// For Mode 81 testing: 0.00025 = 100 slots for 400M points
+#define COMPACTBRUTE_AUX_FRACTION 0.00025
 
 // CompactBruteEntry structure (GPU layout) - same as CompactEntry
 // Size: 16 bytes (4 uints)
@@ -57,6 +58,11 @@ public:
     // and inserts the same points to aux buffer with the same rowIDs
     void updatePoints(vkcore::PBuffer dataBuffer, uint32_t nupdates);
 
+    // Push aux buffer data to main buffer bins and clear aux buffer
+    // Remaps all valid aux entries to their appropriate bins in main buffer
+    // Resets aux buffer count to 0
+    void pushAuxToMain();
+
     // Get statistics
     uint32_t getMaxBinCount();
     
@@ -95,6 +101,7 @@ public:
     // Global allocation tracking
     uint64_t mainAllocatedCapacity;
     uint64_t globalFreeOffset;
+    uint32_t mainAppendOffset;         // Position to append pushed entries (starts at npoints)
 
     // Graphics Pipelines (for build like CompactScan)
     vkcore::GraphicsPipelineProperties bcPipelineProps; // Build Count
@@ -110,10 +117,12 @@ public:
     vk::UniquePipeline deletePipeline;     // Delete from main buffer
     vk::UniquePipeline insertPipeline;     // Insert to aux buffer
     vk::UniquePipeline updatePipeline;     // Update: delete + insert with same rowID
+    vk::UniquePipeline pushAuxPipeline;    // Push aux buffer to main buffer bins
     vk::UniqueShaderModule queryShader;
     vk::UniqueShaderModule deleteShader;
     vk::UniqueShaderModule insertShader;
     vk::UniqueShaderModule updateShader;
+    vk::UniqueShaderModule pushAuxShader;
     
     // Compute pipeline layout
     vk::UniqueDescriptorSetLayout descSetLayout;

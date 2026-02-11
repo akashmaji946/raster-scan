@@ -1,0 +1,62 @@
+#version 450
+#extension GL_EXT_buffer_reference : require
+#extension GL_EXT_buffer_reference_uvec2 : require
+#extension GL_ARB_gpu_shader_int64 : require
+
+// CompactBruteScan Push Aux to Main Shader
+// Appends all valid entries from aux buffer to the end of main buffer
+// Each thread processes one aux entry
+
+layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+
+// Buffer reference for data entries
+layout(buffer_reference, std430, buffer_reference_align = 16) buffer DataBufferRef {
+    uvec4 data;
+};
+
+layout(std430, binding = 0) readonly buffer AuxBuffer {
+    uvec4 auxEntries[]; // Aux buffer entries
+};
+
+layout(std430, binding = 1) buffer AppendCountBuffer {
+    uint appendCount; // Atomic counter for append position
+};
+
+layout(push_constant) uniform PushConstants {
+    uint auxCount;          // Number of valid entries in aux buffer
+    uint mainAppendStart;   // Starting position in main buffer for appending
+    uint mainCapacity;      // Max capacity of main buffer
+    uint pad;
+    uvec2 mainBufferAddr;
+} pc;
+
+void main() {
+    uint gid = gl_GlobalInvocationID.x;
+    if (gid >= pc.auxCount) return;
+    
+    // Read aux entry
+    uvec4 entry = auxEntries[gid];
+    uint x = entry.x;
+    uint y = entry.y;
+    uint z = entry.z;
+    uint rowId = entry.w;
+    
+    // Check valid bit
+    if ((rowId & 0x80000000u) == 0u) return;
+    
+    // Atomically allocate slot at end of main buffer
+    uint slot = atomicAdd(appendCount, 1);
+    uint globalIdx = pc.mainAppendStart + slot;
+    
+    // Check capacity
+    if (globalIdx >= pc.mainCapacity) return;
+    
+    // Write to main buffer
+    uint64_t baseAddr = uint64_t(pc.mainBufferAddr.x) | (uint64_t(pc.mainBufferAddr.y) << 32);
+    uint64_t byteOffset = uint64_t(globalIdx) * 16u;
+    uint64_t elementAddr = baseAddr + byteOffset;
+    DataBufferRef dataRef = DataBufferRef(elementAddr);
+    
+    // Write entry to main buffer
+    dataRef.data = uvec4(x, y, z, rowId);
+}

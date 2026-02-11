@@ -61,7 +61,7 @@ using namespace vkcore;
 // 70 = BruteForce Scan with Update Support (TPC-C) - BRUTE_SCALE_FACTOR controls buffer size
 
 // 80 = CompactBruteScan - builds like CompactScan (binned), queries like BruteForce (all bins), with aux buffer for updates
-
+// 81 = CompactBruteScan - builds like CompactScan (binned), queries like BruteForce (all bins), with aux buffer pushAuxToMain for updates
 #define USE_INDEX_UPDATE_PIPELINE 80
 
 int main(int argc, char* argv[]) {
@@ -147,7 +147,9 @@ int main(int argc, char* argv[]) {
     GPUMemoryTool::printGPUMemoryStatus(vd, "After OperatorCache init");
 
     
-#if USE_INDEX_UPDATE_PIPELINE == 80
+#if USE_INDEX_UPDATE_PIPELINE == 81
+    testCompactBruteScanAuxOverflow(vd, d, staging, testFolder);
+#elif USE_INDEX_UPDATE_PIPELINE == 80
     testCompactBruteScan(d, vd, staging, op);
 #elif USE_INDEX_UPDATE_PIPELINE == 70
     testBruteForceUpdateTPCC(d, vd, staging, op);

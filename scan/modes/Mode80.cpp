@@ -15,7 +15,7 @@
 #endif
 
 #ifndef QUERY_COUNT
-#define QUERY_COUNT 101
+#define QUERY_COUNT 11
 #endif
 
 // Q controls number of queries: Q=10 means 10%, 20%, ..., 100%
@@ -27,7 +27,7 @@
 #define RUN_BATCHWISE 0
 
 // Set to 1 to enable count verification (expensive GPU readbacks)
-#define RUN_TEST 1
+#define RUN_TEST 0
 
 
 static const std::vector<std::string> distributionFiles = {
@@ -298,7 +298,7 @@ void testCompactBruteScan(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer stag
     }
 #endif
     
-    const float S = 0.5;
+    const float S = 1;
     const float percent = 0.00001;
     const int NUM_BATCHES = 10;  // Number of batches to test
     const uint32_t batchSize = 1; //std::min<uint32_t>(npoints, npoints / 100 * percent);  // p% of data per batch

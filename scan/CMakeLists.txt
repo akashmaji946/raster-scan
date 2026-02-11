@@ -56,6 +56,7 @@ set(scan_src
     modes/Mode69.cpp
     modes/Mode70.cpp
     modes/Mode80.cpp
+    modes/Mode81.cpp
     CompactScanIndex.cpp
     CompactBruteScanIndex.cpp
     EquiDepthIndex.cpp
@@ -144,6 +145,7 @@ set(scan_shader_src
     shaders/compactbrute_delete.comp
     shaders/compactbrute_insert.comp
     shaders/compactbrute_update.comp
+    shaders/compactbrute_push_aux.comp
 )
 
 add_executable(EncodeData ${encode_src})
