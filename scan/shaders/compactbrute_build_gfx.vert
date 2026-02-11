@@ -40,6 +40,7 @@ void main() {
     
     uvec2 val = uvec2(valx, valy);
     uvec2 binid = (val - consts.minVal) / consts.binRange;
+    binid = min(binid, uvec2(consts.res - 1u));
     uint bin = binid.x + binid.y * consts.res;
     uint localPos = atomicAdd(count[bin], 1);
     uint globalPos = startAddr[bin] + localPos;

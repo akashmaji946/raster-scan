@@ -22,6 +22,7 @@ out gl_PerVertex {
 void main() {
     uvec2 val = uvec2(valx, valy);
     uvec2 binid = (val - consts.minVal) / consts.binRange;
+    binid = min(binid, uvec2(consts.res - 1u));
     uint bin = binid.x + binid.y * consts.res;
     atomicAdd(count[bin], 1);
 

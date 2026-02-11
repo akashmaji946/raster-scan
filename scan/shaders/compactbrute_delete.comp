@@ -3,11 +3,14 @@
 #extension GL_EXT_buffer_reference_uvec2 : require
 #extension GL_ARB_gpu_shader_int64 : require
 
-// CompactBruteScan Delete Shader
+// CompactBruteScan Delete Shader - Multi-threaded version
 // Deletes by data values (x,y,z) - searches BOTH main buffer (by bin) AND aux buffer (linear)
-// One thread per delete request
+// Uses THREADS_PER_DELETE threads per delete request for parallel bin/aux scanning
 
-layout(local_size_x = 256, local_size_y = 1, local_size_z = 1) in;
+#define THREADS_PER_DELETE 1024  // Number of threads collaborating per delete
+#define LOCAL_SIZE 1024
+
+layout(local_size_x = LOCAL_SIZE, local_size_y = 1, local_size_z = 1) in;
 
 struct CompactBruteEntry {
     uint x;
@@ -43,19 +46,37 @@ layout(push_constant) uniform PushConstants {
     uint auxCount;  // Current count in aux buffer
 } pc;
 
+// Shared memory for early-exit flag per delete request in this workgroup
+// Each workgroup handles 256/THREADS_PER_DELETE = 8 delete requests
+shared uint foundFlag[LOCAL_SIZE / THREADS_PER_DELETE];
+
 void main() {
     uint gid = gl_GlobalInvocationID.x;
-    if (gid >= pc.ndeletes) return;
+    
+    // Which delete request this thread is working on
+    uint deleteId = gid / THREADS_PER_DELETE;
+    // Which thread within the group for this delete
+    uint threadInGroup = gid % THREADS_PER_DELETE;
+    // Local index for shared memory (within workgroup)
+    uint localDeleteId = gl_LocalInvocationID.x / THREADS_PER_DELETE;
+    
+    // Initialize shared flag (only first thread per delete)
+    if (threadInGroup == 0) {
+        foundFlag[localDeleteId] = 0;
+    }
+    barrier();
+    
+    if (deleteId >= pc.ndeletes) return;
     
     uint64_t mainBaseAddr = uint64_t(pc.mainBufferAddr.x) | (uint64_t(pc.mainBufferAddr.y) << 32);
     uint64_t auxBaseAddr = uint64_t(pc.auxBufferAddr.x) | (uint64_t(pc.auxBufferAddr.y) << 32);
     
-    // Read point to delete
-    uint dx = deletePoints[gid * 3 + 0];
-    uint dy = deletePoints[gid * 3 + 1];
-    uint dz = deletePoints[gid * 3 + 2];
+    // Read point to delete (all threads in group read same point)
+    uint dx = deletePoints[deleteId * 3 + 0];
+    uint dy = deletePoints[deleteId * 3 + 1];
+    uint dz = deletePoints[deleteId * 3 + 2];
     
-    // ========== PHASE 1: Search in MAIN buffer (bin-based) ==========
+    // ========== PHASE 1: Search in MAIN buffer (bin-based, parallel) ==========
     // Determine bin
     uint bx = 0;
     if (dx >= pc.minX) {
@@ -73,8 +94,11 @@ void main() {
     uint cnt = extent[binIdx];
     uint start = startAddr[binIdx];
     
-    // Linear scan of bin in main buffer
-    for (uint i = 0; i < cnt; i++) {
+    // Parallel scan of bin - each thread handles strided entries
+    for (uint i = threadInGroup; i < cnt; i += THREADS_PER_DELETE) {
+        // Check if another thread already found it
+        if (foundFlag[localDeleteId] != 0) break;
+        
         uint idx = start + i;
         
         uint64_t byteOffset = uint64_t(idx) * 16u;
@@ -93,32 +117,45 @@ void main() {
                 uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
                 
                 if (oldRowId == currentRowId) {
-                    return; // Successfully deleted from main buffer
+                    // Signal other threads to stop
+                    atomicExchange(foundFlag[localDeleteId], 1);
+                    break;
                 }
             }
         }
     }
     
-    // ========== PHASE 2: Search in AUX buffer (linear scan) ==========
-    // Aux buffer has no binning, so we scan all entries
-    for (uint i = 0; i < pc.auxCount; i++) {
-        uint64_t byteOffset = uint64_t(i) * 16u;
-        uint64_t elementAddr = auxBaseAddr + byteOffset;
-        DataBufferRef dataRef = DataBufferRef(elementAddr);
-        
-        uint ex = dataRef.data.x;
-        uint ey = dataRef.data.y;
-        uint ez = dataRef.data.z;
-        
-        if (ex == dx && ey == dy && ez == dz) {
-            uint currentRowId = dataRef.data.rowId;
+    // Sync before checking if we need to search aux buffer
+    barrier();
+    
+    // ========== PHASE 2: Search in AUX buffer (parallel scan) ==========
+    // Only search aux if not found in main
+    if (foundFlag[localDeleteId] == 0) {
+        // Parallel scan of aux buffer
+        for (uint i = threadInGroup; i < pc.auxCount; i += THREADS_PER_DELETE) {
+            // Check if another thread already found it
+            if (foundFlag[localDeleteId] != 0) break;
             
-            if ((currentRowId & 0x80000000u) != 0u) {
-                uint newRowId = currentRowId & 0x7FFFFFFFu;
-                uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
+            uint64_t byteOffset = uint64_t(i) * 16u;
+            uint64_t elementAddr = auxBaseAddr + byteOffset;
+            DataBufferRef dataRef = DataBufferRef(elementAddr);
+            
+            uint ex = dataRef.data.x;
+            uint ey = dataRef.data.y;
+            uint ez = dataRef.data.z;
+            
+            if (ex == dx && ey == dy && ez == dz) {
+                uint currentRowId = dataRef.data.rowId;
                 
-                if (oldRowId == currentRowId) {
-                    return; // Successfully deleted from aux buffer
+                if ((currentRowId & 0x80000000u) != 0u) {
+                    uint newRowId = currentRowId & 0x7FFFFFFFu;
+                    uint oldRowId = atomicCompSwap(dataRef.data.rowId, currentRowId, newRowId);
+                    
+                    if (oldRowId == currentRowId) {
+                        // Signal other threads to stop
+                        atomicExchange(foundFlag[localDeleteId], 1);
+                        break;
+                    }
                 }
             }
         }

@@ -30,11 +30,16 @@ uniform_data.tofile(f"{folder}/uniform.bin")
 
 # Generate normal data
 print(f"[INFO] Generating normal data: {folder}/normal.bin")
-normal_data = np.random.normal(2**31, 1, (c, n)).astype(np.uint32)
+normal_mu = 2**31
+# Use a large stddev so the distribution covers a wide range ("fat" curve)
+normal_sigma = 2**30
+normal_f = np.random.normal(normal_mu, normal_sigma, (c, n))
+normal_f = np.clip(normal_f, 0, 2**32 - 1)
+normal_data = normal_f.astype(np.uint32)
 normal_data.tofile(f"{folder}/normal.bin")
 
 # Generate zipf data for all 3 variants
-zipf_params = [1.1, 1.3, 1.5]
+zipf_params = [1.01, 1.05, 1.1, 1.2, 1.3]
 for param in zipf_params:
     print(f"[INFO] Generating zipf{param} data: {folder}/zipf{param}.bin")
     zipf_data = np.random.zipf(param, (c, n))

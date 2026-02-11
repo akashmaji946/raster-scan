@@ -40,6 +40,11 @@ CompactBruteScanIndex::CompactBruteScanIndex(PVkDevice vd, int32_t ncols, Single
 }
 
 CompactBruteScanIndex::~CompactBruteScanIndex() {
+    // Wait for all GPU operations to complete before destroying buffers
+    if (vd && vd->device) {
+        vd->device->waitIdle();
+    }
+    
     if (startAddrBuffer) startAddrBuffer->destroy();
     if (countBuffer) countBuffer->destroy();
     if (extentBuffer) extentBuffer->destroy();
@@ -566,7 +571,11 @@ void CompactBruteScanIndex::deletePoints(vkcore::PBuffer dataBuffer, uint32_t nd
     };
     vd->commandBuffer->pushConstants(pipelineLayout.get(), vk::ShaderStageFlagBits::eCompute, 0, sizeof(pc), pc);
     
-    uint32_t groups = (ndeletes + 255) / 256;
+    // THREADS_PER_DELETE threads per delete request (must match shader define)
+    const uint32_t THREADS_PER_DELETE = 1024;
+    const uint32_t LOCAL_SIZE = 1024;
+    uint32_t totalThreads = ndeletes * THREADS_PER_DELETE;
+    uint32_t groups = (totalThreads + LOCAL_SIZE - 1) / LOCAL_SIZE;
     vd->commandBuffer->dispatch(groups, 1, 1);
     
     vd->commandBuffer->end();
