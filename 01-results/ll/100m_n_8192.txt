@@ -1,0 +1,28 @@
+>>>Compact Index build time: 60.6 ms
+--- Compact Index Query Performance ---
+Query 1: 2.937 ms, Result Count: 97323084
+Query 2: 2.977 ms, Result Count: 99720152
+Query 3: 2.994 ms, Result Count: 99987357
+Query 4: 3.234 ms, Result Count: 99993591
+Query 5: 3.286 ms, Result Count: 99993648
+Query 6: 3.078 ms, Result Count: 99999877
+Query 7: 2.851 ms, Result Count: 99999907
+Query 8: 2.958 ms, Result Count: 99999936
+Query 9: 3.212 ms, Result Count: 99999936
+Query 10: 3.045 ms, Result Count: 100000000
+Average Query Time: 3.057 ms
+
+>>> RasterScan2D Index build time: 39.6 ms
+--- RasterScan2D Query Performance ---
+Query 1: 4.200 ms, Result Count: 97323084
+Query 2: 4.530 ms, Result Count: 99720152
+Query 3: 4.069 ms, Result Count: 99987357
+Query 4: 4.606 ms, Result Count: 99993591
+Query 5: 4.675 ms, Result Count: 99993648
+Query 6: 4.239 ms, Result Count: 99999877
+Query 7: 4.292 ms, Result Count: 99999907
+Query 8: 4.525 ms, Result Count: 99999936
+Query 9: 4.581 ms, Result Count: 99999936
+Query 10: 4.496 ms, Result Count: 100000000
+>>> Average Query Time: 4.421 ms
+

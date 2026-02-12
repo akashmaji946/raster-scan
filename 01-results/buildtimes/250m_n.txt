@@ -1,0 +1,19 @@
+250M normal
+
+// 1024
+>>>Compact Index build time: 104.2 ms
+>>> RasterScan2D Index build time: 88.5 ms
+
+// 2048
+>>>Compact Index build time: 138.9 ms
+>>> RasterScan2D Index build time: 104.9 ms
+
+// 4096
+>>>Compact Index build time: 139.7 ms
+>>> RasterScan2D Index build time: 106.6 ms
+
+// 8192
+>>> RasterScan2D Index build time: 92.9 ms
+>>>Compact Index build time: 113.4 ms
+
+

@@ -1,0 +1,19 @@
+500M uniform
+
+// 1024
+>>>Compact Index build time: 134.1 ms
+>>>RasterScan2D Index build time: 121.2 ms
+
+// 2048
+>>>Compact Index build time: 183.3 ms
+>>> RasterScan2D Index build time: 154.1 ms
+
+// 4096
+>>> Compact Index build time: 365.3 ms
+>>> RasterScan2D Index build time: 291.5 ms
+
+// 8192
+>>>Compact Index build time: 477.5 ms
+>>> RasterScan2D Index build time: 430.3 ms
+
+

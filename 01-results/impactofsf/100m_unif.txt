@@ -1,0 +1,23 @@
+>>>Compact Index build time: 41.0 ms
+Average Query Time: 4.447 ms
+
+>>>Compact Index build time: 46.9 ms
+Average Query Time: 4.490 ms
+
+>>>Compact Index build time: 48.3 ms
+Average Query Time: 4.491 ms
+
+>>>Compact Index build time: 55.6 ms
+Average Query Time: 4.379 ms
+
+>>>Compact Index build time: 98.7 ms
+Average Query Time: 4.421 ms
+
+>>>Compact Index build time: 130.3 ms
+Average Query Time: 4.516 ms
+
+>>>Compact Index build time: 153.2 ms
+Average Query Time: 4.537 ms
+
+>>>Compact Index build time: 182.3 ms
+Average Query Time: 4.484 ms

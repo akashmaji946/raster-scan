@@ -1,0 +1,32 @@
+>>>Compact Index build time: 489.1 ms
+
+5
+Avg delete time: 1.362 ms (272.440 us/point)
+Avg insert time: 1.250 ms (370.080 us/point)
+
+50
+Avg delete time: 1.995 ms (39.892 us/point)
+Avg insert time: 1.179 ms (23.580 us/point)
+
+500
+Avg delete time: 9.968 ms (19.937 us/point)
+Avg insert time: 1.642 ms (3.285 us/point)
+
+5000
+Avg delete time: 29.879 ms (5.976 us/point)
+Avg insert time: 1.396 ms (0.279 us/point)
+
+50000
+Avg delete time: 33.002 ms (0.660 us/point)
+Avg insert time: 1.149 ms (0.023 us/point)
+
+500000
+1>>> Delete Time: 328.381 ms 
+1>>>Insert Time: 1.594 ms 
+
+
+
+
+
+
+

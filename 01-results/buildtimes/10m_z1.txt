@@ -1,0 +1,24 @@
+1M zipf1.1
+
+// 1024
+>>>Compact Index build time: 4.6 ms
+>>> RasterScan2D Index build time: 2.6 ms
+
+// 2048
+>>> RasterScan2D Index build time: 2.6 ms
+>>>Compact Index build time: 5.0 ms
+
+// 4096
+>>>Compact Index build time: 7.5 ms
+>>> RasterScan2D Index build time: 3.5 ms
+
+// 8192
+>>>Compact Index build time: 22.7 ms
+>>> RasterScan2D Index build time: 7.8 ms
+
+
+
+
+
+>>>Compact Index build time: 4.5 ms
+>>> RasterScan2D Index build time: 2.6 ms

@@ -1,0 +1,29 @@
+750M TPC-C
+
+1024
+==================================> RasterScan2D Index Build time: 246.7 ms
+==================================> Compact Index Build time: 280.2 ms
+
+
+
+2048
+==================================> RasterScan2D Index Build time: 244.5 ms
+==================================> Compact Index Build time: 278.3 ms
+
+
+
+4096
+==================================> RasterScan2D Index Build time: 243.4 ms
+==================================> Compact Index Build time: 281.6 ms
+
+
+8192
+==================================> RasterScan2D Index Build time: 267.3 ms
+==================================> Compact Index Build time: 270.9 ms
+
+16384
+==================================> RasterScan2D Index Build time: 3005.9 ms
+==================================> Compact Index Build time: 3122.5 ms
+
+
+

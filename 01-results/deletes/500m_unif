@@ -1,0 +1,38 @@
+>>>Compact Index build time: 418.3 ms
+Batch size: 5
+Avg delete time: 2.382 ms 
+Avg insert time: 1.169 ms 
+
+Batch size: 50
+Avg delete time: 2.668 ms 
+Avg insert time: 1.476 ms 
+
+Batch size: 500
+Avg delete time: 3.277 ms 
+Avg insert time: 1.771 ms 
+
+Batch size: 5000
+Avg delete time: 3.109 ms 
+Avg insert time: 1.546 ms 
+
+Batch size: 50000
+Avg delete time: 13.024 ms 
+Avg insert time: 3.131 ms 
+
+Batch size: 500000
+Avg delete time: 99.824 ms 
+Avg insert time: 3.210 ms 
+
+Batch size: 5000000
+Avg delete time: 184.167 ms 
+Avg insert time: 3.282 ms 
+
+
+
+
+
+Batch size: 50000000
+Avg delete time: 964.115 ms 
+Avg insert time: 9.157 ms 
+
+

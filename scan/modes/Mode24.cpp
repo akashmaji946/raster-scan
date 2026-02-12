@@ -1,5 +1,6 @@
 #include "RunModes.hpp"
 #include "../CompactScanIndex.hpp"
+#include "../RasterScan2D.hpp"
 #include "../BufferPool.hpp"
 #include <vector>
 #include <iostream>
@@ -8,6 +9,11 @@
 #include <algorithm>
 #include <random>
 #include <fstream>
+
+// Set USE_RASTER to 1 to run RasterScan2D, 0 to run CompactScanIndex
+#ifndef USE_RASTER
+#define USE_RASTER 0
+#endif
 
 // TPC-C Constants
 static constexpr int32_t kDistrictsPerWarehouse = 10;
@@ -62,6 +68,7 @@ static void generateTPCCData(
 
 // Save TPC-C data to binary file (column-major format)
 static void saveTPCCData(const std::string& filename, const std::vector<uint32_t>& data, uint32_t npoints) {
+    (void)npoints;  // unused
     std::ofstream out(filename, std::ios::binary);
     if (!out) {
         std::cerr << "[TPC-C] ERROR: Failed to open output file: " << filename << "\n";
@@ -73,24 +80,66 @@ static void saveTPCCData(const std::string& filename, const std::vector<uint32_t
               << (data.size() * sizeof(uint32_t) / (1024.0 * 1024.0)) << " MB)\n";
 }
 
+// Generate queries with selectivities 10%, 20%, ..., 100%
+// For TPC-C data, we use CENTERED strategy since data is structured
+static void generateTPCCQueries(
+    const std::vector<uint32_t>& minval, 
+    const std::vector<uint32_t>& maxval,
+    int ncols,
+    std::vector<uint32_t>& targets,
+    int numQueries = 10
+) {
+    targets.resize(numQueries * 6);  // 6 values per query (x1,x2,y1,y2,z1,z2)
+    
+    for (int q = 0; q < numQueries; q++) {
+        double overallSelectivity = (q + 1) * 0.1;  // 10%, 20%, ..., 100%
+        double perDimSelectivity = std::pow(overallSelectivity, 1.0 / ncols);
+        
+        for (int c = 0; c < ncols; c++) {
+            uint64_t range = (uint64_t)maxval[c] - (uint64_t)minval[c];
+            uint64_t queryRange = (uint64_t)(range * perDimSelectivity);
+            
+            // Center the query in the data range
+            uint64_t margin = (range - queryRange) / 2;
+            uint32_t lo = minval[c] + (uint32_t)margin;
+            uint32_t hi = minval[c] + (uint32_t)(margin + queryRange);
+            
+            // Store as x1,x2,y1,y2,z1,z2 format
+            targets[q * 6 + c * 2] = lo;
+            targets[q * 6 + c * 2 + 1] = hi;
+        }
+        // Fill remaining dimensions if ncols < 3
+        for (int c = ncols; c < 3; c++) {
+            targets[q * 6 + c * 2] = 0;
+            targets[q * 6 + c * 2 + 1] = 0xFFFFFFFF;
+        }
+    }
+    
+    std::cerr << "[TPC-C] Generated " << numQueries << " queries (selectivity 10%-100%)\n";
+}
+
 void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging, OperatorCache &op) {
     // dataId is repurposed as scale factor indicator:
     // 0 = 100K customers (~3 warehouses)
     // 1 = 1M customers (~34 warehouses)
     // 2 = 10M customers (~334 warehouses)
-    // 3 = 50M customers (~1667 warehouses)
-    // 4 = 100M customers (~3334 warehouses)
+    // 3 = 25M customers (~834 warehouses)
+    // 4 = 50M customers (~1667 warehouses)
+    // 5 = 75M customers (~2500 warehouses)
+    // 6 = 100M customers (~3334 warehouses)
     
     static const std::vector<int64_t> scaleFactors = {
         100000,      // 100K
         1000000,     // 1M
         10000000,    // 10M
+        25000000,    // 25M
         50000000,    // 50M
+        75000000,    // 75M
         100000000    // 100M
     };
     
     static const std::vector<std::string> scaleNames = {
-        "100K", "1M", "10M", "50M", "100M"
+        "100K", "1M", "10M", "25M", "50M", "75M", "100M"
     };
     
     int scaleIdx = std::min(dataId, (int)scaleFactors.size() - 1);
@@ -141,7 +190,28 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     
     // Get SinglePassScan for GPU prefix sum
     vkcore::SinglePassScan *scan = (vkcore::SinglePassScan *) op.getFunction(vkcore::FunctionType::SinglePassScan);
+
+#if USE_RASTER == 1
+    // =========================================================
+    // Build RasterScan2D Index
+    // =========================================================
+    std::cerr << "\n--- [RasterScan2D] ---\n";
     
+    vkcore::ReduceMax *reduce = (vkcore::ReduceMax *) op.getFunction(vkcore::FunctionType::ReduceMax);
+    PBufferCache bufs(new CommonBufferPool(vd));
+    
+    RasterScan2D rs(vd, bufs, scan, reduce, ncols);
+    
+    GPUMemoryTool::printGPUMemoryStatus(vd, "Before RasterScan2D build");
+    
+    CPUTimer buildTimer;
+    buildTimer.start();
+    PRasterIndex rsIndex = rs.buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
+    double buildTime = double(buildTimer.stop()) / 1000000.0;
+    std::cerr << "RasterScan2D Index Build time: " << (buildTime * 1000.0) << " ms\n";
+    GPUMemoryTool::printGPUMemoryStatus(vd, "After RasterScan2D build");
+    
+#else
     // =========================================================
     // Build CompactScanIndex
     // =========================================================
@@ -163,16 +233,105 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     buildTimer.start();
     compactIndex->buildIndex(pointsBuffer, npoints, minval.data(), maxval.data());
     double buildTime = double(buildTimer.stop()) / 1000000.0;
-    std::cerr << "Compact Index build time: " << (buildTime * 1000.0) << " ms\n";
+    std::cerr << "Compact Index Build time: " << (buildTime * 1000.0) << " ms\n";
     GPUMemoryTool::printGPUMemoryStatus(vd, "After CompactScanIndex build");
+#endif
     
     // =========================================================
-    // Batch Delete/Insert Cycles
+    // Query Execution
+    // =========================================================
+    const int numQueries = 10;
+    std::vector<uint32_t> targets;
+    generateTPCCQueries(minval, maxval, ncols, targets, numQueries);
+    
+    // Result buffer size
+    uint32_t resultSizeUints = (npoints + 31) / 32;
+    
+    // Query buffer
+    vkcore::PBuffer queryBuffer(new Buffer(vd));
+    queryBuffer->create(6 * sizeof(uint32_t), 
+        vk::BufferUsageFlagBits::eVertexBuffer | vk::BufferUsageFlagBits::eStorageBuffer | 
+        vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
+        MemoryType::Internal);
+
+#if USE_RASTER == 1
+    // =========================================================
+    // RasterScan2D Query Performance
+    // =========================================================
+    std::cerr << "\n--- RasterScan2D Query Performance ---\n";
+    
+    double rsTotTime = 0;
+    for (int i = 0; i < numQueries; i++) {
+        int in = i * 6;
+        // RasterScan2D format: x1, y1, x2, y2, z1, z2
+        std::vector<uint32_t> queries = {targets[in], targets[in+2], targets[in+1], targets[in+3], targets[in+4], targets[in+5]};
+        loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+        
+        CPUTimer qTimer;
+        qTimer.start();
+        bufs->resBuffer->clearBuffer();
+        rs.runRangeQueries(rsIndex, queryBuffer, 1);
+        double t = double(qTimer.stop()) / 1000000.0;
+        rsTotTime += t;
+        
+        // Read back and count
+        std::vector<uint32_t> result(resultSizeUints);
+        readUsingStagingBuf((char *)result.data(), resultSizeUints * sizeof(uint32_t), bufs->resBuffer, staging, vd);
+        
+        uint32_t count = 0;
+        for(uint32_t val : result) count += __builtin_popcount(val);
+        std::cerr << "Query " << (i+1) << " (" << ((i+1)*10) << "%): " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
+    }
+    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << (rsTotTime * 1000.0 / numQueries) << " ms\n";
+    
+    std::cerr << "\n[RasterScan2D] Note: Delete/Insert not supported.\n";
+    
+    // Cleanup
+    queryBuffer->destroy();
+    pointsBuffer->destroy();
+    
+    std::cerr << "\nMode 24 (TPC-C with RasterScan2D) Complete.\n";
+    return;
+#else
+    // =========================================================
+    // CompactScanIndex Query Performance
+    // =========================================================
+    vkcore::PBuffer resultBuffer(new Buffer(vd));
+    resultBuffer->create(resultSizeUints * sizeof(uint32_t), 
+        vk::BufferUsageFlagBits::eStorageBuffer | vk::BufferUsageFlagBits::eTransferSrc | vk::BufferUsageFlagBits::eTransferDst, 
+        MemoryType::Internal);
+    
+    std::cerr << "\n--- Compact Index Query Performance ---\n";
+    double compactTotTime = 0;
+    for (int i = 0; i < numQueries; i++) {
+        int in = i * 6;
+        // CompactScanIndex format: x1, x2, y1, y2, z1, z2
+        std::vector<uint32_t> queries = {targets[in], targets[in+1], targets[in+2], targets[in+3], targets[in+4], targets[in+5]};
+        loadUsingStagingBuf((char *)queries.data(), queries.size() * sizeof(uint32_t), queryBuffer, staging, vd, 0);
+        
+        CPUTimer qTimer;
+        qTimer.start();
+        compactIndex->runRangeQueries(queryBuffer, 1, resultBuffer);
+        double t = double(qTimer.stop()) / 1000000.0;
+        compactTotTime += t;
+        
+        // Read back and count
+        std::vector<uint32_t> result(resultSizeUints);
+        readUsingStagingBuf((char *)result.data(), resultSizeUints * sizeof(uint32_t), resultBuffer, staging, vd);
+        
+        uint32_t count = 0;
+        for(uint32_t val : result) count += __builtin_popcount(val);
+        std::cerr << "Query " << (i+1) << " (" << ((i+1)*10) << "%): " << std::fixed << std::setprecision(3) << (t * 1000.0) << " ms, Result Count: " << count << "\n";
+    }
+    std::cerr << "Average Query Time: " << std::fixed << std::setprecision(3) << (compactTotTime * 1000.0 / numQueries) << " ms\n";
+
+    // =========================================================
+    // Batch Delete/Insert Cycles (CompactScanIndex only)
     // =========================================================
     
     // Configuration
-    const uint32_t NUM_BATCHES = 10000000;
-    const int RUNS = 10000;
+    const uint32_t NUM_BATCHES = 100;
+    const int RUNS = 2;
     const bool USE_RANDOM_BATCHES = true;
     const bool CPU_CHECK = false;
     uint32_t batchSize = npoints / NUM_BATCHES;
@@ -314,7 +473,10 @@ void testTPCCBenchmark(int dataId, vkcore::PVkDevice vd, vkcore::PBuffer staging
     // Cleanup
     batchBuffer->destroy();
     if (indexBuffer) indexBuffer->destroy();
+    queryBuffer->destroy();
+    resultBuffer->destroy();
     pointsBuffer->destroy();
     
     std::cerr << "\nMode 24 (TPC-C) Complete.\n";
+#endif  // USE_RASTER
 }

@@ -1,0 +1,200 @@
+Compact Index Build time: 8.7 ms
+[TPC-C] Generated 10 queries (selectivity 10%-100%)
+--- Compact Index Query Performance ---
+Query 1 (10%): 1.357 ms, Result Count: 1079575
+Query 2 (20%): 1.339 ms, Result Count: 2052180
+Query 3 (30%): 1.704 ms, Result Count: 3134488
+Query 4 (40%): 1.956 ms, Result Count: 3805620
+Query 5 (50%): 2.249 ms, Result Count: 5047720
+Query 6 (60%): 2.423 ms, Result Count: 5687440
+Query 7 (70%): 2.605 ms, Result Count: 6305984
+Query 8 (80%): 3.098 ms, Result Count: 7770150
+Query 9 (90%): 3.444 ms, Result Count: 8392608
+Query 10 (100%): 3.497 ms, Result Count: 10000000
+Average Query Time: 2.367 ms
+
+RasterScan2D Index Build time: 8.6 ms
+[TPC-C] Generated 10 queries (selectivity 10%-100%)
+--- RasterScan2D Query Performance ---
+Query 1 (10%): 1.664 ms, Result Count: 1079575
+Query 2 (20%): 1.733 ms, Result Count: 2052180
+Query 3 (30%): 2.253 ms, Result Count: 3134488
+Query 4 (40%): 2.338 ms, Result Count: 3805620
+Query 5 (50%): 2.936 ms, Result Count: 5047720
+Query 6 (60%): 2.862 ms, Result Count: 5687440
+Query 7 (70%): 3.073 ms, Result Count: 6305984
+Query 8 (80%): 3.492 ms, Result Count: 7770150
+Query 9 (90%): 3.711 ms, Result Count: 8392608
+Query 10 (100%): 4.099 ms, Result Count: 10000000
+Average Query Time: 2.816 ms
+
+
+
+
+RasterScan2D Index Build time: 17.1 ms
+[TPC-C] Generated 10 queries (selectivity 10%-100%)
+--- RasterScan2D Query Performance ---
+Query 1 (10%): 2.297 ms, Result Count: 2695455
+Query 2 (20%): 3.047 ms, Result Count: 5135712
+Query 3 (30%): 3.969 ms, Result Count: 7843248
+Query 4 (40%): 4.407 ms, Result Count: 9498580
+Query 5 (50%): 5.354 ms, Result Count: 12609776
+Query 6 (60%): 5.910 ms, Result Count: 14228720
+Query 7 (70%): 6.082 ms, Result Count: 15764960
+Query 8 (80%): 7.123 ms, Result Count: 19400310
+Query 9 (90%): 7.474 ms, Result Count: 20981520
+Query 10 (100%): 8.668 ms, Result Count: 25000000
+Average Query Time: 5.433 ms
+
+Compact Index Build time: 18.1 ms
+[TPC-C] Generated 10 queries (selectivity 10%-100%)
+--- Compact Index Query Performance ---
+Query 1 (10%): 2.061 ms, Result Count: 2695455
+Query 2 (20%): 2.606 ms, Result Count: 5135712
+Query 3 (30%): 3.526 ms, Result Count: 7843248
+Query 4 (40%): 3.965 ms, Result Count: 9498580
+Query 5 (50%): 4.912 ms, Result Count: 12609776
+Query 6 (60%): 5.398 ms, Result Count: 14228720
+Query 7 (70%): 5.733 ms, Result Count: 15764960
+Query 8 (80%): 6.805 ms, Result Count: 19400310
+Query 9 (90%): 6.954 ms, Result Count: 20981520
+Query 10 (100%): 7.982 ms, Result Count: 25000000
+Average Query Time: 4.994 ms
+
+
+
+
+
+
+
+Compact Index Build time: 18.2 ms
+
+// 25
+Avg delete time per run: 4.604 ms
+Avg insert time per run: 1.732 ms
+Avg delete throughput: 184.160 us/point
+Avg insert throughput: 69.280 us/point
+
+// 250
+Avg delete time per run: 7.857 ms
+Avg insert time per run: 2.111 ms
+Avg delete throughput: 31.430 us/point
+Avg insert throughput: 8.446 us/point
+
+// 2500
+Avg delete time per run: 11.500 ms
+Avg insert time per run: 2.083 ms
+Avg delete throughput: 4.600 us/point
+Avg insert throughput: 0.833 us/point
+
+// 25000
+Avg delete time per run: 71.441 ms
+Avg insert time per run: 2.887 ms
+Avg delete throughput: 2.858 us/point
+Avg insert throughput: 0.075 us/point
+
+
+Compact Index Build time: 8.7 ms
+
+// 10
+Avg delete time per run: 1.056 ms
+Avg insert time per run: 0.515 ms
+Avg delete throughput: 105.650 us/point
+Avg insert throughput: 51.550 us/point
+
+// 100
+Avg delete time per run: 1.393 ms
+Avg insert time per run: 0.609 ms
+Avg delete throughput: 13.925 us/point
+Avg insert throughput: 6.090 us/point
+
+// 1000
+Avg delete time per run: 1.968 ms
+Avg insert time per run: 0.635 ms
+Avg delete throughput: 1.968 us/point
+Avg insert throughput: 0.635 us/point
+
+// 10000
+Avg delete time per run: 7.943 ms
+Avg insert time per run: 0.698 ms
+Avg delete throughput: 0.794 us/point
+Avg insert throughput: 0.070 us/point
+
+// 100000
+Avg delete time per run: 71.807 ms
+Avg insert time per run: 1.156 ms
+Avg delete throughput: 0.718 us/point
+Avg insert throughput: 0.012 us/point
+
+
+
+Compact Scan Index Build Time: 8.7ms
+
+// 10
+Avg delete time per batch: 0.577 ms
+Avg insert time per batch: 0.540 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 100
+Avg delete time per batch: 0.615 ms
+Avg insert time per batch: 0.602 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 1000
+Avg delete time per batch: 0.622 ms
+Avg insert time per batch: 0.644 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 10000
+Avg delete time per batch: 0.731 ms
+Avg insert time per batch: 0.696 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 100000
+Avg delete time per batch: 1.379 ms
+Avg insert time per batch: 1.222 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 1000000
+Avg delete time per batch: 7.308 ms
+Avg insert time per batch: 6.860 ms
+Avg delete throughput: 0.001 us/point
+Avg insert throughput: 0.001 us/point
+
+
+Compact Scan Index Build Time: 18.2 ms
+
+// 25
+Avg delete time per batch: 1.678 ms
+Avg insert time per batch: 1.542 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 250
+Avg delete time per batch: 1.896 ms
+Avg insert time per batch: 1.817 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 2500
+Avg delete time per batch: 2.443 ms
+Avg insert time per batch: 2.329 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 25000
+Avg delete time per batch: 5.019 ms
+Avg insert time per batch: 3.300 ms
+Avg delete throughput: 0.000 us/point
+Avg insert throughput: 0.000 us/point
+
+// 250000
+Avg delete time per batch: 27.855 ms
+Avg insert time per batch: 14.986 ms
+Avg delete throughput: 0.002 us/point
+Avg insert throughput: 0.001 us/point
