@@ -1,0 +1,27 @@
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(std430, set = 0, binding = 0) readonly buffer InputData {
+    uint data[];
+} inData;
+
+layout(std430, set = 0, binding = 1) readonly buffer Indices {
+    uint data[];
+} indices;
+
+layout(std430, set = 0, binding = 2) writeonly buffer OutputData {
+    uint data[];
+} outData;
+
+layout(push_constant) uniform PushConstants {
+    uint numElements;
+};
+
+void main() {
+    uint gID = gl_GlobalInvocationID.x;
+    if (gID >= numElements) return;
+
+    uint index = indices.data[gID];
+    outData.data[gID] = inData.data[index];
+}

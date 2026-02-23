@@ -1,0 +1,34 @@
+#version 450
+
+layout(local_size_x = 16) in; // One thread per bucket
+
+layout(set = 0, binding = 0) buffer PartialSums {
+    uint partial_sums[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint numBlocks; // Number of blocks produced in Phase 1
+};
+
+layout(set = 0, binding = 1) buffer GlobalOffsets {
+    uint bucketTotal[]; // Output: Total count per bucket (for CPU)
+};
+
+void main() {
+    uint bucketID = gl_GlobalInvocationID.x;
+    
+    uint sum = 0;
+    // Serial scan of the block sums for this bucket
+    // numBlocks is ~1525 for 100M elements.
+    // Serial loop of 1500 is trivial (microseconds).
+    
+    for (uint i = 0; i < numBlocks; i++) {
+        uint idx = i * 16 + bucketID;
+        uint count = partial_sums[idx];
+        partial_sums[idx] = sum; // Exclusive scan
+        sum += count;
+    }
+    
+    // Store total for this bucket (Scatter needs global offset logic on CPU)
+    bucketTotal[bucketID] = sum;
+}

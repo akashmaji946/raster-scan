@@ -1,0 +1,29 @@
+#version 450
+
+layout(local_size_x = 16) in;
+
+layout(set = 0, binding = 0) buffer HistogramBuffer {
+    uint histograms[];
+};
+
+layout(set = 0, binding = 1) buffer GlobalOffsets {
+    uint bucketOffsets[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint numGroups;
+};
+
+void main() {
+    uint bucket = gl_GlobalInvocationID.x;
+
+    uint sum = 0;
+    for (uint g = 0; g < numGroups; g++) {
+        uint idx = g * 16 + bucket;
+        uint count = histograms[idx];
+        histograms[idx] = sum;
+        sum += count;
+    }
+
+    bucketOffsets[bucket] = sum;
+}

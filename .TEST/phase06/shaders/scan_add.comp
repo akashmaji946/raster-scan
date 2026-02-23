@@ -1,0 +1,31 @@
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) buffer HistogramBuffer {
+    uint histograms[];
+};
+
+layout(set = 0, binding = 1) buffer PartialSums {
+    uint partial_sums[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint numGroups;
+};
+
+void main() {
+    uint bucketID = gl_WorkGroupID.y;
+    uint blockID = gl_WorkGroupID.x;
+    uint tid = gl_LocalInvocationID.x;
+    
+    // Get the base offset for this block from the scanned partial sums
+    uint blockOffset = partial_sums[blockID * 16 + bucketID];
+    
+    uint groupIdx = blockID * 256 + tid;
+    
+    if (groupIdx < numGroups) {
+        // Add block offset to the locally scanned value
+        histograms[groupIdx * 16 + bucketID] += blockOffset;
+    }
+}

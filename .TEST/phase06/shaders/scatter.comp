@@ -1,0 +1,88 @@
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) buffer InputBuffer {
+    uint data[];
+};
+
+layout(set = 0, binding = 1) buffer OutputBuffer {
+    uint outData[];
+};
+
+layout(set = 0, binding = 2) buffer HistogramBuffer {
+    uint histograms[];
+};
+
+layout(set = 0, binding = 3) buffer GlobalOffsets {
+    uint globalBucketOffsets[];
+};
+
+layout(set = 0, binding = 4) buffer InPayload {
+    uint inPayload[];
+};
+
+layout(set = 0, binding = 5) buffer OutPayload {
+    uint outPayload[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint shift;
+    uint numElements;
+};
+
+// Store buckets for the workgroup to allow stable rank calculation
+shared uint groupBuckets[256];
+shared uint localOffsets[16];
+shared uint globalBaseOffsets[16];
+
+void main() {
+    uint tid = gl_LocalInvocationID.x;
+    uint gid = gl_GlobalInvocationID.x;
+    uint group = gl_WorkGroupID.x;
+
+    // 1. Cooperative Load: Prefetch offsets
+    if (tid < 16) {
+        // histograms[] now contains the exclusive prefix sum for this group (relative to bucket)
+        localOffsets[tid] = histograms[group * 16 + tid];
+        globalBaseOffsets[tid] = globalBucketOffsets[tid]; 
+    }
+
+    uint value = 0;
+    uint payloadVal = 0;
+    uint myBucket = 0;
+    bool isActive = false;
+
+    // 2. Load Data and Payloads
+    if (gid < numElements) {
+        value = data[gid];
+        payloadVal = inPayload[gid];
+        myBucket = (value >> shift) & 0xF;
+        groupBuckets[tid] = myBucket;
+        isActive = true;
+    } else {
+        groupBuckets[tid] = 0xFFFFFFFF; // Dummy invalid bucket
+    }
+
+    barrier(); // Wait for groupBuckets and offsets
+
+    if (isActive) {
+        // 3. Compute Stable Rank (Naive O(N) scan)
+        // Count how many threads with index < tid have the same bucket
+        uint myRank = 0;
+        
+        // Loop 0..tid-1 to count predecessors with same bucket
+        for (uint i = 0; i < tid; i++) {
+            if (groupBuckets[i] == myBucket) {
+                myRank++;
+            }
+        }
+
+        // 4. Calculate Final Position
+        // Global Bucket Start + Group Offset in Bucket + My Rank in Group
+        uint finalIndex = globalBaseOffsets[myBucket] + localOffsets[myBucket] + myRank;
+
+        outData[finalIndex] = value;
+        outPayload[finalIndex] = payloadVal;
+    }
+}

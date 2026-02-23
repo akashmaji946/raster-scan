@@ -1,0 +1,77 @@
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) buffer HistogramBuffer {
+    uint histograms[];
+};
+
+layout(set = 0, binding = 1) buffer PartialSums {
+    uint partial_sums[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint numGroups;
+};
+
+shared uint s_data[256];
+
+void main() {
+    uint bucketID = gl_WorkGroupID.y;
+    uint blockID = gl_WorkGroupID.x;
+    uint tid = gl_LocalInvocationID.x;
+
+    uint groupIdx = blockID * 256 + tid;
+    
+    // 1. Load Global -> Shared
+    if (groupIdx < numGroups) {
+        s_data[tid] = histograms[groupIdx * 16 + bucketID];
+    } else {
+        s_data[tid] = 0;
+    }
+    
+    barrier();
+
+    // 2. Scan (Exclusive) - Implementation: Hillis-Steele (Inclusive) then Shift
+    // Actually we want Inclusive for the local array, but Exclusive for the global result?
+    // scan.comp logic was: hist[i] = prev_sum. (Exclusive).
+    // Let's produce Exclusive Scan in s_data.
+    
+    // Bank conflicts? Hillis Steele
+    // Double buffered shared mem? s_data[2][256]?
+    // Or just simple scan.
+    
+    // Naive Inclusive Scan
+    for (uint stride = 1; stride < 256; stride *= 2) {
+        uint val = 0;
+        if (tid >= stride) {
+            val = s_data[tid - stride];
+        }
+        barrier();
+        if (tid >= stride) {
+            s_data[tid] += val;
+        }
+        barrier();
+    }
+    
+    // Convert Inclusive -> Exclusive
+    // Store inclusive sum (total) for partial_sums
+    uint totalSum = s_data[255];
+    
+    barrier();
+    
+    // Shift for exclusive
+    uint exclusiveVal = 0;
+    if (tid > 0) exclusiveVal = s_data[tid - 1];
+    
+    // Write back
+    if (groupIdx < numGroups) {
+        histograms[groupIdx * 16 + bucketID] = exclusiveVal;
+    }
+    
+    // Thread 0 writes partial sum
+    // NOTE: This must be the TOTAL sum of the block (inclusive last element)
+    if (tid == 0) {
+        partial_sums[blockID * 16 + bucketID] = totalSum;
+    }
+}

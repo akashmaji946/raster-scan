@@ -1,0 +1,43 @@
+#version 450
+
+layout(local_size_x = 256) in;
+
+layout(set = 0, binding = 0) buffer InputBuffer {
+    uint data[];
+};
+
+layout(set = 0, binding = 1) buffer HistogramBuffer {
+    uint histograms[];
+};
+
+layout(push_constant) uniform PushConstants {
+    uint shift;
+    uint numElements;
+};
+
+shared uint localHist[16];
+
+void main() {
+    uint tid = gl_LocalInvocationID.x;
+    uint gid = gl_GlobalInvocationID.x;
+    uint group = gl_WorkGroupID.x;
+
+    // Initialize shared histogram
+    if (tid < 16)
+        localHist[tid] = 0;
+
+    barrier();
+
+    if (gid < numElements) {
+        uint value = data[gid];
+        uint bucket = (value >> shift) & 0xF;
+        atomicAdd(localHist[bucket], 1);
+    }
+
+    barrier();
+
+    // Write local histogram to global memory
+    if (tid < 16) {
+        histograms[group * 16 + tid] = localHist[tid];
+    }
+}
