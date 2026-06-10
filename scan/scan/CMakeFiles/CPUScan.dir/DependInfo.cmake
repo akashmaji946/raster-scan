@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/akashmaji/Device/IMPORTANT/raster-scan/scan/cpu_scan.cpp" "scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o" "gcc" "scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o.d"
+  "~/Device/IMPORTANT/raster-scan/scan/cpu_scan.cpp" "scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o" "gcc" "scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o.d"
   )
 
 # Targets to which this target links.

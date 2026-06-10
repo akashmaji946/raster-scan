@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan
+CMAKE_SOURCE_DIR = ~/Device/IMPORTANT/raster-scan
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+CMAKE_BINARY_DIR = ~/Device/IMPORTANT/raster-scan/scan
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan//CMakeFiles/progress.marks
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles ~/Device/IMPORTANT/raster-scan/scan/vulkan//CMakeFiles/progress.marks
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/all
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/clean
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/preinstall
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/preinstall
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 vulkan/CMakeFiles/VkCore.dir/rule:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/CMakeFiles/VkCore.dir/rule
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/CMakeFiles/VkCore.dir/rule
 .PHONY : vulkan/CMakeFiles/VkCore.dir/rule
 
 # Convenience name for target.
@@ -127,7 +127,7 @@ VkCore: vulkan/CMakeFiles/VkCore.dir/rule
 
 # fast build rule for target.
 VkCore/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/build
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/build
 .PHONY : VkCore/fast
 
 common/utils.o: common/utils.cpp.o
@@ -135,7 +135,7 @@ common/utils.o: common/utils.cpp.o
 
 # target to build an object file
 common/utils.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o
 .PHONY : common/utils.cpp.o
 
 common/utils.i: common/utils.cpp.i
@@ -143,7 +143,7 @@ common/utils.i: common/utils.cpp.i
 
 # target to preprocess a source file
 common/utils.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.i
 .PHONY : common/utils.cpp.i
 
 common/utils.s: common/utils.cpp.s
@@ -151,7 +151,7 @@ common/utils.s: common/utils.cpp.s
 
 # target to generate assembly for a file
 common/utils.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.s
 .PHONY : common/utils.cpp.s
 
 core/ComputePipelineProperties.o: core/ComputePipelineProperties.cpp.o
@@ -159,7 +159,7 @@ core/ComputePipelineProperties.o: core/ComputePipelineProperties.cpp.o
 
 # target to build an object file
 core/ComputePipelineProperties.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o
 .PHONY : core/ComputePipelineProperties.cpp.o
 
 core/ComputePipelineProperties.i: core/ComputePipelineProperties.cpp.i
@@ -167,7 +167,7 @@ core/ComputePipelineProperties.i: core/ComputePipelineProperties.cpp.i
 
 # target to preprocess a source file
 core/ComputePipelineProperties.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i
 .PHONY : core/ComputePipelineProperties.cpp.i
 
 core/ComputePipelineProperties.s: core/ComputePipelineProperties.cpp.s
@@ -175,7 +175,7 @@ core/ComputePipelineProperties.s: core/ComputePipelineProperties.cpp.s
 
 # target to generate assembly for a file
 core/ComputePipelineProperties.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s
 .PHONY : core/ComputePipelineProperties.cpp.s
 
 core/GPUTimer.o: core/GPUTimer.cpp.o
@@ -183,7 +183,7 @@ core/GPUTimer.o: core/GPUTimer.cpp.o
 
 # target to build an object file
 core/GPUTimer.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o
 .PHONY : core/GPUTimer.cpp.o
 
 core/GPUTimer.i: core/GPUTimer.cpp.i
@@ -191,7 +191,7 @@ core/GPUTimer.i: core/GPUTimer.cpp.i
 
 # target to preprocess a source file
 core/GPUTimer.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i
 .PHONY : core/GPUTimer.cpp.i
 
 core/GPUTimer.s: core/GPUTimer.cpp.s
@@ -199,7 +199,7 @@ core/GPUTimer.s: core/GPUTimer.cpp.s
 
 # target to generate assembly for a file
 core/GPUTimer.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s
 .PHONY : core/GPUTimer.cpp.s
 
 core/GraphicsPipelineProperties.o: core/GraphicsPipelineProperties.cpp.o
@@ -207,7 +207,7 @@ core/GraphicsPipelineProperties.o: core/GraphicsPipelineProperties.cpp.o
 
 # target to build an object file
 core/GraphicsPipelineProperties.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o
 .PHONY : core/GraphicsPipelineProperties.cpp.o
 
 core/GraphicsPipelineProperties.i: core/GraphicsPipelineProperties.cpp.i
@@ -215,7 +215,7 @@ core/GraphicsPipelineProperties.i: core/GraphicsPipelineProperties.cpp.i
 
 # target to preprocess a source file
 core/GraphicsPipelineProperties.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i
 .PHONY : core/GraphicsPipelineProperties.cpp.i
 
 core/GraphicsPipelineProperties.s: core/GraphicsPipelineProperties.cpp.s
@@ -223,7 +223,7 @@ core/GraphicsPipelineProperties.s: core/GraphicsPipelineProperties.cpp.s
 
 # target to generate assembly for a file
 core/GraphicsPipelineProperties.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s
 .PHONY : core/GraphicsPipelineProperties.cpp.s
 
 core/VkData.o: core/VkData.cpp.o
@@ -231,7 +231,7 @@ core/VkData.o: core/VkData.cpp.o
 
 # target to build an object file
 core/VkData.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o
 .PHONY : core/VkData.cpp.o
 
 core/VkData.i: core/VkData.cpp.i
@@ -239,7 +239,7 @@ core/VkData.i: core/VkData.cpp.i
 
 # target to preprocess a source file
 core/VkData.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.i
 .PHONY : core/VkData.cpp.i
 
 core/VkData.s: core/VkData.cpp.s
@@ -247,7 +247,7 @@ core/VkData.s: core/VkData.cpp.s
 
 # target to generate assembly for a file
 core/VkData.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.s
 .PHONY : core/VkData.cpp.s
 
 core/VkEngine.o: core/VkEngine.cpp.o
@@ -255,7 +255,7 @@ core/VkEngine.o: core/VkEngine.cpp.o
 
 # target to build an object file
 core/VkEngine.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o
 .PHONY : core/VkEngine.cpp.o
 
 core/VkEngine.i: core/VkEngine.cpp.i
@@ -263,7 +263,7 @@ core/VkEngine.i: core/VkEngine.cpp.i
 
 # target to preprocess a source file
 core/VkEngine.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.i
 .PHONY : core/VkEngine.cpp.i
 
 core/VkEngine.s: core/VkEngine.cpp.s
@@ -271,7 +271,7 @@ core/VkEngine.s: core/VkEngine.cpp.s
 
 # target to generate assembly for a file
 core/VkEngine.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.s
 .PHONY : core/VkEngine.cpp.s
 
 core/VulkanDevice.o: core/VulkanDevice.cpp.o
@@ -279,7 +279,7 @@ core/VulkanDevice.o: core/VulkanDevice.cpp.o
 
 # target to build an object file
 core/VulkanDevice.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o
 .PHONY : core/VulkanDevice.cpp.o
 
 core/VulkanDevice.i: core/VulkanDevice.cpp.i
@@ -287,7 +287,7 @@ core/VulkanDevice.i: core/VulkanDevice.cpp.i
 
 # target to preprocess a source file
 core/VulkanDevice.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i
 .PHONY : core/VulkanDevice.cpp.i
 
 core/VulkanDevice.s: core/VulkanDevice.cpp.s
@@ -295,7 +295,7 @@ core/VulkanDevice.s: core/VulkanDevice.cpp.s
 
 # target to generate assembly for a file
 core/VulkanDevice.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s
 .PHONY : core/VulkanDevice.cpp.s
 
 core/vkutils.o: core/vkutils.cpp.o
@@ -303,7 +303,7 @@ core/vkutils.o: core/vkutils.cpp.o
 
 # target to build an object file
 core/vkutils.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o
 .PHONY : core/vkutils.cpp.o
 
 core/vkutils.i: core/vkutils.cpp.i
@@ -311,7 +311,7 @@ core/vkutils.i: core/vkutils.cpp.i
 
 # target to preprocess a source file
 core/vkutils.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.i
 .PHONY : core/vkutils.cpp.i
 
 core/vkutils.s: core/vkutils.cpp.s
@@ -319,7 +319,7 @@ core/vkutils.s: core/vkutils.cpp.s
 
 # target to generate assembly for a file
 core/vkutils.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.s
 .PHONY : core/vkutils.cpp.s
 
 operators/OperatorCache.o: operators/OperatorCache.cpp.o
@@ -327,7 +327,7 @@ operators/OperatorCache.o: operators/OperatorCache.cpp.o
 
 # target to build an object file
 operators/OperatorCache.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o
 .PHONY : operators/OperatorCache.cpp.o
 
 operators/OperatorCache.i: operators/OperatorCache.cpp.i
@@ -335,7 +335,7 @@ operators/OperatorCache.i: operators/OperatorCache.cpp.i
 
 # target to preprocess a source file
 operators/OperatorCache.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i
 .PHONY : operators/OperatorCache.cpp.i
 
 operators/OperatorCache.s: operators/OperatorCache.cpp.s
@@ -343,7 +343,7 @@ operators/OperatorCache.s: operators/OperatorCache.cpp.s
 
 # target to generate assembly for a file
 operators/OperatorCache.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s
 .PHONY : operators/OperatorCache.cpp.s
 
 operators/ReduceMax.o: operators/ReduceMax.cpp.o
@@ -351,7 +351,7 @@ operators/ReduceMax.o: operators/ReduceMax.cpp.o
 
 # target to build an object file
 operators/ReduceMax.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o
 .PHONY : operators/ReduceMax.cpp.o
 
 operators/ReduceMax.i: operators/ReduceMax.cpp.i
@@ -359,7 +359,7 @@ operators/ReduceMax.i: operators/ReduceMax.cpp.i
 
 # target to preprocess a source file
 operators/ReduceMax.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i
 .PHONY : operators/ReduceMax.cpp.i
 
 operators/ReduceMax.s: operators/ReduceMax.cpp.s
@@ -367,7 +367,7 @@ operators/ReduceMax.s: operators/ReduceMax.cpp.s
 
 # target to generate assembly for a file
 operators/ReduceMax.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s
 .PHONY : operators/ReduceMax.cpp.s
 
 operators/SinglePassScan.o: operators/SinglePassScan.cpp.o
@@ -375,7 +375,7 @@ operators/SinglePassScan.o: operators/SinglePassScan.cpp.o
 
 # target to build an object file
 operators/SinglePassScan.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o
 .PHONY : operators/SinglePassScan.cpp.o
 
 operators/SinglePassScan.i: operators/SinglePassScan.cpp.i
@@ -383,7 +383,7 @@ operators/SinglePassScan.i: operators/SinglePassScan.cpp.i
 
 # target to preprocess a source file
 operators/SinglePassScan.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i
 .PHONY : operators/SinglePassScan.cpp.i
 
 operators/SinglePassScan.s: operators/SinglePassScan.cpp.s
@@ -391,7 +391,7 @@ operators/SinglePassScan.s: operators/SinglePassScan.cpp.s
 
 # target to generate assembly for a file
 operators/SinglePassScan.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s
 .PHONY : operators/SinglePassScan.cpp.s
 
 vma/vma.o: vma/vma.cpp.o
@@ -399,7 +399,7 @@ vma/vma.o: vma/vma.cpp.o
 
 # target to build an object file
 vma/vma.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o
 .PHONY : vma/vma.cpp.o
 
 vma/vma.i: vma/vma.cpp.i
@@ -407,7 +407,7 @@ vma/vma.i: vma/vma.cpp.i
 
 # target to preprocess a source file
 vma/vma.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.i
 .PHONY : vma/vma.cpp.i
 
 vma/vma.s: vma/vma.cpp.s
@@ -415,7 +415,7 @@ vma/vma.s: vma/vma.cpp.s
 
 # target to generate assembly for a file
 vma/vma.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.s
 .PHONY : vma/vma.cpp.s
 
 # Help Target
@@ -474,6 +474,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

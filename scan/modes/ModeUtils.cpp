@@ -1,7 +1,7 @@
 #include "ModeUtils.hpp"
 
 // Global variables definitions
-const std::string PROJECT_DIR = "/home/akashmaji/Device/IMPORTANT/raster-scan/";
+const std::string PROJECT_DIR = "~/Device/IMPORTANT/raster-scan/";
 std::string g_opfolder;
 std::string g_qfolder;
 int32_t g_dim = 3;

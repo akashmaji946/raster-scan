@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan
+CMAKE_SOURCE_DIR = ~/Device/IMPORTANT/raster-scan
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+CMAKE_BINARY_DIR = ~/Device/IMPORTANT/raster-scan/scan
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -87,14 +87,14 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan//CMakeFiles/progress.marks
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles ~/Device/IMPORTANT/raster-scan/scan/scan//CMakeFiles/progress.marks
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/all
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/clean
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/clean
 .PHONY : clean
 
 # The main clean target
@@ -103,22 +103,22 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/preinstall
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/preinstall
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
 # Convenience name for target.
 scan/CMakeFiles/EncodeData.dir/rule:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/EncodeData.dir/rule
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/EncodeData.dir/rule
 .PHONY : scan/CMakeFiles/EncodeData.dir/rule
 
 # Convenience name for target.
@@ -127,12 +127,12 @@ EncodeData: scan/CMakeFiles/EncodeData.dir/rule
 
 # fast build rule for target.
 EncodeData/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/build
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/build
 .PHONY : EncodeData/fast
 
 # Convenience name for target.
 scan/CMakeFiles/RasterScan.dir/rule:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/RasterScan.dir/rule
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/RasterScan.dir/rule
 .PHONY : scan/CMakeFiles/RasterScan.dir/rule
 
 # Convenience name for target.
@@ -141,12 +141,12 @@ RasterScan: scan/CMakeFiles/RasterScan.dir/rule
 
 # fast build rule for target.
 RasterScan/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/build
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/build
 .PHONY : RasterScan/fast
 
 # Convenience name for target.
 scan/CMakeFiles/CPUScan.dir/rule:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/CPUScan.dir/rule
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/CPUScan.dir/rule
 .PHONY : scan/CMakeFiles/CPUScan.dir/rule
 
 # Convenience name for target.
@@ -155,12 +155,12 @@ CPUScan: scan/CMakeFiles/CPUScan.dir/rule
 
 # fast build rule for target.
 CPUScan/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/build
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/build
 .PHONY : CPUScan/fast
 
 # Convenience name for target.
 scan/CMakeFiles/Compare.dir/rule:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/Compare.dir/rule
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/Compare.dir/rule
 .PHONY : scan/CMakeFiles/Compare.dir/rule
 
 # Convenience name for target.
@@ -169,7 +169,7 @@ Compare: scan/CMakeFiles/Compare.dir/rule
 
 # fast build rule for target.
 Compare/fast:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/build
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/build
 .PHONY : Compare/fast
 
 BruteForceIndex.o: BruteForceIndex.cpp.o
@@ -177,7 +177,7 @@ BruteForceIndex.o: BruteForceIndex.cpp.o
 
 # target to build an object file
 BruteForceIndex.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o
 .PHONY : BruteForceIndex.cpp.o
 
 BruteForceIndex.i: BruteForceIndex.cpp.i
@@ -185,7 +185,7 @@ BruteForceIndex.i: BruteForceIndex.cpp.i
 
 # target to preprocess a source file
 BruteForceIndex.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i
 .PHONY : BruteForceIndex.cpp.i
 
 BruteForceIndex.s: BruteForceIndex.cpp.s
@@ -193,7 +193,7 @@ BruteForceIndex.s: BruteForceIndex.cpp.s
 
 # target to generate assembly for a file
 BruteForceIndex.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s
 .PHONY : BruteForceIndex.cpp.s
 
 BruteForceIndexUpdatable.o: BruteForceIndexUpdatable.cpp.o
@@ -201,7 +201,7 @@ BruteForceIndexUpdatable.o: BruteForceIndexUpdatable.cpp.o
 
 # target to build an object file
 BruteForceIndexUpdatable.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o
 .PHONY : BruteForceIndexUpdatable.cpp.o
 
 BruteForceIndexUpdatable.i: BruteForceIndexUpdatable.cpp.i
@@ -209,7 +209,7 @@ BruteForceIndexUpdatable.i: BruteForceIndexUpdatable.cpp.i
 
 # target to preprocess a source file
 BruteForceIndexUpdatable.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i
 .PHONY : BruteForceIndexUpdatable.cpp.i
 
 BruteForceIndexUpdatable.s: BruteForceIndexUpdatable.cpp.s
@@ -217,7 +217,7 @@ BruteForceIndexUpdatable.s: BruteForceIndexUpdatable.cpp.s
 
 # target to generate assembly for a file
 BruteForceIndexUpdatable.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s
 .PHONY : BruteForceIndexUpdatable.cpp.s
 
 BufferPool.o: BufferPool.cpp.o
@@ -225,7 +225,7 @@ BufferPool.o: BufferPool.cpp.o
 
 # target to build an object file
 BufferPool.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o
 .PHONY : BufferPool.cpp.o
 
 BufferPool.i: BufferPool.cpp.i
@@ -233,7 +233,7 @@ BufferPool.i: BufferPool.cpp.i
 
 # target to preprocess a source file
 BufferPool.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.i
 .PHONY : BufferPool.cpp.i
 
 BufferPool.s: BufferPool.cpp.s
@@ -241,7 +241,7 @@ BufferPool.s: BufferPool.cpp.s
 
 # target to generate assembly for a file
 BufferPool.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.s
 .PHONY : BufferPool.cpp.s
 
 CPUTimer.o: CPUTimer.cpp.o
@@ -249,7 +249,7 @@ CPUTimer.o: CPUTimer.cpp.o
 
 # target to build an object file
 CPUTimer.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o
 .PHONY : CPUTimer.cpp.o
 
 CPUTimer.i: CPUTimer.cpp.i
@@ -257,7 +257,7 @@ CPUTimer.i: CPUTimer.cpp.i
 
 # target to preprocess a source file
 CPUTimer.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.i
 .PHONY : CPUTimer.cpp.i
 
 CPUTimer.s: CPUTimer.cpp.s
@@ -265,7 +265,7 @@ CPUTimer.s: CPUTimer.cpp.s
 
 # target to generate assembly for a file
 CPUTimer.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.s
 .PHONY : CPUTimer.cpp.s
 
 CompactBruteScanIndex.o: CompactBruteScanIndex.cpp.o
@@ -273,7 +273,7 @@ CompactBruteScanIndex.o: CompactBruteScanIndex.cpp.o
 
 # target to build an object file
 CompactBruteScanIndex.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o
 .PHONY : CompactBruteScanIndex.cpp.o
 
 CompactBruteScanIndex.i: CompactBruteScanIndex.cpp.i
@@ -281,7 +281,7 @@ CompactBruteScanIndex.i: CompactBruteScanIndex.cpp.i
 
 # target to preprocess a source file
 CompactBruteScanIndex.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i
 .PHONY : CompactBruteScanIndex.cpp.i
 
 CompactBruteScanIndex.s: CompactBruteScanIndex.cpp.s
@@ -289,7 +289,7 @@ CompactBruteScanIndex.s: CompactBruteScanIndex.cpp.s
 
 # target to generate assembly for a file
 CompactBruteScanIndex.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s
 .PHONY : CompactBruteScanIndex.cpp.s
 
 CompactScanIndex.o: CompactScanIndex.cpp.o
@@ -297,7 +297,7 @@ CompactScanIndex.o: CompactScanIndex.cpp.o
 
 # target to build an object file
 CompactScanIndex.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o
 .PHONY : CompactScanIndex.cpp.o
 
 CompactScanIndex.i: CompactScanIndex.cpp.i
@@ -305,7 +305,7 @@ CompactScanIndex.i: CompactScanIndex.cpp.i
 
 # target to preprocess a source file
 CompactScanIndex.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i
 .PHONY : CompactScanIndex.cpp.i
 
 CompactScanIndex.s: CompactScanIndex.cpp.s
@@ -313,7 +313,7 @@ CompactScanIndex.s: CompactScanIndex.cpp.s
 
 # target to generate assembly for a file
 CompactScanIndex.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s
 .PHONY : CompactScanIndex.cpp.s
 
 EquiDepthIndex.o: EquiDepthIndex.cpp.o
@@ -321,7 +321,7 @@ EquiDepthIndex.o: EquiDepthIndex.cpp.o
 
 # target to build an object file
 EquiDepthIndex.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o
 .PHONY : EquiDepthIndex.cpp.o
 
 EquiDepthIndex.i: EquiDepthIndex.cpp.i
@@ -329,7 +329,7 @@ EquiDepthIndex.i: EquiDepthIndex.cpp.i
 
 # target to preprocess a source file
 EquiDepthIndex.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i
 .PHONY : EquiDepthIndex.cpp.i
 
 EquiDepthIndex.s: EquiDepthIndex.cpp.s
@@ -337,7 +337,7 @@ EquiDepthIndex.s: EquiDepthIndex.cpp.s
 
 # target to generate assembly for a file
 EquiDepthIndex.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s
 .PHONY : EquiDepthIndex.cpp.s
 
 RasterScan2D.o: RasterScan2D.cpp.o
@@ -345,7 +345,7 @@ RasterScan2D.o: RasterScan2D.cpp.o
 
 # target to build an object file
 RasterScan2D.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o
 .PHONY : RasterScan2D.cpp.o
 
 RasterScan2D.i: RasterScan2D.cpp.i
@@ -353,7 +353,7 @@ RasterScan2D.i: RasterScan2D.cpp.i
 
 # target to preprocess a source file
 RasterScan2D.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i
 .PHONY : RasterScan2D.cpp.i
 
 RasterScan2D.s: RasterScan2D.cpp.s
@@ -361,7 +361,7 @@ RasterScan2D.s: RasterScan2D.cpp.s
 
 # target to generate assembly for a file
 RasterScan2D.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s
 .PHONY : RasterScan2D.cpp.s
 
 RasterScanIndexUpdate.o: RasterScanIndexUpdate.cpp.o
@@ -369,7 +369,7 @@ RasterScanIndexUpdate.o: RasterScanIndexUpdate.cpp.o
 
 # target to build an object file
 RasterScanIndexUpdate.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o
 .PHONY : RasterScanIndexUpdate.cpp.o
 
 RasterScanIndexUpdate.i: RasterScanIndexUpdate.cpp.i
@@ -377,7 +377,7 @@ RasterScanIndexUpdate.i: RasterScanIndexUpdate.cpp.i
 
 # target to preprocess a source file
 RasterScanIndexUpdate.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i
 .PHONY : RasterScanIndexUpdate.cpp.i
 
 RasterScanIndexUpdate.s: RasterScanIndexUpdate.cpp.s
@@ -385,7 +385,7 @@ RasterScanIndexUpdate.s: RasterScanIndexUpdate.cpp.s
 
 # target to generate assembly for a file
 RasterScanIndexUpdate.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s
 .PHONY : RasterScanIndexUpdate.cpp.s
 
 compare_cpu_gpu.o: compare_cpu_gpu.cpp.o
@@ -393,7 +393,7 @@ compare_cpu_gpu.o: compare_cpu_gpu.cpp.o
 
 # target to build an object file
 compare_cpu_gpu.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.o
 .PHONY : compare_cpu_gpu.cpp.o
 
 compare_cpu_gpu.i: compare_cpu_gpu.cpp.i
@@ -401,7 +401,7 @@ compare_cpu_gpu.i: compare_cpu_gpu.cpp.i
 
 # target to preprocess a source file
 compare_cpu_gpu.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.i
 .PHONY : compare_cpu_gpu.cpp.i
 
 compare_cpu_gpu.s: compare_cpu_gpu.cpp.s
@@ -409,7 +409,7 @@ compare_cpu_gpu.s: compare_cpu_gpu.cpp.s
 
 # target to generate assembly for a file
 compare_cpu_gpu.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/compare_cpu_gpu.cpp.s
 .PHONY : compare_cpu_gpu.cpp.s
 
 cpu_scan.o: cpu_scan.cpp.o
@@ -417,7 +417,7 @@ cpu_scan.o: cpu_scan.cpp.o
 
 # target to build an object file
 cpu_scan.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.o
 .PHONY : cpu_scan.cpp.o
 
 cpu_scan.i: cpu_scan.cpp.i
@@ -425,7 +425,7 @@ cpu_scan.i: cpu_scan.cpp.i
 
 # target to preprocess a source file
 cpu_scan.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.i
 .PHONY : cpu_scan.cpp.i
 
 cpu_scan.s: cpu_scan.cpp.s
@@ -433,7 +433,7 @@ cpu_scan.s: cpu_scan.cpp.s
 
 # target to generate assembly for a file
 cpu_scan.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/cpu_scan.cpp.s
 .PHONY : cpu_scan.cpp.s
 
 encode.o: encode.cpp.o
@@ -441,7 +441,7 @@ encode.o: encode.cpp.o
 
 # target to build an object file
 encode.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.o
 .PHONY : encode.cpp.o
 
 encode.i: encode.cpp.i
@@ -449,7 +449,7 @@ encode.i: encode.cpp.i
 
 # target to preprocess a source file
 encode.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.i
 .PHONY : encode.cpp.i
 
 encode.s: encode.cpp.s
@@ -457,7 +457,7 @@ encode.s: encode.cpp.s
 
 # target to generate assembly for a file
 encode.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/encode.cpp.s
 .PHONY : encode.cpp.s
 
 modes/Mode0.o: modes/Mode0.cpp.o
@@ -465,7 +465,7 @@ modes/Mode0.o: modes/Mode0.cpp.o
 
 # target to build an object file
 modes/Mode0.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o
 .PHONY : modes/Mode0.cpp.o
 
 modes/Mode0.i: modes/Mode0.cpp.i
@@ -473,7 +473,7 @@ modes/Mode0.i: modes/Mode0.cpp.i
 
 # target to preprocess a source file
 modes/Mode0.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i
 .PHONY : modes/Mode0.cpp.i
 
 modes/Mode0.s: modes/Mode0.cpp.s
@@ -481,7 +481,7 @@ modes/Mode0.s: modes/Mode0.cpp.s
 
 # target to generate assembly for a file
 modes/Mode0.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s
 .PHONY : modes/Mode0.cpp.s
 
 modes/Mode1.o: modes/Mode1.cpp.o
@@ -489,7 +489,7 @@ modes/Mode1.o: modes/Mode1.cpp.o
 
 # target to build an object file
 modes/Mode1.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o
 .PHONY : modes/Mode1.cpp.o
 
 modes/Mode1.i: modes/Mode1.cpp.i
@@ -497,7 +497,7 @@ modes/Mode1.i: modes/Mode1.cpp.i
 
 # target to preprocess a source file
 modes/Mode1.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i
 .PHONY : modes/Mode1.cpp.i
 
 modes/Mode1.s: modes/Mode1.cpp.s
@@ -505,7 +505,7 @@ modes/Mode1.s: modes/Mode1.cpp.s
 
 # target to generate assembly for a file
 modes/Mode1.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s
 .PHONY : modes/Mode1.cpp.s
 
 modes/Mode10.o: modes/Mode10.cpp.o
@@ -513,7 +513,7 @@ modes/Mode10.o: modes/Mode10.cpp.o
 
 # target to build an object file
 modes/Mode10.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o
 .PHONY : modes/Mode10.cpp.o
 
 modes/Mode10.i: modes/Mode10.cpp.i
@@ -521,7 +521,7 @@ modes/Mode10.i: modes/Mode10.cpp.i
 
 # target to preprocess a source file
 modes/Mode10.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i
 .PHONY : modes/Mode10.cpp.i
 
 modes/Mode10.s: modes/Mode10.cpp.s
@@ -529,7 +529,7 @@ modes/Mode10.s: modes/Mode10.cpp.s
 
 # target to generate assembly for a file
 modes/Mode10.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s
 .PHONY : modes/Mode10.cpp.s
 
 modes/Mode11.o: modes/Mode11.cpp.o
@@ -537,7 +537,7 @@ modes/Mode11.o: modes/Mode11.cpp.o
 
 # target to build an object file
 modes/Mode11.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o
 .PHONY : modes/Mode11.cpp.o
 
 modes/Mode11.i: modes/Mode11.cpp.i
@@ -545,7 +545,7 @@ modes/Mode11.i: modes/Mode11.cpp.i
 
 # target to preprocess a source file
 modes/Mode11.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i
 .PHONY : modes/Mode11.cpp.i
 
 modes/Mode11.s: modes/Mode11.cpp.s
@@ -553,7 +553,7 @@ modes/Mode11.s: modes/Mode11.cpp.s
 
 # target to generate assembly for a file
 modes/Mode11.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s
 .PHONY : modes/Mode11.cpp.s
 
 modes/Mode12.o: modes/Mode12.cpp.o
@@ -561,7 +561,7 @@ modes/Mode12.o: modes/Mode12.cpp.o
 
 # target to build an object file
 modes/Mode12.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o
 .PHONY : modes/Mode12.cpp.o
 
 modes/Mode12.i: modes/Mode12.cpp.i
@@ -569,7 +569,7 @@ modes/Mode12.i: modes/Mode12.cpp.i
 
 # target to preprocess a source file
 modes/Mode12.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i
 .PHONY : modes/Mode12.cpp.i
 
 modes/Mode12.s: modes/Mode12.cpp.s
@@ -577,7 +577,7 @@ modes/Mode12.s: modes/Mode12.cpp.s
 
 # target to generate assembly for a file
 modes/Mode12.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s
 .PHONY : modes/Mode12.cpp.s
 
 modes/Mode13.o: modes/Mode13.cpp.o
@@ -585,7 +585,7 @@ modes/Mode13.o: modes/Mode13.cpp.o
 
 # target to build an object file
 modes/Mode13.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o
 .PHONY : modes/Mode13.cpp.o
 
 modes/Mode13.i: modes/Mode13.cpp.i
@@ -593,7 +593,7 @@ modes/Mode13.i: modes/Mode13.cpp.i
 
 # target to preprocess a source file
 modes/Mode13.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i
 .PHONY : modes/Mode13.cpp.i
 
 modes/Mode13.s: modes/Mode13.cpp.s
@@ -601,7 +601,7 @@ modes/Mode13.s: modes/Mode13.cpp.s
 
 # target to generate assembly for a file
 modes/Mode13.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s
 .PHONY : modes/Mode13.cpp.s
 
 modes/Mode2.o: modes/Mode2.cpp.o
@@ -609,7 +609,7 @@ modes/Mode2.o: modes/Mode2.cpp.o
 
 # target to build an object file
 modes/Mode2.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o
 .PHONY : modes/Mode2.cpp.o
 
 modes/Mode2.i: modes/Mode2.cpp.i
@@ -617,7 +617,7 @@ modes/Mode2.i: modes/Mode2.cpp.i
 
 # target to preprocess a source file
 modes/Mode2.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i
 .PHONY : modes/Mode2.cpp.i
 
 modes/Mode2.s: modes/Mode2.cpp.s
@@ -625,7 +625,7 @@ modes/Mode2.s: modes/Mode2.cpp.s
 
 # target to generate assembly for a file
 modes/Mode2.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s
 .PHONY : modes/Mode2.cpp.s
 
 modes/Mode21.o: modes/Mode21.cpp.o
@@ -633,7 +633,7 @@ modes/Mode21.o: modes/Mode21.cpp.o
 
 # target to build an object file
 modes/Mode21.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o
 .PHONY : modes/Mode21.cpp.o
 
 modes/Mode21.i: modes/Mode21.cpp.i
@@ -641,7 +641,7 @@ modes/Mode21.i: modes/Mode21.cpp.i
 
 # target to preprocess a source file
 modes/Mode21.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i
 .PHONY : modes/Mode21.cpp.i
 
 modes/Mode21.s: modes/Mode21.cpp.s
@@ -649,7 +649,7 @@ modes/Mode21.s: modes/Mode21.cpp.s
 
 # target to generate assembly for a file
 modes/Mode21.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s
 .PHONY : modes/Mode21.cpp.s
 
 modes/Mode22.o: modes/Mode22.cpp.o
@@ -657,7 +657,7 @@ modes/Mode22.o: modes/Mode22.cpp.o
 
 # target to build an object file
 modes/Mode22.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o
 .PHONY : modes/Mode22.cpp.o
 
 modes/Mode22.i: modes/Mode22.cpp.i
@@ -665,7 +665,7 @@ modes/Mode22.i: modes/Mode22.cpp.i
 
 # target to preprocess a source file
 modes/Mode22.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i
 .PHONY : modes/Mode22.cpp.i
 
 modes/Mode22.s: modes/Mode22.cpp.s
@@ -673,7 +673,7 @@ modes/Mode22.s: modes/Mode22.cpp.s
 
 # target to generate assembly for a file
 modes/Mode22.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s
 .PHONY : modes/Mode22.cpp.s
 
 modes/Mode23.o: modes/Mode23.cpp.o
@@ -681,7 +681,7 @@ modes/Mode23.o: modes/Mode23.cpp.o
 
 # target to build an object file
 modes/Mode23.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o
 .PHONY : modes/Mode23.cpp.o
 
 modes/Mode23.i: modes/Mode23.cpp.i
@@ -689,7 +689,7 @@ modes/Mode23.i: modes/Mode23.cpp.i
 
 # target to preprocess a source file
 modes/Mode23.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i
 .PHONY : modes/Mode23.cpp.i
 
 modes/Mode23.s: modes/Mode23.cpp.s
@@ -697,7 +697,7 @@ modes/Mode23.s: modes/Mode23.cpp.s
 
 # target to generate assembly for a file
 modes/Mode23.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s
 .PHONY : modes/Mode23.cpp.s
 
 modes/Mode24.o: modes/Mode24.cpp.o
@@ -705,7 +705,7 @@ modes/Mode24.o: modes/Mode24.cpp.o
 
 # target to build an object file
 modes/Mode24.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o
 .PHONY : modes/Mode24.cpp.o
 
 modes/Mode24.i: modes/Mode24.cpp.i
@@ -713,7 +713,7 @@ modes/Mode24.i: modes/Mode24.cpp.i
 
 # target to preprocess a source file
 modes/Mode24.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i
 .PHONY : modes/Mode24.cpp.i
 
 modes/Mode24.s: modes/Mode24.cpp.s
@@ -721,7 +721,7 @@ modes/Mode24.s: modes/Mode24.cpp.s
 
 # target to generate assembly for a file
 modes/Mode24.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s
 .PHONY : modes/Mode24.cpp.s
 
 modes/Mode25.o: modes/Mode25.cpp.o
@@ -729,7 +729,7 @@ modes/Mode25.o: modes/Mode25.cpp.o
 
 # target to build an object file
 modes/Mode25.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o
 .PHONY : modes/Mode25.cpp.o
 
 modes/Mode25.i: modes/Mode25.cpp.i
@@ -737,7 +737,7 @@ modes/Mode25.i: modes/Mode25.cpp.i
 
 # target to preprocess a source file
 modes/Mode25.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i
 .PHONY : modes/Mode25.cpp.i
 
 modes/Mode25.s: modes/Mode25.cpp.s
@@ -745,7 +745,7 @@ modes/Mode25.s: modes/Mode25.cpp.s
 
 # target to generate assembly for a file
 modes/Mode25.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s
 .PHONY : modes/Mode25.cpp.s
 
 modes/Mode3.o: modes/Mode3.cpp.o
@@ -753,7 +753,7 @@ modes/Mode3.o: modes/Mode3.cpp.o
 
 # target to build an object file
 modes/Mode3.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o
 .PHONY : modes/Mode3.cpp.o
 
 modes/Mode3.i: modes/Mode3.cpp.i
@@ -761,7 +761,7 @@ modes/Mode3.i: modes/Mode3.cpp.i
 
 # target to preprocess a source file
 modes/Mode3.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i
 .PHONY : modes/Mode3.cpp.i
 
 modes/Mode3.s: modes/Mode3.cpp.s
@@ -769,7 +769,7 @@ modes/Mode3.s: modes/Mode3.cpp.s
 
 # target to generate assembly for a file
 modes/Mode3.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s
 .PHONY : modes/Mode3.cpp.s
 
 modes/Mode4.o: modes/Mode4.cpp.o
@@ -777,7 +777,7 @@ modes/Mode4.o: modes/Mode4.cpp.o
 
 # target to build an object file
 modes/Mode4.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o
 .PHONY : modes/Mode4.cpp.o
 
 modes/Mode4.i: modes/Mode4.cpp.i
@@ -785,7 +785,7 @@ modes/Mode4.i: modes/Mode4.cpp.i
 
 # target to preprocess a source file
 modes/Mode4.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i
 .PHONY : modes/Mode4.cpp.i
 
 modes/Mode4.s: modes/Mode4.cpp.s
@@ -793,7 +793,7 @@ modes/Mode4.s: modes/Mode4.cpp.s
 
 # target to generate assembly for a file
 modes/Mode4.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s
 .PHONY : modes/Mode4.cpp.s
 
 modes/Mode42.o: modes/Mode42.cpp.o
@@ -801,7 +801,7 @@ modes/Mode42.o: modes/Mode42.cpp.o
 
 # target to build an object file
 modes/Mode42.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o
 .PHONY : modes/Mode42.cpp.o
 
 modes/Mode42.i: modes/Mode42.cpp.i
@@ -809,7 +809,7 @@ modes/Mode42.i: modes/Mode42.cpp.i
 
 # target to preprocess a source file
 modes/Mode42.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i
 .PHONY : modes/Mode42.cpp.i
 
 modes/Mode42.s: modes/Mode42.cpp.s
@@ -817,7 +817,7 @@ modes/Mode42.s: modes/Mode42.cpp.s
 
 # target to generate assembly for a file
 modes/Mode42.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s
 .PHONY : modes/Mode42.cpp.s
 
 modes/Mode44.o: modes/Mode44.cpp.o
@@ -825,7 +825,7 @@ modes/Mode44.o: modes/Mode44.cpp.o
 
 # target to build an object file
 modes/Mode44.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o
 .PHONY : modes/Mode44.cpp.o
 
 modes/Mode44.i: modes/Mode44.cpp.i
@@ -833,7 +833,7 @@ modes/Mode44.i: modes/Mode44.cpp.i
 
 # target to preprocess a source file
 modes/Mode44.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i
 .PHONY : modes/Mode44.cpp.i
 
 modes/Mode44.s: modes/Mode44.cpp.s
@@ -841,7 +841,7 @@ modes/Mode44.s: modes/Mode44.cpp.s
 
 # target to generate assembly for a file
 modes/Mode44.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s
 .PHONY : modes/Mode44.cpp.s
 
 modes/Mode5.o: modes/Mode5.cpp.o
@@ -849,7 +849,7 @@ modes/Mode5.o: modes/Mode5.cpp.o
 
 # target to build an object file
 modes/Mode5.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o
 .PHONY : modes/Mode5.cpp.o
 
 modes/Mode5.i: modes/Mode5.cpp.i
@@ -857,7 +857,7 @@ modes/Mode5.i: modes/Mode5.cpp.i
 
 # target to preprocess a source file
 modes/Mode5.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i
 .PHONY : modes/Mode5.cpp.i
 
 modes/Mode5.s: modes/Mode5.cpp.s
@@ -865,7 +865,7 @@ modes/Mode5.s: modes/Mode5.cpp.s
 
 # target to generate assembly for a file
 modes/Mode5.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s
 .PHONY : modes/Mode5.cpp.s
 
 modes/Mode51.o: modes/Mode51.cpp.o
@@ -873,7 +873,7 @@ modes/Mode51.o: modes/Mode51.cpp.o
 
 # target to build an object file
 modes/Mode51.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o
 .PHONY : modes/Mode51.cpp.o
 
 modes/Mode51.i: modes/Mode51.cpp.i
@@ -881,7 +881,7 @@ modes/Mode51.i: modes/Mode51.cpp.i
 
 # target to preprocess a source file
 modes/Mode51.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i
 .PHONY : modes/Mode51.cpp.i
 
 modes/Mode51.s: modes/Mode51.cpp.s
@@ -889,7 +889,7 @@ modes/Mode51.s: modes/Mode51.cpp.s
 
 # target to generate assembly for a file
 modes/Mode51.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s
 .PHONY : modes/Mode51.cpp.s
 
 modes/Mode52.o: modes/Mode52.cpp.o
@@ -897,7 +897,7 @@ modes/Mode52.o: modes/Mode52.cpp.o
 
 # target to build an object file
 modes/Mode52.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o
 .PHONY : modes/Mode52.cpp.o
 
 modes/Mode52.i: modes/Mode52.cpp.i
@@ -905,7 +905,7 @@ modes/Mode52.i: modes/Mode52.cpp.i
 
 # target to preprocess a source file
 modes/Mode52.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i
 .PHONY : modes/Mode52.cpp.i
 
 modes/Mode52.s: modes/Mode52.cpp.s
@@ -913,7 +913,7 @@ modes/Mode52.s: modes/Mode52.cpp.s
 
 # target to generate assembly for a file
 modes/Mode52.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s
 .PHONY : modes/Mode52.cpp.s
 
 modes/Mode53.o: modes/Mode53.cpp.o
@@ -921,7 +921,7 @@ modes/Mode53.o: modes/Mode53.cpp.o
 
 # target to build an object file
 modes/Mode53.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o
 .PHONY : modes/Mode53.cpp.o
 
 modes/Mode53.i: modes/Mode53.cpp.i
@@ -929,7 +929,7 @@ modes/Mode53.i: modes/Mode53.cpp.i
 
 # target to preprocess a source file
 modes/Mode53.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i
 .PHONY : modes/Mode53.cpp.i
 
 modes/Mode53.s: modes/Mode53.cpp.s
@@ -937,7 +937,7 @@ modes/Mode53.s: modes/Mode53.cpp.s
 
 # target to generate assembly for a file
 modes/Mode53.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s
 .PHONY : modes/Mode53.cpp.s
 
 modes/Mode6.o: modes/Mode6.cpp.o
@@ -945,7 +945,7 @@ modes/Mode6.o: modes/Mode6.cpp.o
 
 # target to build an object file
 modes/Mode6.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o
 .PHONY : modes/Mode6.cpp.o
 
 modes/Mode6.i: modes/Mode6.cpp.i
@@ -953,7 +953,7 @@ modes/Mode6.i: modes/Mode6.cpp.i
 
 # target to preprocess a source file
 modes/Mode6.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i
 .PHONY : modes/Mode6.cpp.i
 
 modes/Mode6.s: modes/Mode6.cpp.s
@@ -961,7 +961,7 @@ modes/Mode6.s: modes/Mode6.cpp.s
 
 # target to generate assembly for a file
 modes/Mode6.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s
 .PHONY : modes/Mode6.cpp.s
 
 modes/Mode60.o: modes/Mode60.cpp.o
@@ -969,7 +969,7 @@ modes/Mode60.o: modes/Mode60.cpp.o
 
 # target to build an object file
 modes/Mode60.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o
 .PHONY : modes/Mode60.cpp.o
 
 modes/Mode60.i: modes/Mode60.cpp.i
@@ -977,7 +977,7 @@ modes/Mode60.i: modes/Mode60.cpp.i
 
 # target to preprocess a source file
 modes/Mode60.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i
 .PHONY : modes/Mode60.cpp.i
 
 modes/Mode60.s: modes/Mode60.cpp.s
@@ -985,7 +985,7 @@ modes/Mode60.s: modes/Mode60.cpp.s
 
 # target to generate assembly for a file
 modes/Mode60.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s
 .PHONY : modes/Mode60.cpp.s
 
 modes/Mode61.o: modes/Mode61.cpp.o
@@ -993,7 +993,7 @@ modes/Mode61.o: modes/Mode61.cpp.o
 
 # target to build an object file
 modes/Mode61.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o
 .PHONY : modes/Mode61.cpp.o
 
 modes/Mode61.i: modes/Mode61.cpp.i
@@ -1001,7 +1001,7 @@ modes/Mode61.i: modes/Mode61.cpp.i
 
 # target to preprocess a source file
 modes/Mode61.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i
 .PHONY : modes/Mode61.cpp.i
 
 modes/Mode61.s: modes/Mode61.cpp.s
@@ -1009,7 +1009,7 @@ modes/Mode61.s: modes/Mode61.cpp.s
 
 # target to generate assembly for a file
 modes/Mode61.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s
 .PHONY : modes/Mode61.cpp.s
 
 modes/Mode62.o: modes/Mode62.cpp.o
@@ -1017,7 +1017,7 @@ modes/Mode62.o: modes/Mode62.cpp.o
 
 # target to build an object file
 modes/Mode62.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o
 .PHONY : modes/Mode62.cpp.o
 
 modes/Mode62.i: modes/Mode62.cpp.i
@@ -1025,7 +1025,7 @@ modes/Mode62.i: modes/Mode62.cpp.i
 
 # target to preprocess a source file
 modes/Mode62.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i
 .PHONY : modes/Mode62.cpp.i
 
 modes/Mode62.s: modes/Mode62.cpp.s
@@ -1033,7 +1033,7 @@ modes/Mode62.s: modes/Mode62.cpp.s
 
 # target to generate assembly for a file
 modes/Mode62.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s
 .PHONY : modes/Mode62.cpp.s
 
 modes/Mode63.o: modes/Mode63.cpp.o
@@ -1041,7 +1041,7 @@ modes/Mode63.o: modes/Mode63.cpp.o
 
 # target to build an object file
 modes/Mode63.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o
 .PHONY : modes/Mode63.cpp.o
 
 modes/Mode63.i: modes/Mode63.cpp.i
@@ -1049,7 +1049,7 @@ modes/Mode63.i: modes/Mode63.cpp.i
 
 # target to preprocess a source file
 modes/Mode63.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i
 .PHONY : modes/Mode63.cpp.i
 
 modes/Mode63.s: modes/Mode63.cpp.s
@@ -1057,7 +1057,7 @@ modes/Mode63.s: modes/Mode63.cpp.s
 
 # target to generate assembly for a file
 modes/Mode63.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s
 .PHONY : modes/Mode63.cpp.s
 
 modes/Mode64.o: modes/Mode64.cpp.o
@@ -1065,7 +1065,7 @@ modes/Mode64.o: modes/Mode64.cpp.o
 
 # target to build an object file
 modes/Mode64.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o
 .PHONY : modes/Mode64.cpp.o
 
 modes/Mode64.i: modes/Mode64.cpp.i
@@ -1073,7 +1073,7 @@ modes/Mode64.i: modes/Mode64.cpp.i
 
 # target to preprocess a source file
 modes/Mode64.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i
 .PHONY : modes/Mode64.cpp.i
 
 modes/Mode64.s: modes/Mode64.cpp.s
@@ -1081,7 +1081,7 @@ modes/Mode64.s: modes/Mode64.cpp.s
 
 # target to generate assembly for a file
 modes/Mode64.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s
 .PHONY : modes/Mode64.cpp.s
 
 modes/Mode65.o: modes/Mode65.cpp.o
@@ -1089,7 +1089,7 @@ modes/Mode65.o: modes/Mode65.cpp.o
 
 # target to build an object file
 modes/Mode65.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o
 .PHONY : modes/Mode65.cpp.o
 
 modes/Mode65.i: modes/Mode65.cpp.i
@@ -1097,7 +1097,7 @@ modes/Mode65.i: modes/Mode65.cpp.i
 
 # target to preprocess a source file
 modes/Mode65.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i
 .PHONY : modes/Mode65.cpp.i
 
 modes/Mode65.s: modes/Mode65.cpp.s
@@ -1105,7 +1105,7 @@ modes/Mode65.s: modes/Mode65.cpp.s
 
 # target to generate assembly for a file
 modes/Mode65.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s
 .PHONY : modes/Mode65.cpp.s
 
 modes/Mode66.o: modes/Mode66.cpp.o
@@ -1113,7 +1113,7 @@ modes/Mode66.o: modes/Mode66.cpp.o
 
 # target to build an object file
 modes/Mode66.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o
 .PHONY : modes/Mode66.cpp.o
 
 modes/Mode66.i: modes/Mode66.cpp.i
@@ -1121,7 +1121,7 @@ modes/Mode66.i: modes/Mode66.cpp.i
 
 # target to preprocess a source file
 modes/Mode66.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i
 .PHONY : modes/Mode66.cpp.i
 
 modes/Mode66.s: modes/Mode66.cpp.s
@@ -1129,7 +1129,7 @@ modes/Mode66.s: modes/Mode66.cpp.s
 
 # target to generate assembly for a file
 modes/Mode66.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s
 .PHONY : modes/Mode66.cpp.s
 
 modes/Mode67.o: modes/Mode67.cpp.o
@@ -1137,7 +1137,7 @@ modes/Mode67.o: modes/Mode67.cpp.o
 
 # target to build an object file
 modes/Mode67.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o
 .PHONY : modes/Mode67.cpp.o
 
 modes/Mode67.i: modes/Mode67.cpp.i
@@ -1145,7 +1145,7 @@ modes/Mode67.i: modes/Mode67.cpp.i
 
 # target to preprocess a source file
 modes/Mode67.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i
 .PHONY : modes/Mode67.cpp.i
 
 modes/Mode67.s: modes/Mode67.cpp.s
@@ -1153,7 +1153,7 @@ modes/Mode67.s: modes/Mode67.cpp.s
 
 # target to generate assembly for a file
 modes/Mode67.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s
 .PHONY : modes/Mode67.cpp.s
 
 modes/Mode68.o: modes/Mode68.cpp.o
@@ -1161,7 +1161,7 @@ modes/Mode68.o: modes/Mode68.cpp.o
 
 # target to build an object file
 modes/Mode68.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o
 .PHONY : modes/Mode68.cpp.o
 
 modes/Mode68.i: modes/Mode68.cpp.i
@@ -1169,7 +1169,7 @@ modes/Mode68.i: modes/Mode68.cpp.i
 
 # target to preprocess a source file
 modes/Mode68.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i
 .PHONY : modes/Mode68.cpp.i
 
 modes/Mode68.s: modes/Mode68.cpp.s
@@ -1177,7 +1177,7 @@ modes/Mode68.s: modes/Mode68.cpp.s
 
 # target to generate assembly for a file
 modes/Mode68.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s
 .PHONY : modes/Mode68.cpp.s
 
 modes/Mode69.o: modes/Mode69.cpp.o
@@ -1185,7 +1185,7 @@ modes/Mode69.o: modes/Mode69.cpp.o
 
 # target to build an object file
 modes/Mode69.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o
 .PHONY : modes/Mode69.cpp.o
 
 modes/Mode69.i: modes/Mode69.cpp.i
@@ -1193,7 +1193,7 @@ modes/Mode69.i: modes/Mode69.cpp.i
 
 # target to preprocess a source file
 modes/Mode69.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i
 .PHONY : modes/Mode69.cpp.i
 
 modes/Mode69.s: modes/Mode69.cpp.s
@@ -1201,7 +1201,7 @@ modes/Mode69.s: modes/Mode69.cpp.s
 
 # target to generate assembly for a file
 modes/Mode69.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s
 .PHONY : modes/Mode69.cpp.s
 
 modes/Mode7.o: modes/Mode7.cpp.o
@@ -1209,7 +1209,7 @@ modes/Mode7.o: modes/Mode7.cpp.o
 
 # target to build an object file
 modes/Mode7.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o
 .PHONY : modes/Mode7.cpp.o
 
 modes/Mode7.i: modes/Mode7.cpp.i
@@ -1217,7 +1217,7 @@ modes/Mode7.i: modes/Mode7.cpp.i
 
 # target to preprocess a source file
 modes/Mode7.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i
 .PHONY : modes/Mode7.cpp.i
 
 modes/Mode7.s: modes/Mode7.cpp.s
@@ -1225,7 +1225,7 @@ modes/Mode7.s: modes/Mode7.cpp.s
 
 # target to generate assembly for a file
 modes/Mode7.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s
 .PHONY : modes/Mode7.cpp.s
 
 modes/Mode70.o: modes/Mode70.cpp.o
@@ -1233,7 +1233,7 @@ modes/Mode70.o: modes/Mode70.cpp.o
 
 # target to build an object file
 modes/Mode70.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o
 .PHONY : modes/Mode70.cpp.o
 
 modes/Mode70.i: modes/Mode70.cpp.i
@@ -1241,7 +1241,7 @@ modes/Mode70.i: modes/Mode70.cpp.i
 
 # target to preprocess a source file
 modes/Mode70.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i
 .PHONY : modes/Mode70.cpp.i
 
 modes/Mode70.s: modes/Mode70.cpp.s
@@ -1249,7 +1249,7 @@ modes/Mode70.s: modes/Mode70.cpp.s
 
 # target to generate assembly for a file
 modes/Mode70.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s
 .PHONY : modes/Mode70.cpp.s
 
 modes/Mode8.o: modes/Mode8.cpp.o
@@ -1257,7 +1257,7 @@ modes/Mode8.o: modes/Mode8.cpp.o
 
 # target to build an object file
 modes/Mode8.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o
 .PHONY : modes/Mode8.cpp.o
 
 modes/Mode8.i: modes/Mode8.cpp.i
@@ -1265,7 +1265,7 @@ modes/Mode8.i: modes/Mode8.cpp.i
 
 # target to preprocess a source file
 modes/Mode8.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i
 .PHONY : modes/Mode8.cpp.i
 
 modes/Mode8.s: modes/Mode8.cpp.s
@@ -1273,7 +1273,7 @@ modes/Mode8.s: modes/Mode8.cpp.s
 
 # target to generate assembly for a file
 modes/Mode8.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s
 .PHONY : modes/Mode8.cpp.s
 
 modes/Mode80.o: modes/Mode80.cpp.o
@@ -1281,7 +1281,7 @@ modes/Mode80.o: modes/Mode80.cpp.o
 
 # target to build an object file
 modes/Mode80.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o
 .PHONY : modes/Mode80.cpp.o
 
 modes/Mode80.i: modes/Mode80.cpp.i
@@ -1289,7 +1289,7 @@ modes/Mode80.i: modes/Mode80.cpp.i
 
 # target to preprocess a source file
 modes/Mode80.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i
 .PHONY : modes/Mode80.cpp.i
 
 modes/Mode80.s: modes/Mode80.cpp.s
@@ -1297,7 +1297,7 @@ modes/Mode80.s: modes/Mode80.cpp.s
 
 # target to generate assembly for a file
 modes/Mode80.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s
 .PHONY : modes/Mode80.cpp.s
 
 modes/Mode9.o: modes/Mode9.cpp.o
@@ -1305,7 +1305,7 @@ modes/Mode9.o: modes/Mode9.cpp.o
 
 # target to build an object file
 modes/Mode9.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o
 .PHONY : modes/Mode9.cpp.o
 
 modes/Mode9.i: modes/Mode9.cpp.i
@@ -1313,7 +1313,7 @@ modes/Mode9.i: modes/Mode9.cpp.i
 
 # target to preprocess a source file
 modes/Mode9.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i
 .PHONY : modes/Mode9.cpp.i
 
 modes/Mode9.s: modes/Mode9.cpp.s
@@ -1321,7 +1321,7 @@ modes/Mode9.s: modes/Mode9.cpp.s
 
 # target to generate assembly for a file
 modes/Mode9.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s
 .PHONY : modes/Mode9.cpp.s
 
 modes/ModeUtils.o: modes/ModeUtils.cpp.o
@@ -1329,7 +1329,7 @@ modes/ModeUtils.o: modes/ModeUtils.cpp.o
 
 # target to build an object file
 modes/ModeUtils.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o
 .PHONY : modes/ModeUtils.cpp.o
 
 modes/ModeUtils.i: modes/ModeUtils.cpp.i
@@ -1337,7 +1337,7 @@ modes/ModeUtils.i: modes/ModeUtils.cpp.i
 
 # target to preprocess a source file
 modes/ModeUtils.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i
 .PHONY : modes/ModeUtils.cpp.i
 
 modes/ModeUtils.s: modes/ModeUtils.cpp.s
@@ -1345,7 +1345,7 @@ modes/ModeUtils.s: modes/ModeUtils.cpp.s
 
 # target to generate assembly for a file
 modes/ModeUtils.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s
 .PHONY : modes/ModeUtils.cpp.s
 
 scan.o: scan.cpp.o
@@ -1353,7 +1353,7 @@ scan.o: scan.cpp.o
 
 # target to build an object file
 scan.cpp.o:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.o
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.o
 .PHONY : scan.cpp.o
 
 scan.i: scan.cpp.i
@@ -1361,7 +1361,7 @@ scan.i: scan.cpp.i
 
 # target to preprocess a source file
 scan.cpp.i:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.i
 .PHONY : scan.cpp.i
 
 scan.s: scan.cpp.s
@@ -1369,7 +1369,7 @@ scan.s: scan.cpp.s
 
 # target to generate assembly for a file
 scan.cpp.s:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/scan.cpp.s
 .PHONY : scan.cpp.s
 
 # Help Target
@@ -1545,6 +1545,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 

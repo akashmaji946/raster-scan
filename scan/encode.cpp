@@ -16,7 +16,7 @@
 #include <cstring>
 
 // Global variables
-const std::string PROJECT_DIR = "/home/akashmaji/Device/IMPORTANT/raster-scan/";
+const std::string PROJECT_DIR = "~/Device/IMPORTANT/raster-scan/";
 int32_t g_dim = 3;
 uint32_t g_npoints = uint32_t(50e6);  // Default: 50 million
 std::string g_folder;

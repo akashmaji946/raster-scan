@@ -1,4 +1,4 @@
-# Install script for directory: /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+# Install script for directory: ~/Device/IMPORTANT/raster-scan/scan
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

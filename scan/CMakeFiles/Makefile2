@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan
+CMAKE_SOURCE_DIR = ~/Device/IMPORTANT/raster-scan
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+CMAKE_BINARY_DIR = ~/Device/IMPORTANT/raster-scan/scan
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -120,14 +120,14 @@ vulkan/clean: vulkan/CMakeFiles/VkCore.dir/clean
 vulkan/CMakeFiles/VkCore.dir/all:
 	$(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/depend
 	$(MAKE) $(MAKESILENT) -f vulkan/CMakeFiles/VkCore.dir/build.make vulkan/CMakeFiles/VkCore.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=89,90,91,92,93,94,95,96,97,98,99,100 "Built target VkCore"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=89,90,91,92,93,94,95,96,97,98,99,100 "Built target VkCore"
 .PHONY : vulkan/CMakeFiles/VkCore.dir/all
 
 # Build rule for subdir invocation for target.
 vulkan/CMakeFiles/VkCore.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 12
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 vulkan/CMakeFiles/VkCore.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : vulkan/CMakeFiles/VkCore.dir/rule
 
 # Convenience name for target.
@@ -146,14 +146,14 @@ vulkan/CMakeFiles/VkCore.dir/clean:
 scan/CMakeFiles/EncodeData.dir/all:
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/depend
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/EncodeData.dir/build.make scan/CMakeFiles/EncodeData.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=3,4 "Built target EncodeData"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=3,4 "Built target EncodeData"
 .PHONY : scan/CMakeFiles/EncodeData.dir/all
 
 # Build rule for subdir invocation for target.
 scan/CMakeFiles/EncodeData.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/EncodeData.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : scan/CMakeFiles/EncodeData.dir/rule
 
 # Convenience name for target.
@@ -172,14 +172,14 @@ scan/CMakeFiles/EncodeData.dir/clean:
 scan/CMakeFiles/RasterScan.dir/all: vulkan/CMakeFiles/VkCore.dir/all
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/depend
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/RasterScan.dir/build.make scan/CMakeFiles/RasterScan.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88 "Built target RasterScan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88 "Built target RasterScan"
 .PHONY : scan/CMakeFiles/RasterScan.dir/all
 
 # Build rule for subdir invocation for target.
 scan/CMakeFiles/RasterScan.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 96
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 96
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/RasterScan.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : scan/CMakeFiles/RasterScan.dir/rule
 
 # Convenience name for target.
@@ -198,14 +198,14 @@ scan/CMakeFiles/RasterScan.dir/clean:
 scan/CMakeFiles/CPUScan.dir/all:
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/depend
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/CPUScan.dir/build.make scan/CMakeFiles/CPUScan.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=1 "Built target CPUScan"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=1 "Built target CPUScan"
 .PHONY : scan/CMakeFiles/CPUScan.dir/all
 
 # Build rule for subdir invocation for target.
 scan/CMakeFiles/CPUScan.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/CPUScan.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : scan/CMakeFiles/CPUScan.dir/rule
 
 # Convenience name for target.
@@ -224,14 +224,14 @@ scan/CMakeFiles/CPUScan.dir/clean:
 scan/CMakeFiles/Compare.dir/all:
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/depend
 	$(MAKE) $(MAKESILENT) -f scan/CMakeFiles/Compare.dir/build.make scan/CMakeFiles/Compare.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=2 "Built target Compare"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=2 "Built target Compare"
 .PHONY : scan/CMakeFiles/Compare.dir/all
 
 # Build rule for subdir invocation for target.
 scan/CMakeFiles/Compare.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 1
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 1
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 scan/CMakeFiles/Compare.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start ~/Device/IMPORTANT/raster-scan/scan/CMakeFiles 0
 .PHONY : scan/CMakeFiles/Compare.dir/rule
 
 # Convenience name for target.

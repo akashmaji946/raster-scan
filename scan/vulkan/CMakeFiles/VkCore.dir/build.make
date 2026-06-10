@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan
+CMAKE_SOURCE_DIR = ~/Device/IMPORTANT/raster-scan
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+CMAKE_BINARY_DIR = ~/Device/IMPORTANT/raster-scan/scan
 
 # Include any dependencies generated for this target.
 include vulkan/CMakeFiles/VkCore.dir/depend.make
@@ -71,181 +71,181 @@ include vulkan/CMakeFiles/VkCore.dir/flags.make
 
 shaders/prefixsum.comp.spv: ../vulkan/shaders/prefixsum.comp
 shaders/prefixsum.comp.spv: ../vulkan/shaders/prefixsum.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ../shaders/prefixsum.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/prefixsum.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/shaders/prefixsum.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ../shaders/prefixsum.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/prefixsum.comp.spv ~/Device/IMPORTANT/raster-scan/vulkan/shaders/prefixsum.comp --target-env=vulkan1.1
 
 shaders/reduce-max.comp.spv: ../vulkan/shaders/reduce-max.comp
 shaders/reduce-max.comp.spv: ../vulkan/shaders/reduce-max.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ../shaders/reduce-max.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/reduce-max.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/shaders/reduce-max.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ../shaders/reduce-max.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/reduce-max.comp.spv ~/Device/IMPORTANT/raster-scan/vulkan/shaders/reduce-max.comp --target-env=vulkan1.1
 
 vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o: ../vulkan/common/utils.cpp
 vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o -MF CMakeFiles/VkCore.dir/common/utils.cpp.o.d -o CMakeFiles/VkCore.dir/common/utils.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.o -MF CMakeFiles/VkCore.dir/common/utils.cpp.o.d -o CMakeFiles/VkCore.dir/common/utils.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp
 
 vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/common/utils.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp > CMakeFiles/VkCore.dir/common/utils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp > CMakeFiles/VkCore.dir/common/utils.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/common/utils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/common/utils.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp -o CMakeFiles/VkCore.dir/common/utils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/common/utils.cpp -o CMakeFiles/VkCore.dir/common/utils.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o: ../vulkan/core/ComputePipelineProperties.cpp
 vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o -MF CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o.d -o CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o -MF CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o.d -o CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp > CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp > CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp -o CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/ComputePipelineProperties.cpp -o CMakeFiles/VkCore.dir/core/ComputePipelineProperties.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o: ../vulkan/core/GraphicsPipelineProperties.cpp
 vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o -MF CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o.d -o CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o -MF CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o.d -o CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp > CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp > CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp -o CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/GraphicsPipelineProperties.cpp -o CMakeFiles/VkCore.dir/core/GraphicsPipelineProperties.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o: ../vulkan/core/GPUTimer.cpp
 vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o -MF CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o.d -o CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o -MF CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o.d -o CMakeFiles/VkCore.dir/core/GPUTimer.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp > CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp > CMakeFiles/VkCore.dir/core/GPUTimer.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp -o CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/GPUTimer.cpp -o CMakeFiles/VkCore.dir/core/GPUTimer.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o: ../vulkan/core/VkData.cpp
 vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o -MF CMakeFiles/VkCore.dir/core/VkData.cpp.o.d -o CMakeFiles/VkCore.dir/core/VkData.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.o -MF CMakeFiles/VkCore.dir/core/VkData.cpp.o.d -o CMakeFiles/VkCore.dir/core/VkData.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/VkData.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp > CMakeFiles/VkCore.dir/core/VkData.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp > CMakeFiles/VkCore.dir/core/VkData.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/VkData.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/VkData.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp -o CMakeFiles/VkCore.dir/core/VkData.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/VkData.cpp -o CMakeFiles/VkCore.dir/core/VkData.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o: ../vulkan/core/VkEngine.cpp
 vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o -MF CMakeFiles/VkCore.dir/core/VkEngine.cpp.o.d -o CMakeFiles/VkCore.dir/core/VkEngine.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.o -MF CMakeFiles/VkCore.dir/core/VkEngine.cpp.o.d -o CMakeFiles/VkCore.dir/core/VkEngine.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/VkEngine.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp > CMakeFiles/VkCore.dir/core/VkEngine.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp > CMakeFiles/VkCore.dir/core/VkEngine.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/VkEngine.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/VkEngine.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp -o CMakeFiles/VkCore.dir/core/VkEngine.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/VkEngine.cpp -o CMakeFiles/VkCore.dir/core/VkEngine.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o: ../vulkan/core/VulkanDevice.cpp
 vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o -MF CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o.d -o CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o -MF CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o.d -o CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp > CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp > CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp -o CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/VulkanDevice.cpp -o CMakeFiles/VkCore.dir/core/VulkanDevice.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o: ../vulkan/core/vkutils.cpp
 vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o -MF CMakeFiles/VkCore.dir/core/vkutils.cpp.o.d -o CMakeFiles/VkCore.dir/core/vkutils.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.o -MF CMakeFiles/VkCore.dir/core/vkutils.cpp.o.d -o CMakeFiles/VkCore.dir/core/vkutils.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp
 
 vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/core/vkutils.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp > CMakeFiles/VkCore.dir/core/vkutils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp > CMakeFiles/VkCore.dir/core/vkutils.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/core/vkutils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/core/vkutils.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp -o CMakeFiles/VkCore.dir/core/vkutils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/core/vkutils.cpp -o CMakeFiles/VkCore.dir/core/vkutils.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o: ../vulkan/operators/OperatorCache.cpp
 vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o -MF CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o.d -o CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o -MF CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o.d -o CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp
 
 vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp > CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp > CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp -o CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/operators/OperatorCache.cpp -o CMakeFiles/VkCore.dir/operators/OperatorCache.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o: ../vulkan/operators/ReduceMax.cpp
 vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o -MF CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o.d -o CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o -MF CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o.d -o CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp
 
 vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp > CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp > CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp -o CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/operators/ReduceMax.cpp -o CMakeFiles/VkCore.dir/operators/ReduceMax.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o: ../vulkan/operators/SinglePassScan.cpp
 vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o -MF CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o.d -o CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o -MF CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o.d -o CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp
 
 vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp > CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp > CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp -o CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/operators/SinglePassScan.cpp -o CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.s
 
 vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o: vulkan/CMakeFiles/VkCore.dir/flags.make
 vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o: ../vulkan/vma/vma.cpp
 vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o: vulkan/CMakeFiles/VkCore.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o -MF CMakeFiles/VkCore.dir/vma/vma.cpp.o.d -o CMakeFiles/VkCore.dir/vma/vma.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o -MF CMakeFiles/VkCore.dir/vma/vma.cpp.o.d -o CMakeFiles/VkCore.dir/vma/vma.cpp.o -c ~/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp
 
 vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/VkCore.dir/vma/vma.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp > CMakeFiles/VkCore.dir/vma/vma.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp > CMakeFiles/VkCore.dir/vma/vma.cpp.i
 
 vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/VkCore.dir/vma/vma.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp -o CMakeFiles/VkCore.dir/vma/vma.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/vulkan/vma/vma.cpp -o CMakeFiles/VkCore.dir/vma/vma.cpp.s
 
 # Object files for target VkCore
 VkCore_OBJECTS = \
@@ -279,20 +279,20 @@ vulkan/libVkCore.a: vulkan/CMakeFiles/VkCore.dir/operators/SinglePassScan.cpp.o
 vulkan/libVkCore.a: vulkan/CMakeFiles/VkCore.dir/vma/vma.cpp.o
 vulkan/libVkCore.a: vulkan/CMakeFiles/VkCore.dir/build.make
 vulkan/libVkCore.a: vulkan/CMakeFiles/VkCore.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX static library libVkCore.a"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -P CMakeFiles/VkCore.dir/cmake_clean_target.cmake
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/VkCore.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Linking CXX static library libVkCore.a"
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -P CMakeFiles/VkCore.dir/cmake_clean_target.cmake
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/VkCore.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 vulkan/CMakeFiles/VkCore.dir/build: vulkan/libVkCore.a
 .PHONY : vulkan/CMakeFiles/VkCore.dir/build
 
 vulkan/CMakeFiles/VkCore.dir/clean:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -P CMakeFiles/VkCore.dir/cmake_clean.cmake
+	cd ~/Device/IMPORTANT/raster-scan/scan/vulkan && $(CMAKE_COMMAND) -P CMakeFiles/VkCore.dir/cmake_clean.cmake
 .PHONY : vulkan/CMakeFiles/VkCore.dir/clean
 
 vulkan/CMakeFiles/VkCore.dir/depend: shaders/prefixsum.comp.spv
 vulkan/CMakeFiles/VkCore.dir/depend: shaders/reduce-max.comp.spv
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/akashmaji/Device/IMPORTANT/raster-scan /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan /home/akashmaji/Device/IMPORTANT/raster-scan/scan /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan /home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan/CMakeFiles/VkCore.dir/DependInfo.cmake --color=$(COLOR)
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" ~/Device/IMPORTANT/raster-scan ~/Device/IMPORTANT/raster-scan/vulkan ~/Device/IMPORTANT/raster-scan/scan ~/Device/IMPORTANT/raster-scan/scan/vulkan ~/Device/IMPORTANT/raster-scan/scan/vulkan/CMakeFiles/VkCore.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : vulkan/CMakeFiles/VkCore.dir/depend
 

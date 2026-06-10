@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = -DDEV_BUILD
 
-CXX_INCLUDES = -I/home/akashmaji/Device/IMPORTANT/raster-scan/scan/vulkan -I/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan -I/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/.
+CXX_INCLUDES = -I~/Device/IMPORTANT/raster-scan/scan/vulkan -I~/Device/IMPORTANT/raster-scan/vulkan -I~/Device/IMPORTANT/raster-scan/vulkan/.
 
 CXX_FLAGS = -std=gnu++17
 

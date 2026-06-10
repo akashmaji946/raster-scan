@@ -6,11 +6,11 @@
 
 #IncludeRegexTransform: 
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/common/ShaderDefines.h
+~/Device/IMPORTANT/raster-scan/vulkan/common/ShaderDefines.h
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/shaders/prefixsum.comp
+~/Device/IMPORTANT/raster-scan/vulkan/shaders/prefixsum.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/shaders/reduce-max.comp
+~/Device/IMPORTANT/raster-scan/vulkan/shaders/reduce-max.comp
 ../common/ShaderDefines.h
-/home/akashmaji/Device/IMPORTANT/raster-scan/vulkan/common/ShaderDefines.h
+~/Device/IMPORTANT/raster-scan/vulkan/common/ShaderDefines.h
 

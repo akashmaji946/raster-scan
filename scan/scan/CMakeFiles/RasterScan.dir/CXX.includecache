@@ -6,135 +6,135 @@
 
 #IncludeRegexTransform: 
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag
+~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom
+~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert
+~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert
 
-/home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp
+~/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp
 

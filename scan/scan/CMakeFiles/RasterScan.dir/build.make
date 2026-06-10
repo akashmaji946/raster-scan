@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan
+CMAKE_SOURCE_DIR = ~/Device/IMPORTANT/raster-scan
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/akashmaji/Device/IMPORTANT/raster-scan/scan
+CMAKE_BINARY_DIR = ~/Device/IMPORTANT/raster-scan/scan
 
 # Include any dependencies generated for this target.
 include scan/CMakeFiles/RasterScan.dir/depend.make
@@ -71,991 +71,991 @@ include scan/CMakeFiles/RasterScan.dir/flags.make
 
 shaders/dummy.frag.spv: shaders/dummy.frag
 shaders/dummy.frag.spv: shaders/dummy.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ../shaders/dummy.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Generating ../shaders/dummy.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/dummy.frag --target-env=vulkan1.1
 
 shaders/build-count-2D.vert.spv: shaders/build-count-2D.vert
 shaders/build-count-2D.vert.spv: shaders/build-count-2D.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ../shaders/build-count-2D.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Generating ../shaders/build-count-2D.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/build-count-2D.vert --target-env=vulkan1.1
 
 shaders/build2D.vert.spv: shaders/build2D.vert
 shaders/build2D.vert.spv: shaders/build2D.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating ../shaders/build2D.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Generating ../shaders/build2D.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/build2D.vert --target-env=vulkan1.1
 
 shaders/range2D.vert.spv: shaders/range2D.vert
 shaders/range2D.vert.spv: shaders/range2D.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating ../shaders/range2D.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Generating ../shaders/range2D.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.vert --target-env=vulkan1.1
 
 shaders/range2D.frag.spv: shaders/range2D.frag
 shaders/range2D.frag.spv: shaders/range2D.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating ../shaders/range2D.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Generating ../shaders/range2D.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.frag --target-env=vulkan1.1
 
 shaders/range2D.geom.spv: shaders/range2D.geom
 shaders/range2D.geom.spv: shaders/range2D.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating ../shaders/range2D.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Generating ../shaders/range2D.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/range2D.geom --target-env=vulkan1.1
 
 shaders/edge2D.vert.spv: shaders/edge2D.vert
 shaders/edge2D.vert.spv: shaders/edge2D.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating ../shaders/edge2D.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Generating ../shaders/edge2D.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.vert --target-env=vulkan1.1
 
 shaders/edge2D.frag.spv: shaders/edge2D.frag
 shaders/edge2D.frag.spv: shaders/edge2D.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating ../shaders/edge2D.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Generating ../shaders/edge2D.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.frag --target-env=vulkan1.1
 
 shaders/edge2D.geom.spv: shaders/edge2D.geom
 shaders/edge2D.geom.spv: shaders/edge2D.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating ../shaders/edge2D.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Generating ../shaders/edge2D.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/edge2D.geom --target-env=vulkan1.1
 
 shaders/insert-page.vert.spv: shaders/insert-page.vert
 shaders/insert-page.vert.spv: shaders/insert-page.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating ../shaders/insert-page.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Generating ../shaders/insert-page.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page.vert --target-env=vulkan1.1
 
 shaders/delete-page.vert.spv: shaders/delete-page.vert
 shaders/delete-page.vert.spv: shaders/delete-page.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Generating ../shaders/delete-page.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Generating ../shaders/delete-page.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-page.vert --target-env=vulkan1.1
 
 shaders/delete-range.vert.spv: shaders/delete-range.vert
 shaders/delete-range.vert.spv: shaders/delete-range.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Generating ../shaders/delete-range.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Generating ../shaders/delete-range.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-range.vert --target-env=vulkan1.1
 
 shaders/query-tex-ll.vert.spv: shaders/query-tex-ll.vert
 shaders/query-tex-ll.vert.spv: shaders/query-tex-ll.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Generating ../shaders/query-tex-ll.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Generating ../shaders/query-tex-ll.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.vert --target-env=vulkan1.1
 
 shaders/query-tex-ll.geom.spv: shaders/query-tex-ll.geom
 shaders/query-tex-ll.geom.spv: shaders/query-tex-ll.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Generating ../shaders/query-tex-ll.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Generating ../shaders/query-tex-ll.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.geom --target-env=vulkan1.1
 
 shaders/query-tex-ll.frag.spv: shaders/query-tex-ll.frag
 shaders/query-tex-ll.frag.spv: shaders/query-tex-ll.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Generating ../shaders/query-tex-ll.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Generating ../shaders/query-tex-ll.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-tex-ll.frag --target-env=vulkan1.1
 
 shaders/query-page-ll.vert.spv: shaders/query-page-ll.vert
 shaders/query-page-ll.vert.spv: shaders/query-page-ll.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Generating ../shaders/query-page-ll.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Generating ../shaders/query-page-ll.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.vert --target-env=vulkan1.1
 
 shaders/query-page-ll.geom.spv: shaders/query-page-ll.geom
 shaders/query-page-ll.geom.spv: shaders/query-page-ll.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Generating ../shaders/query-page-ll.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Generating ../shaders/query-page-ll.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.geom --target-env=vulkan1.1
 
 shaders/query-page-ll.frag.spv: shaders/query-page-ll.frag
 shaders/query-page-ll.frag.spv: shaders/query-page-ll.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Generating ../shaders/query-page-ll.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Generating ../shaders/query-page-ll.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/query-page-ll.frag --target-env=vulkan1.1
 
 shaders/insert-page-bitmap.vert.spv: shaders/insert-page-bitmap.vert
 shaders/insert-page-bitmap.vert.spv: shaders/insert-page-bitmap.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Generating ../shaders/insert-page-bitmap.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Generating ../shaders/insert-page-bitmap.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap.vert --target-env=vulkan1.1
 
 shaders/insert-page-bitmap-v2.vert.spv: shaders/insert-page-bitmap-v2.vert
 shaders/insert-page-bitmap-v2.vert.spv: shaders/insert-page-bitmap-v2.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Generating ../shaders/insert-page-bitmap-v2.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Generating ../shaders/insert-page-bitmap-v2.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/insert-page-bitmap-v2.vert --target-env=vulkan1.1
 
 shaders/delete-by-data.vert.spv: shaders/delete-by-data.vert
 shaders/delete-by-data.vert.spv: shaders/delete-by-data.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Generating ../shaders/delete-by-data.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Generating ../shaders/delete-by-data.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/delete-by-data.vert --target-env=vulkan1.1
 
 shaders/mark-free-bitmap.vert.spv: shaders/mark-free-bitmap.vert
 shaders/mark-free-bitmap.vert.spv: shaders/mark-free-bitmap.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Generating ../shaders/mark-free-bitmap.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Generating ../shaders/mark-free-bitmap.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/mark-free-bitmap.vert --target-env=vulkan1.1
 
 shaders/compact-pages.vert.spv: shaders/compact-pages.vert
 shaders/compact-pages.vert.spv: shaders/compact-pages.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Generating ../shaders/compact-pages.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_23) "Generating ../shaders/compact-pages.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact-pages.vert --target-env=vulkan1.1
 
 shaders/verify-index.comp.spv: shaders/verify-index.comp
 shaders/verify-index.comp.spv: shaders/verify-index.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Generating ../shaders/verify-index.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_24) "Generating ../shaders/verify-index.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/verify-index.comp --target-env=vulkan1.1
 
 shaders/compact_insert.comp.spv: shaders/compact_insert.comp
 shaders/compact_insert.comp.spv: shaders/compact_insert.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Generating ../shaders/compact_insert.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_25) "Generating ../shaders/compact_insert.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert.comp --target-env=vulkan1.1
 
 shaders/compact_query.comp.spv: shaders/compact_query.comp
 shaders/compact_query.comp.spv: shaders/compact_query.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Generating ../shaders/compact_query.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_26) "Generating ../shaders/compact_query.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query.comp --target-env=vulkan1.1
 
 shaders/compact_delete.comp.spv: shaders/compact_delete.comp
 shaders/compact_delete.comp.spv: shaders/compact_delete.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Generating ../shaders/compact_delete.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_27) "Generating ../shaders/compact_delete.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete.comp --target-env=vulkan1.1
 
 shaders/compact_delete_indexed.comp.spv: shaders/compact_delete_indexed.comp
 shaders/compact_delete_indexed.comp.spv: shaders/compact_delete_indexed.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Generating ../shaders/compact_delete_indexed.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_28) "Generating ../shaders/compact_delete_indexed.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_delete_indexed.comp --target-env=vulkan1.1
 
 shaders/compact_count.comp.spv: shaders/compact_count.comp
 shaders/compact_count.comp.spv: shaders/compact_count.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Generating ../shaders/compact_count.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_29) "Generating ../shaders/compact_count.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count.comp --target-env=vulkan1.1
 
 shaders/compact_stats.comp.spv: shaders/compact_stats.comp
 shaders/compact_stats.comp.spv: shaders/compact_stats.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Generating ../shaders/compact_stats.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_30) "Generating ../shaders/compact_stats.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_stats.comp --target-env=vulkan1.1
 
 shaders/compact_count_gfx.vert.spv: shaders/compact_count_gfx.vert
 shaders/compact_count_gfx.vert.spv: shaders/compact_count_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Generating ../shaders/compact_count_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_31) "Generating ../shaders/compact_count_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_count_gfx.vert --target-env=vulkan1.1
 
 shaders/compact_build_gfx.vert.spv: shaders/compact_build_gfx.vert
 shaders/compact_build_gfx.vert.spv: shaders/compact_build_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Generating ../shaders/compact_build_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_32) "Generating ../shaders/compact_build_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_build_gfx.vert --target-env=vulkan1.1
 
 shaders/compact_insert_gfx.vert.spv: shaders/compact_insert_gfx.vert
 shaders/compact_insert_gfx.vert.spv: shaders/compact_insert_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Generating ../shaders/compact_insert_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_33) "Generating ../shaders/compact_insert_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_insert_gfx.vert --target-env=vulkan1.1
 
 shaders/compact_scale_counts.comp.spv: shaders/compact_scale_counts.comp
 shaders/compact_scale_counts.comp.spv: shaders/compact_scale_counts.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Generating ../shaders/compact_scale_counts.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_34) "Generating ../shaders/compact_scale_counts.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_scale_counts.comp --target-env=vulkan1.1
 
 shaders/compact_query_gfx.vert.spv: shaders/compact_query_gfx.vert
 shaders/compact_query_gfx.vert.spv: shaders/compact_query_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Generating ../shaders/compact_query_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_35) "Generating ../shaders/compact_query_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.vert --target-env=vulkan1.1
 
 shaders/compact_query_gfx.geom.spv: shaders/compact_query_gfx.geom
 shaders/compact_query_gfx.geom.spv: shaders/compact_query_gfx.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Generating ../shaders/compact_query_gfx.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_36) "Generating ../shaders/compact_query_gfx.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.geom --target-env=vulkan1.1
 
 shaders/compact_query_gfx.frag.spv: shaders/compact_query_gfx.frag
 shaders/compact_query_gfx.frag.spv: shaders/compact_query_gfx.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Generating ../shaders/compact_query_gfx.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_37) "Generating ../shaders/compact_query_gfx.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_query_gfx.frag --target-env=vulkan1.1
 
 shaders/compact_range.frag.spv: shaders/compact_range.frag
 shaders/compact_range.frag.spv: shaders/compact_range.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Generating ../shaders/compact_range.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_38) "Generating ../shaders/compact_range.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_range.frag --target-env=vulkan1.1
 
 shaders/compact_edge.vert.spv: shaders/compact_edge.vert
 shaders/compact_edge.vert.spv: shaders/compact_edge.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Generating ../shaders/compact_edge.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_39) "Generating ../shaders/compact_edge.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.vert --target-env=vulkan1.1
 
 shaders/compact_edge.geom.spv: shaders/compact_edge.geom
 shaders/compact_edge.geom.spv: shaders/compact_edge.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Generating ../shaders/compact_edge.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_40) "Generating ../shaders/compact_edge.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.geom --target-env=vulkan1.1
 
 shaders/compact_edge.frag.spv: shaders/compact_edge.frag
 shaders/compact_edge.frag.spv: shaders/compact_edge.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Generating ../shaders/compact_edge.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_41) "Generating ../shaders/compact_edge.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compact_edge.frag --target-env=vulkan1.1
 
 shaders/equidepth_histogram.comp.spv: shaders/equidepth_histogram.comp
 shaders/equidepth_histogram.comp.spv: shaders/equidepth_histogram.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Generating ../shaders/equidepth_histogram.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_42) "Generating ../shaders/equidepth_histogram.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_histogram.comp --target-env=vulkan1.1
 
 shaders/equidepth_quantiles.comp.spv: shaders/equidepth_quantiles.comp
 shaders/equidepth_quantiles.comp.spv: shaders/equidepth_quantiles.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Generating ../shaders/equidepth_quantiles.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_43) "Generating ../shaders/equidepth_quantiles.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_quantiles.comp --target-env=vulkan1.1
 
 shaders/equidepth_count.vert.spv: shaders/equidepth_count.vert
 shaders/equidepth_count.vert.spv: shaders/equidepth_count.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Generating ../shaders/equidepth_count.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_44) "Generating ../shaders/equidepth_count.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_count.vert --target-env=vulkan1.1
 
 shaders/equidepth_build.vert.spv: shaders/equidepth_build.vert
 shaders/equidepth_build.vert.spv: shaders/equidepth_build.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Generating ../shaders/equidepth_build.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_45) "Generating ../shaders/equidepth_build.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_build.vert --target-env=vulkan1.1
 
 shaders/equidepth_morton.comp.spv: shaders/equidepth_morton.comp
 shaders/equidepth_morton.comp.spv: shaders/equidepth_morton.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Generating ../shaders/equidepth_morton.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_46) "Generating ../shaders/equidepth_morton.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton.comp --target-env=vulkan1.1
 
 shaders/equidepth_morton_quantiles.comp.spv: shaders/equidepth_morton_quantiles.comp
 shaders/equidepth_morton_quantiles.comp.spv: shaders/equidepth_morton_quantiles.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Generating ../shaders/equidepth_morton_quantiles.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_47) "Generating ../shaders/equidepth_morton_quantiles.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_quantiles.comp --target-env=vulkan1.1
 
 shaders/equidepth_morton_count.vert.spv: shaders/equidepth_morton_count.vert
 shaders/equidepth_morton_count.vert.spv: shaders/equidepth_morton_count.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Generating ../shaders/equidepth_morton_count.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_48) "Generating ../shaders/equidepth_morton_count.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_count.vert --target-env=vulkan1.1
 
 shaders/equidepth_morton_build.vert.spv: shaders/equidepth_morton_build.vert
 shaders/equidepth_morton_build.vert.spv: shaders/equidepth_morton_build.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Generating ../shaders/equidepth_morton_build.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_49) "Generating ../shaders/equidepth_morton_build.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_build.vert --target-env=vulkan1.1
 
 shaders/equidepth_morton_query.vert.spv: shaders/equidepth_morton_query.vert
 shaders/equidepth_morton_query.vert.spv: shaders/equidepth_morton_query.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Generating ../shaders/equidepth_morton_query.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_50) "Generating ../shaders/equidepth_morton_query.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_query.vert --target-env=vulkan1.1
 
 shaders/equidepth_morton_range.frag.spv: shaders/equidepth_morton_range.frag
 shaders/equidepth_morton_range.frag.spv: shaders/equidepth_morton_range.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Generating ../shaders/equidepth_morton_range.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_51) "Generating ../shaders/equidepth_morton_range.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_morton_range.frag --target-env=vulkan1.1
 
 shaders/equidepth_query.vert.spv: shaders/equidepth_query.vert
 shaders/equidepth_query.vert.spv: shaders/equidepth_query.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Generating ../shaders/equidepth_query.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_52) "Generating ../shaders/equidepth_query.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.vert --target-env=vulkan1.1
 
 shaders/equidepth_query.geom.spv: shaders/equidepth_query.geom
 shaders/equidepth_query.geom.spv: shaders/equidepth_query.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Generating ../shaders/equidepth_query.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_53) "Generating ../shaders/equidepth_query.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query.geom --target-env=vulkan1.1
 
 shaders/equidepth_range.frag.spv: shaders/equidepth_range.frag
 shaders/equidepth_range.frag.spv: shaders/equidepth_range.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Generating ../shaders/equidepth_range.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_54) "Generating ../shaders/equidepth_range.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_range.frag --target-env=vulkan1.1
 
 shaders/equidepth_edge.vert.spv: shaders/equidepth_edge.vert
 shaders/equidepth_edge.vert.spv: shaders/equidepth_edge.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Generating ../shaders/equidepth_edge.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_55) "Generating ../shaders/equidepth_edge.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.vert --target-env=vulkan1.1
 
 shaders/equidepth_edge.geom.spv: shaders/equidepth_edge.geom
 shaders/equidepth_edge.geom.spv: shaders/equidepth_edge.geom
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Generating ../shaders/equidepth_edge.geom.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_56) "Generating ../shaders/equidepth_edge.geom.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.geom --target-env=vulkan1.1
 
 shaders/equidepth_edge.frag.spv: shaders/equidepth_edge.frag
 shaders/equidepth_edge.frag.spv: shaders/equidepth_edge.frag
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Generating ../shaders/equidepth_edge.frag.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_57) "Generating ../shaders/equidepth_edge.frag.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_edge.frag --target-env=vulkan1.1
 
 shaders/equidepth_query_compute.comp.spv: shaders/equidepth_query_compute.comp
 shaders/equidepth_query_compute.comp.spv: shaders/equidepth_query_compute.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Generating ../shaders/equidepth_query_compute.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_58) "Generating ../shaders/equidepth_query_compute.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/equidepth_query_compute.comp --target-env=vulkan1.1
 
 shaders/bruteforce_delete.comp.spv: shaders/bruteforce_delete.comp
 shaders/bruteforce_delete.comp.spv: shaders/bruteforce_delete.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Generating ../shaders/bruteforce_delete.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_59) "Generating ../shaders/bruteforce_delete.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_delete.comp --target-env=vulkan1.1
 
 shaders/bruteforce_insert.comp.spv: shaders/bruteforce_insert.comp
 shaders/bruteforce_insert.comp.spv: shaders/bruteforce_insert.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Generating ../shaders/bruteforce_insert.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_60) "Generating ../shaders/bruteforce_insert.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/bruteforce_insert.comp --target-env=vulkan1.1
 
 shaders/compactbrute_count_gfx.vert.spv: shaders/compactbrute_count_gfx.vert
 shaders/compactbrute_count_gfx.vert.spv: shaders/compactbrute_count_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Generating ../shaders/compactbrute_count_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_61) "Generating ../shaders/compactbrute_count_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_count_gfx.vert --target-env=vulkan1.1
 
 shaders/compactbrute_build_gfx.vert.spv: shaders/compactbrute_build_gfx.vert
 shaders/compactbrute_build_gfx.vert.spv: shaders/compactbrute_build_gfx.vert
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Generating ../shaders/compactbrute_build_gfx.vert.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_62) "Generating ../shaders/compactbrute_build_gfx.vert.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_build_gfx.vert --target-env=vulkan1.1
 
 shaders/compactbrute_query.comp.spv: shaders/compactbrute_query.comp
 shaders/compactbrute_query.comp.spv: shaders/compactbrute_query.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Generating ../shaders/compactbrute_query.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_63) "Generating ../shaders/compactbrute_query.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_query.comp --target-env=vulkan1.1
 
 shaders/compactbrute_delete.comp.spv: shaders/compactbrute_delete.comp
 shaders/compactbrute_delete.comp.spv: shaders/compactbrute_delete.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Generating ../shaders/compactbrute_delete.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_64) "Generating ../shaders/compactbrute_delete.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_delete.comp --target-env=vulkan1.1
 
 shaders/compactbrute_insert.comp.spv: shaders/compactbrute_insert.comp
 shaders/compactbrute_insert.comp.spv: shaders/compactbrute_insert.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Generating ../shaders/compactbrute_insert.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_65) "Generating ../shaders/compactbrute_insert.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_insert.comp --target-env=vulkan1.1
 
 shaders/compactbrute_update.comp.spv: shaders/compactbrute_update.comp
 shaders/compactbrute_update.comp.spv: shaders/compactbrute_update.comp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Generating ../shaders/compactbrute_update.comp.spv"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp.spv /home/akashmaji/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp --target-env=vulkan1.1
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_66) "Generating ../shaders/compactbrute_update.comp.spv"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/glslc -o ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp.spv ~/Device/IMPORTANT/raster-scan/scan/shaders/compactbrute_update.comp --target-env=vulkan1.1
 
 scan/CMakeFiles/RasterScan.dir/scan.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/scan.cpp.o: scan.cpp
 scan/CMakeFiles/RasterScan.dir/scan.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building CXX object scan/CMakeFiles/RasterScan.dir/scan.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/scan.cpp.o -MF CMakeFiles/RasterScan.dir/scan.cpp.o.d -o CMakeFiles/RasterScan.dir/scan.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_67) "Building CXX object scan/CMakeFiles/RasterScan.dir/scan.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/scan.cpp.o -MF CMakeFiles/RasterScan.dir/scan.cpp.o.d -o CMakeFiles/RasterScan.dir/scan.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/scan.cpp
 
 scan/CMakeFiles/RasterScan.dir/scan.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/scan.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan.cpp > CMakeFiles/RasterScan.dir/scan.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/scan.cpp > CMakeFiles/RasterScan.dir/scan.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/scan.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/scan.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan.cpp -o CMakeFiles/RasterScan.dir/scan.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/scan.cpp -o CMakeFiles/RasterScan.dir/scan.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o: RasterScan2D.cpp
 scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building CXX object scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o -MF CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o.d -o CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_68) "Building CXX object scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o -MF CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o.d -o CMakeFiles/RasterScan.dir/RasterScan2D.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp
 
 scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp > CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp > CMakeFiles/RasterScan.dir/RasterScan2D.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp -o CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/RasterScan2D.cpp -o CMakeFiles/RasterScan.dir/RasterScan2D.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o: RasterScanIndexUpdate.cpp
 scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building CXX object scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o -MF CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o.d -o CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_69) "Building CXX object scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o -MF CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o.d -o CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp
 
 scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp > CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp > CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp -o CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/RasterScanIndexUpdate.cpp -o CMakeFiles/RasterScan.dir/RasterScanIndexUpdate.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o: BufferPool.cpp
 scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building CXX object scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o -MF CMakeFiles/RasterScan.dir/BufferPool.cpp.o.d -o CMakeFiles/RasterScan.dir/BufferPool.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_70) "Building CXX object scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.o -MF CMakeFiles/RasterScan.dir/BufferPool.cpp.o.d -o CMakeFiles/RasterScan.dir/BufferPool.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp
 
 scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/BufferPool.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp > CMakeFiles/RasterScan.dir/BufferPool.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp > CMakeFiles/RasterScan.dir/BufferPool.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/BufferPool.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/BufferPool.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp -o CMakeFiles/RasterScan.dir/BufferPool.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/BufferPool.cpp -o CMakeFiles/RasterScan.dir/BufferPool.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o: CPUTimer.cpp
 scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building CXX object scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o -MF CMakeFiles/RasterScan.dir/CPUTimer.cpp.o.d -o CMakeFiles/RasterScan.dir/CPUTimer.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_71) "Building CXX object scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.o -MF CMakeFiles/RasterScan.dir/CPUTimer.cpp.o.d -o CMakeFiles/RasterScan.dir/CPUTimer.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp
 
 scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/CPUTimer.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp > CMakeFiles/RasterScan.dir/CPUTimer.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp > CMakeFiles/RasterScan.dir/CPUTimer.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/CPUTimer.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/CPUTimer.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp -o CMakeFiles/RasterScan.dir/CPUTimer.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/CPUTimer.cpp -o CMakeFiles/RasterScan.dir/CPUTimer.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o: modes/ModeUtils.cpp
 scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o -MF CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_72) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o -MF CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp > CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp > CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp -o CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/ModeUtils.cpp -o CMakeFiles/RasterScan.dir/modes/ModeUtils.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o: modes/Mode0.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_73) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode0.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp > CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp > CMakeFiles/RasterScan.dir/modes/Mode0.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp -o CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode0.cpp -o CMakeFiles/RasterScan.dir/modes/Mode0.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o: modes/Mode1.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_74) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode1.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp > CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp > CMakeFiles/RasterScan.dir/modes/Mode1.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp -o CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode1.cpp -o CMakeFiles/RasterScan.dir/modes/Mode1.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o: modes/Mode2.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_75) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode2.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp > CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp > CMakeFiles/RasterScan.dir/modes/Mode2.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp -o CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode2.cpp -o CMakeFiles/RasterScan.dir/modes/Mode2.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o: modes/Mode3.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_76) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode3.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp > CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp > CMakeFiles/RasterScan.dir/modes/Mode3.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp -o CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode3.cpp -o CMakeFiles/RasterScan.dir/modes/Mode3.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o: modes/Mode4.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_77) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode4.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp > CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp > CMakeFiles/RasterScan.dir/modes/Mode4.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp -o CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode4.cpp -o CMakeFiles/RasterScan.dir/modes/Mode4.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o: modes/Mode5.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_78) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode5.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp > CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp > CMakeFiles/RasterScan.dir/modes/Mode5.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp -o CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode5.cpp -o CMakeFiles/RasterScan.dir/modes/Mode5.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o: modes/Mode6.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_79) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode6.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp > CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp > CMakeFiles/RasterScan.dir/modes/Mode6.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp -o CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode6.cpp -o CMakeFiles/RasterScan.dir/modes/Mode6.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o: modes/Mode7.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_80) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode7.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp > CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp > CMakeFiles/RasterScan.dir/modes/Mode7.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp -o CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode7.cpp -o CMakeFiles/RasterScan.dir/modes/Mode7.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o: modes/Mode8.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_81) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode8.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp > CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp > CMakeFiles/RasterScan.dir/modes/Mode8.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp -o CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode8.cpp -o CMakeFiles/RasterScan.dir/modes/Mode8.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o: modes/Mode9.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_82) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode9.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp > CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp > CMakeFiles/RasterScan.dir/modes/Mode9.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp -o CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode9.cpp -o CMakeFiles/RasterScan.dir/modes/Mode9.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o: modes/Mode10.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_83) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode10.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp > CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp > CMakeFiles/RasterScan.dir/modes/Mode10.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp -o CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode10.cpp -o CMakeFiles/RasterScan.dir/modes/Mode10.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o: modes/Mode11.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_84) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode11.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp > CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp > CMakeFiles/RasterScan.dir/modes/Mode11.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp -o CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode11.cpp -o CMakeFiles/RasterScan.dir/modes/Mode11.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o: modes/Mode12.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_85) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode12.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp > CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp > CMakeFiles/RasterScan.dir/modes/Mode12.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp -o CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode12.cpp -o CMakeFiles/RasterScan.dir/modes/Mode12.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o: modes/Mode13.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_86) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode13.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp > CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp > CMakeFiles/RasterScan.dir/modes/Mode13.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp -o CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode13.cpp -o CMakeFiles/RasterScan.dir/modes/Mode13.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o: modes/Mode21.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_87) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode21.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp > CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp > CMakeFiles/RasterScan.dir/modes/Mode21.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp -o CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode21.cpp -o CMakeFiles/RasterScan.dir/modes/Mode21.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o: modes/Mode22.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_88) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode22.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp > CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp > CMakeFiles/RasterScan.dir/modes/Mode22.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp -o CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode22.cpp -o CMakeFiles/RasterScan.dir/modes/Mode22.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o: modes/Mode23.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_89) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode23.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp > CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp > CMakeFiles/RasterScan.dir/modes/Mode23.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp -o CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode23.cpp -o CMakeFiles/RasterScan.dir/modes/Mode23.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o: modes/Mode24.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_90) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode24.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp > CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp > CMakeFiles/RasterScan.dir/modes/Mode24.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp -o CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode24.cpp -o CMakeFiles/RasterScan.dir/modes/Mode24.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o: modes/Mode25.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_91) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode25.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp > CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp > CMakeFiles/RasterScan.dir/modes/Mode25.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp -o CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode25.cpp -o CMakeFiles/RasterScan.dir/modes/Mode25.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o: modes/Mode42.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_92) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode42.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp > CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp > CMakeFiles/RasterScan.dir/modes/Mode42.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp -o CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode42.cpp -o CMakeFiles/RasterScan.dir/modes/Mode42.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o: modes/Mode44.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_93) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode44.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp > CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp > CMakeFiles/RasterScan.dir/modes/Mode44.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp -o CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode44.cpp -o CMakeFiles/RasterScan.dir/modes/Mode44.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o: modes/Mode51.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_94) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode51.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp > CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp > CMakeFiles/RasterScan.dir/modes/Mode51.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp -o CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode51.cpp -o CMakeFiles/RasterScan.dir/modes/Mode51.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o: modes/Mode52.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_95) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_95) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode52.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp > CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp > CMakeFiles/RasterScan.dir/modes/Mode52.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp -o CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode52.cpp -o CMakeFiles/RasterScan.dir/modes/Mode52.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o: modes/Mode53.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_96) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_96) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode53.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp > CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp > CMakeFiles/RasterScan.dir/modes/Mode53.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp -o CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode53.cpp -o CMakeFiles/RasterScan.dir/modes/Mode53.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o: modes/Mode60.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_97) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_97) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode60.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp > CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp > CMakeFiles/RasterScan.dir/modes/Mode60.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp -o CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode60.cpp -o CMakeFiles/RasterScan.dir/modes/Mode60.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o: modes/Mode61.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_98) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_98) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode61.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp > CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp > CMakeFiles/RasterScan.dir/modes/Mode61.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp -o CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode61.cpp -o CMakeFiles/RasterScan.dir/modes/Mode61.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o: modes/Mode62.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_99) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_99) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode62.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp > CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp > CMakeFiles/RasterScan.dir/modes/Mode62.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp -o CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode62.cpp -o CMakeFiles/RasterScan.dir/modes/Mode62.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o: modes/Mode63.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_100) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_100) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode63.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp > CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp > CMakeFiles/RasterScan.dir/modes/Mode63.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp -o CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode63.cpp -o CMakeFiles/RasterScan.dir/modes/Mode63.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o: modes/Mode64.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_101) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_101) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode64.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp > CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp > CMakeFiles/RasterScan.dir/modes/Mode64.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp -o CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode64.cpp -o CMakeFiles/RasterScan.dir/modes/Mode64.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o: modes/Mode65.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_102) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_102) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode65.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp > CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp > CMakeFiles/RasterScan.dir/modes/Mode65.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp -o CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode65.cpp -o CMakeFiles/RasterScan.dir/modes/Mode65.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o: modes/Mode66.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_103) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_103) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode66.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp > CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp > CMakeFiles/RasterScan.dir/modes/Mode66.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp -o CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode66.cpp -o CMakeFiles/RasterScan.dir/modes/Mode66.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o: modes/Mode67.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_104) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_104) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode67.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp > CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp > CMakeFiles/RasterScan.dir/modes/Mode67.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp -o CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode67.cpp -o CMakeFiles/RasterScan.dir/modes/Mode67.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o: modes/Mode68.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_105) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_105) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode68.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp > CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp > CMakeFiles/RasterScan.dir/modes/Mode68.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp -o CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode68.cpp -o CMakeFiles/RasterScan.dir/modes/Mode68.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o: modes/Mode69.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_106) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_106) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode69.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp > CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp > CMakeFiles/RasterScan.dir/modes/Mode69.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp -o CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode69.cpp -o CMakeFiles/RasterScan.dir/modes/Mode69.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o: modes/Mode70.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_107) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_107) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode70.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp > CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp > CMakeFiles/RasterScan.dir/modes/Mode70.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp -o CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode70.cpp -o CMakeFiles/RasterScan.dir/modes/Mode70.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o: modes/Mode80.cpp
 scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_108) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_108) "Building CXX object scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o -MF CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o.d -o CMakeFiles/RasterScan.dir/modes/Mode80.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp > CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp > CMakeFiles/RasterScan.dir/modes/Mode80.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp -o CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/modes/Mode80.cpp -o CMakeFiles/RasterScan.dir/modes/Mode80.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o: CompactScanIndex.cpp
 scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_109) "Building CXX object scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o -MF CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_109) "Building CXX object scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o -MF CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp
 
 scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp > CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp > CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp -o CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/CompactScanIndex.cpp -o CMakeFiles/RasterScan.dir/CompactScanIndex.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o: CompactBruteScanIndex.cpp
 scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_110) "Building CXX object scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o -MF CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_110) "Building CXX object scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o -MF CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp
 
 scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp > CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp > CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp -o CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/CompactBruteScanIndex.cpp -o CMakeFiles/RasterScan.dir/CompactBruteScanIndex.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o: EquiDepthIndex.cpp
 scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_111) "Building CXX object scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o -MF CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_111) "Building CXX object scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o -MF CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp
 
 scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp > CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp > CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp -o CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/EquiDepthIndex.cpp -o CMakeFiles/RasterScan.dir/EquiDepthIndex.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o: BruteForceIndex.cpp
 scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_112) "Building CXX object scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o -MF CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_112) "Building CXX object scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o -MF CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o.d -o CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp > CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp > CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp -o CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndex.cpp -o CMakeFiles/RasterScan.dir/BruteForceIndex.cpp.s
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o: scan/CMakeFiles/RasterScan.dir/flags.make
 scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o: BruteForceIndexUpdatable.cpp
 scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o: scan/CMakeFiles/RasterScan.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_113) "Building CXX object scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o -MF CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o.d -o CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o -c /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_113) "Building CXX object scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o -MF CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o.d -o CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.o -c ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp > CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp > CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.i
 
 scan/CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/akashmaji/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp -o CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S ~/Device/IMPORTANT/raster-scan/scan/BruteForceIndexUpdatable.cpp -o CMakeFiles/RasterScan.dir/BruteForceIndexUpdatable.cpp.s
 
 # Object files for target RasterScan
 RasterScan_OBJECTS = \
@@ -1162,15 +1162,15 @@ scan/RasterScan: /usr/lib/x86_64-linux-gnu/libvulkan.so
 scan/RasterScan: vulkan/libVkCore.a
 scan/RasterScan: /usr/lib/x86_64-linux-gnu/libvulkan.so
 scan/RasterScan: scan/CMakeFiles/RasterScan.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/akashmaji/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_114) "Linking CXX executable RasterScan"
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RasterScan.dir/link.txt --verbose=$(VERBOSE)
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=~/Device/IMPORTANT/raster-scan/scan/CMakeFiles --progress-num=$(CMAKE_PROGRESS_114) "Linking CXX executable RasterScan"
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RasterScan.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
 scan/CMakeFiles/RasterScan.dir/build: scan/RasterScan
 .PHONY : scan/CMakeFiles/RasterScan.dir/build
 
 scan/CMakeFiles/RasterScan.dir/clean:
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan && $(CMAKE_COMMAND) -P CMakeFiles/RasterScan.dir/cmake_clean.cmake
+	cd ~/Device/IMPORTANT/raster-scan/scan/scan && $(CMAKE_COMMAND) -P CMakeFiles/RasterScan.dir/cmake_clean.cmake
 .PHONY : scan/CMakeFiles/RasterScan.dir/clean
 
 scan/CMakeFiles/RasterScan.dir/depend: shaders/bruteforce_delete.comp.spv
@@ -1239,6 +1239,6 @@ scan/CMakeFiles/RasterScan.dir/depend: shaders/range2D.frag.spv
 scan/CMakeFiles/RasterScan.dir/depend: shaders/range2D.geom.spv
 scan/CMakeFiles/RasterScan.dir/depend: shaders/range2D.vert.spv
 scan/CMakeFiles/RasterScan.dir/depend: shaders/verify-index.comp.spv
-	cd /home/akashmaji/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/akashmaji/Device/IMPORTANT/raster-scan /home/akashmaji/Device/IMPORTANT/raster-scan/scan /home/akashmaji/Device/IMPORTANT/raster-scan/scan /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan /home/akashmaji/Device/IMPORTANT/raster-scan/scan/scan/CMakeFiles/RasterScan.dir/DependInfo.cmake --color=$(COLOR)
+	cd ~/Device/IMPORTANT/raster-scan/scan && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" ~/Device/IMPORTANT/raster-scan ~/Device/IMPORTANT/raster-scan/scan ~/Device/IMPORTANT/raster-scan/scan ~/Device/IMPORTANT/raster-scan/scan/scan ~/Device/IMPORTANT/raster-scan/scan/scan/CMakeFiles/RasterScan.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : scan/CMakeFiles/RasterScan.dir/depend
 

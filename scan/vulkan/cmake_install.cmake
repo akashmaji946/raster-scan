@@ -1,4 +1,4 @@
-# Install script for directory: /home/akashmaji/Device/IMPORTANT/raster-scan/vulkan
+# Install script for directory: ~/Device/IMPORTANT/raster-scan/vulkan
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

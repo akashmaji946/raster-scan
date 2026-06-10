@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/akashmaji/Device/IMPORTANT/raster-scan/scan/encode.cpp" "scan/CMakeFiles/EncodeData.dir/encode.cpp.o" "gcc" "scan/CMakeFiles/EncodeData.dir/encode.cpp.o.d"
+  "~/Device/IMPORTANT/raster-scan/scan/encode.cpp" "scan/CMakeFiles/EncodeData.dir/encode.cpp.o" "gcc" "scan/CMakeFiles/EncodeData.dir/encode.cpp.o.d"
   )
 
 # Targets to which this target links.
